@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         realPassword = sharedPreferences.getString("realPassword", "");
         if (!realPassword.isEmpty()) {
             confirm.setVisibility(View.GONE);
+            password.setHint("Input Password");
         }
     }
 
