@@ -49,7 +49,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.ok:
                 if (!realPassword.isEmpty()){
                     if (Objects.equals(realPassword, password.getText().toString())){
-//                        Intent intent = new Intent();
+                       Intent intent = new Intent(this,SubActivity.class);
+                       startActivity(intent);
                     }else {
                         showToast("Invalid Password");
                     }
@@ -61,7 +62,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     } else {
                         realPassword = password.getText().toString();
                         editor.putString("realPassword",realPassword).commit();
-//                        Intent intent = new Intent();
+                       Intent intent = new Intent(this,SubActivity.class);
+                       startActivity(intent);
                     }
                 }
                 break;
@@ -73,6 +75,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     void showToast(String content){
-
+        Toast.makeText(this, content, Toast.LENGTH_SHORT).show();
     }
 }
