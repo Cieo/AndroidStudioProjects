@@ -4,22 +4,46 @@
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:weight_sum="1"
-    tools:context="com.example.cieo233.appdevelopmentlab7.MainActivity"
-    android:orientation="vertical">
-    <EditText
-      android:layout_width="match_parent"
-      android:layout_height="0"
-      android:id="@+id/content"
-      android:weight="1"
-      />
-    <LinearLayout
-      android:layout_width="match_parent"
-      android:layout_height="warp_content">
+    android:weightSum="1"
+    tools:context="com.example.cieo233.appdevelopmentlab7.SubActivity">
 
-    </LinearLayout>
+    <EditText
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="start" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:text="save" />
+
+        <Button
+            android:id="@+id/load"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="load" />
+
+        <Button
+            android:id="@+id/clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="clear" />
+    </RelativeLayout>
+
 </LinearLayout>
