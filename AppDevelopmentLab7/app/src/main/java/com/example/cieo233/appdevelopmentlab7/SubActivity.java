@@ -47,19 +47,13 @@ public class SubActivity extends AppCompatActivity implements View.OnClickListen
         clear.setOnClickListener(this);
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        Intent i = new Intent(Intent.ACTION_MAIN);
-//        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        i.addCategory(Intent.CATEGORY_HOME);
-//        startActivity(i);
-//    }
 
     @Override
     public void onClick(View view) {
         file = new File("/storage/emulated/0/appDevelopment/file1.txt");
         try {
             switch (view.getId()) {
+//                Save the text in edittext to the file
                 case R.id.save:
                     if (!file.exists()) {
                         file.createNewFile();
@@ -70,6 +64,7 @@ public class SubActivity extends AppCompatActivity implements View.OnClickListen
                     bufferedWriter.close();
                     fileWriter.close();
                     break;
+//                Load the text in the file to the edittext
                 case R.id.load:
                     if (file.exists()) {
                         content.setText("");

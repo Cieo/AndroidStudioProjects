@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setResponse();
     }
 
+//    init the variables we are going to use
     void init() {
         sharedPreferences = getSharedPreferences("lab7", MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ok:
+//                if we click ok , check if the password is empty or different with the confirmation
                 if (!realPassword.isEmpty()) {
                     if (Objects.equals(realPassword, password.getText().toString())) {
                         Intent intent = new Intent(this, SubActivity.class);
