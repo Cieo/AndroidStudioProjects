@@ -12,6 +12,7 @@
     tools:context="com.example.cieo233.appdevelopmentlab8.MainActivity">
 
     <Button
+        android:id="@+id/addItem"
         android:layout_gravity="center"
         android:text="增加条目"
         android:layout_width="wrap_content"
@@ -46,4 +47,10 @@
         android:background="@color/colorPrimary"
         android:layout_width="match_parent"
         android:layout_height="1px" />
+    <ListView
+        android:id="@+id/peopleList"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
 </LinearLayout>

@@ -15,8 +15,8 @@
             android:layout_height="wrap_content"
             android:text="姓名：" />
 
-        <EditText
-            android:id="@+id/inputName"
+        <TextView
+            android:id="@+id/dialogName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -31,7 +31,7 @@
             android:text="生日：" />
 
         <EditText
-            android:id="@+id/inputBirthday"
+            android:id="@+id/dialogBirthday"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
@@ -46,14 +46,23 @@
             android:text="礼物：" />
 
         <EditText
-            android:id="@+id/inputGift"
+            android:id="@+id/dialogGift"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </LinearLayout>
-    <Button
-        android:id="@+id/add"
-        android:layout_gravity="center"
-        android:text="增加"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="电话：" />
+
+        <TextView
+            android:id="@+id/dialogPhone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
 </LinearLayout>
