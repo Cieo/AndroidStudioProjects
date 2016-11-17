@@ -10,11 +10,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.crypto.spec.DESedeKeySpec;
 
 /**
  * Created by Cieo233 on 11/16/2016.
@@ -49,14 +48,20 @@ public class SubActivity extends AppCompatActivity implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        if (mDatabaseHelper.insert(inputName.getText().toString(), inputBirthday.getText().toString(), inputGift.getText().toString())) {
-            Log.e(DEBUG, "insert 成功");
-            setResult(1);
-        } else {
-            Log.e(DEBUG, "insert 失败");
-            setResult(0);
+        if (inputName.getText().length() == 0){
+            showToast("名字为空，请完善");
+            return;
         }
-        this.finish();
+        if (mDatabaseHelper.insert(inputName.getText().toString(), inputBirthday.getText().toString(), inputGift.getText().toString())) {
+            setResult(1);
+            this.finish();
+        } else {
+            showToast("名字重复啦，请核查");
+        }
+    }
+
+    void showToast(String content){
+        Toast.makeText(this,content,Toast.LENGTH_SHORT).show();
     }
 }
 

@@ -17,7 +17,7 @@
 
         <EditText
             android:id="@+id/inputName"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
@@ -32,7 +32,7 @@
 
         <EditText
             android:id="@+id/inputBirthday"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
@@ -47,7 +47,7 @@
 
         <EditText
             android:id="@+id/inputGift"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
     <Button

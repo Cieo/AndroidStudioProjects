@@ -32,7 +32,7 @@
 
         <EditText
             android:id="@+id/dialogBirthday"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
@@ -47,20 +47,23 @@
 
         <EditText
             android:id="@+id/dialogGift"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>
     <LinearLayout
+        android:layout_marginTop="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
         <TextView
+            android:textColor="#14AA50"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="电话：" />
 
         <TextView
+            android:textColor="#14AA50"
             android:id="@+id/dialogPhone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
