@@ -59,8 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_main);
         init();
         startService();
-        setResponse();
-        setAnimator();
+
     }
 
     void init() {
@@ -82,6 +81,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
                 mBinder = (MainService.mBinder) iBinder;
                 mediaPlayer = mBinder.getMediaPlayer();
+                setResponse();
+                setAnimator();
             }
 
             @Override
