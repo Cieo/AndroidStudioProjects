@@ -7,6 +7,7 @@
     android:orientation="horizontal">
 
     <TextView
+        android:textColor="#E653E2"
         android:layout_gravity="top"
         android:id="@+id/title"
         android:textSize="18sp"

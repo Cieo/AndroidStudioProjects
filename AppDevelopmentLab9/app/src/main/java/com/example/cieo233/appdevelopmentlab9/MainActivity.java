@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 switch (msg.what) {
                     case 1:
                         city.setText(weather.getCity());
-                        update_time.setText(weather.getUpdateTime());
+                        update_time.setText(weather.getUpdateTime()+"更新");
                         tempture.setText(weather.getTempture());
                         high_low.setText(weather.getLowHigh());
                         humidity.setText(weather.getHumidity());
