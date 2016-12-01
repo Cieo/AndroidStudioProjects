@@ -4,6 +4,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -36,6 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Handler handler;
     private Weather weather;
     private TipsAdapter tipsAdapter;
+    private FutureAdapter futureAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         future_weather = (RecyclerView) findViewById(R.id.future_weather);
         tipsAdapter = new TipsAdapter(new ArrayList<String>(), this);
         tips.setAdapter(tipsAdapter);
+        futureAdapter = new FutureAdapter(new ArrayList<String>(),this);
+        future_weather.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.HORIZONTAL,false));
+        future_weather.setAdapter(futureAdapter);
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -73,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         windspeed.setText(weather.getWindSpeed());
                         tipsAdapter.setTips(weather.getTips());
                         tipsAdapter.notifyDataSetChanged();
+                        futureAdapter.setFuture(weather.getFuture());
+                        futureAdapter.notifyDataSetChanged();
                         break;
                     case 2:
                         showToast("免费用户不能使用高速访问");
@@ -117,7 +124,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Log.e("WOCAO", "Thread start!");
                 String str_city = input_city.getText().toString();
                 String http_request = "http://ws.webxml.com.cn/WebServices/WeatherWS.asmx/getWeather?theCityCode=" + str_city + "&theUserID=";
                 try {
@@ -131,7 +137,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             builder.append(line + "\n");
                         }
                         String body = builder.toString();
-                        Log.e("wocao",body);
                         if (body.contains("免费用户24小时内访问超过规定数量")){
                             handler.sendEmptyMessage(24);
                             return;
