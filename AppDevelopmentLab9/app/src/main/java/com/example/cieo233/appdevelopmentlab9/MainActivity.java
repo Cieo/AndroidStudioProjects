@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RecyclerView future_weather;
     private Handler handler;
     private Weather weather;
+    private TipsAdapter tipsAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,10 +57,33 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         air_quality = (TextView) findViewById(R.id.airQuality);
         windspeed = (TextView) findViewById(R.id.windSpeed);
         future_weather = (RecyclerView) findViewById(R.id.future_weather);
+        tipsAdapter = new TipsAdapter(new ArrayList<String>(), this);
+        tips.setAdapter(tipsAdapter);
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
-
+                switch (msg.what) {
+                    case 1:
+                        city.setText(weather.getCity());
+                        update_time.setText(weather.getUpdateTime());
+                        tempture.setText(weather.getTempture());
+                        high_low.setText(weather.getLowHigh());
+                        humidity.setText(weather.getHumidity());
+                        air_quality.setText(weather.getAirQuality());
+                        windspeed.setText(weather.getWindSpeed());
+                        tipsAdapter.setTips(weather.getTips());
+                        tipsAdapter.notifyDataSetChanged();
+                        break;
+                    case 2:
+                        showToast("免费用户不能使用高速访问");
+                        break;
+                    case 3:
+                        showToast("查询结果为空");
+                        break;
+                    case 24:
+                        showToast("免费用户24小时内访问超过规定数量");
+                        break;
+                }
             }
         };
     }
@@ -79,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             if (eventType == XmlPullParser.START_TAG) {
                 eventType = xpp.next();
                 if (eventType == XmlPullParser.TEXT) {
-                    builder.append(xpp.getText()+"\n");
+                    builder.append(xpp.getText() + "\n");
                 }
             }
             eventType = xpp.next();
@@ -105,8 +130,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         while ((line = reader.readLine()) != null) {
                             builder.append(line + "\n");
                         }
-                        weather = new Weather(praseXML(builder.toString()).split("\n"));
-                        handler.sendEmptyMessage(1);
+                        String body = builder.toString();
+                        Log.e("wocao",body);
+                        if (body.contains("免费用户24小时内访问超过规定数量")){
+                            handler.sendEmptyMessage(24);
+                            return;
+                        } else if (body.contains("免费用户不能使用高速访问")){
+                            handler.sendEmptyMessage(2);
+                        } else if (body.contains("查询结果为空")){
+                            handler.sendEmptyMessage(3);
+                        } else {
+                            weather = new Weather(praseXML(body).split("\n"));
+                            handler.sendEmptyMessage(1);
+                        }
                         reader.close();
                     }
                 } catch (IOException e) {
@@ -118,37 +154,48 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }).start();
     }
 
+    void showToast(String content){
+        Toast.makeText(this,content,Toast.LENGTH_SHORT).show();
+    }
+
 }
 
-class Weather{
+class Weather {
     private String[] weather;
 
     public Weather(String[] weather) {
         this.weather = weather;
     }
 
-    public String getCity(){
+    public String getCity() {
         return weather[3];
     }
-    public String getUpdateTime(){
+
+    public String getUpdateTime() {
         return weather[5].split(" ")[1];
     }
-    public String getTempture(){
-        return weather[6].substring(weather[6].indexOf("气温：")+3,weather[6].indexOf("；风向"));
+
+    public String getTempture() {
+        return weather[6].substring(weather[6].indexOf("气温：") + 3, weather[6].indexOf("；风向"));
     }
-    public String getLowHigh(){
+
+    public String getLowHigh() {
         return weather[16];
     }
-    public String getHumidity(){
+
+    public String getHumidity() {
         return weather[6].substring(weather[6].indexOf("湿度："));
     }
-    public String getAirQuality(){
+
+    public String getAirQuality() {
         return weather[7].substring(weather[7].indexOf("空气质量："));
     }
-    public String getWindSpeed(){
-        return weather[6].substring(weather[6].indexOf("风力：")+3,weather[6].indexOf("；湿度"));
+
+    public String getWindSpeed() {
+        return weather[6].substring(weather[6].indexOf("风力：") + 3, weather[6].indexOf("；湿度"));
     }
-    public List<String> getTips(){
+
+    public List<String> getTips() {
         List<String> tips = new ArrayList<>();
         tips.add(weather[8]);
         tips.add(weather[9]);
@@ -158,13 +205,14 @@ class Weather{
         tips.add(weather[13]);
         return tips;
     }
-    public List<String> getFuture(){
+
+    public List<String> getFuture() {
         List<String> future = new ArrayList<>();
-        future.add(weather[15]+"\n"+weather[16]);
-        future.add(weather[20]+"\n"+weather[21]);
-        future.add(weather[25]+"\n"+weather[26]);
-        future.add(weather[30]+"\n"+weather[31]);
-        future.add(weather[35]+"\n"+weather[36]);
+        future.add(weather[15] + "\n" + weather[16]);
+        future.add(weather[20] + "\n" + weather[21]);
+        future.add(weather[25] + "\n" + weather[26]);
+        future.add(weather[30] + "\n" + weather[31]);
+        future.add(weather[35] + "\n" + weather[36]);
         return future;
     }
 }
