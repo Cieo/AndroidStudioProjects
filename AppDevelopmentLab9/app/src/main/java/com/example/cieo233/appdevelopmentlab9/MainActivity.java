@@ -80,6 +80,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         tipsAdapter.notifyDataSetChanged();
                         futureAdapter.setFuture(weather.getFuture());
                         futureAdapter.notifyDataSetChanged();
+
+                        city.setVisibility(View.VISIBLE);
+                        update_time.setVisibility(View.VISIBLE);
+                        findViewById(R.id.relative_layout).setVisibility(View.VISIBLE);
+                        future_weather.setVisibility(View.VISIBLE);
+                        tips.setVisibility(View.VISIBLE);
                         break;
                     case 2:
                         showToast("免费用户不能使用高速访问");
@@ -193,7 +199,7 @@ class Weather {
     }
 
     public String getAirQuality() {
-        return weather[7].substring(weather[7].indexOf("空气质量："));
+        return weather[7].substring(weather[7].indexOf("空气质量："),weather[7].length() - 1);
     }
 
     public String getWindSpeed() {
