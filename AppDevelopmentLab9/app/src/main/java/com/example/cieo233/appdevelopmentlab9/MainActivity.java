@@ -155,6 +155,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             handler.sendEmptyMessage(1);
                         }
                         reader.close();
+                        http.disconnect();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
