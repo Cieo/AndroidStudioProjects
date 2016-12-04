@@ -22,9 +22,9 @@ class FutureAdapter extends RecyclerView.Adapter {
         this.future = future;
     }
 
-    FutureAdapter(List<String> future, Context context) {
-        this.future = future;
-        this.context = context;
+        FutureAdapter(List<String> future, Context context) {
+            this.future = future;
+            this.context = context;
     }
 
     @Override

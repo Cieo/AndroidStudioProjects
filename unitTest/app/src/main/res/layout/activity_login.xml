@@ -21,6 +21,7 @@
         android:layout_height="wrap_content">
 
         <EditText
+            android:text="Cieo2333"
             android:id="@+id/edit_id"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -35,6 +36,7 @@
         android:layout_height="wrap_content">
 
         <EditText
+            android:text="Cieo2333"
             android:id="@+id/edit_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
