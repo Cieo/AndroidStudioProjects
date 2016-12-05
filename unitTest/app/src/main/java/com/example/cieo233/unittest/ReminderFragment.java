@@ -1,5 +1,6 @@
 package com.example.cieo233.unittest;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -78,8 +80,10 @@ public class ReminderFragment extends Fragment implements View.OnClickListener {
                         reminderAdapter.notifyDataSetChanged();
                         break;
                     case 1:
+                        showToast("用户身份无效");
                         break;
                     case 2:
+                        showToast("未知错误");
                         break;
                 }
             }
@@ -134,7 +138,18 @@ public class ReminderFragment extends Fragment implements View.OnClickListener {
         switch (view.getId()){
             case R.id.btn_add_reminder:
                 Log.e("WOCAO","add_reminder, wait to be done");
+                startActivityForResult(new Intent(getContext(),AddRminderActivity.class),1);
                 break;
         }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        getReminder();
+        Log.e("WOCAO","msg from on activity result");
+    }
+
+    void showToast(String content){
+        Toast.makeText(getContext(),content,Toast.LENGTH_SHORT).show();
     }
 }
