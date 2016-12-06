@@ -6,39 +6,37 @@
     <EditText
         android:text="AI Project"
         android:id="@+id/reminder_create_title"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
         android:text="any problems @TA"
         android:id="@+id/reminder_create_content"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
     <EditText
         android:text="I have a dream"
         android:id="@+id/reminder_create_remark"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-    <DatePicker
+    <TextView
         android:id="@+id/reminder_create_date"
-        android:layout_width="wrap_content"
-        android:layout_height="100dp">
-
-    </DatePicker>
+        android:text="1994"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
     <EditText
         android:id="@+id/reminder_create_priority"
         android:text="LOW"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
     <EditText
         android:id="@+id/reminder_create_channel"
         android:text="AI"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
    <Button
        android:id="@+id/reminder_create_submit"
-       android:layout_width="wrap_content"
+       android:layout_width="match_parent"
        android:layout_height="wrap_content" />
 
 </LinearLayout>

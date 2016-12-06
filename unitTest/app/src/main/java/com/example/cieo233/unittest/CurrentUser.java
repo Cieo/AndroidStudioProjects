@@ -1,5 +1,6 @@
 package com.example.cieo233.unittest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +31,8 @@ class CurrentUser {
     }
 
     public CurrentUser(){
-
+        channels = new ArrayList<>();
+        reminders = new ArrayList<>();
     }
 
     public static CurrentUser getInstance() {
