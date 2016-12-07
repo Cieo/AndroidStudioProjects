@@ -77,9 +77,7 @@ public class ChannelFragment extends Fragment implements View.OnClickListener {
     }
 
     void init() {
-        channelAdapter = new ChannelAdapter(getContext(), CurrentUser.getInstance().getChannels());
-        channel_list.setLayoutManager(new LinearLayoutManager(getContext()));
-        channel_list.setAdapter(channelAdapter);
+
         handler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
@@ -102,6 +100,10 @@ public class ChannelFragment extends Fragment implements View.OnClickListener {
                 }
             }
         };
+        channelAdapter = new ChannelAdapter(getContext(), CurrentUser.getInstance().getChannels());
+        channelAdapter.setHandler(handler);
+        channel_list.setLayoutManager(new LinearLayoutManager(getContext()));
+        channel_list.setAdapter(channelAdapter);
     }
 
     void showToast(String content) {
