@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity{
     void init(){
         fragments = new ArrayList<>();
         fragments.add(new ReminderFragment());
+        fragments.add(new ChannelFragment());
         fragment_adapter = new FragmentAdapter(getSupportFragmentManager(),fragments);
         view_pager.setAdapter(fragment_adapter);
     }
