@@ -77,7 +77,7 @@ public class ChannelAdapter extends RecyclerView.Adapter{
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         mHolder = (ChannelHolder) holder;
         mChannel = channels.get(position);
         mHolder.getChannel_name().setText(mChannel.getName());
@@ -91,6 +91,7 @@ public class ChannelAdapter extends RecyclerView.Adapter{
         mHolder.getChannel_type().setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                mChannel = channels.get(holder.getAdapterPosition());
                 if (b){
                     joinChannel();
                 }
