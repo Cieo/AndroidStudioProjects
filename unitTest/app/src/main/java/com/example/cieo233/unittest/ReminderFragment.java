@@ -79,35 +79,12 @@ public class ReminderFragment extends Fragment implements View.OnClickListener {
         reminderAdapter = new ReminderAdapter(getContext(), CurrentUser.getInstance().getReminders());
         reminder_list.setLayoutManager(new LinearLayoutManager(getContext()));
         reminder_list.setAdapter(reminderAdapter);
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case 0:
-                        reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
-                        reminderAdapter.notifyDataSetChanged();
-                        break;
-                    case 1:
-                        showToast("用户身份无效");
-                        break;
-                    case 2:
-                        showToast("未知错误");
-                        break;
-                    case 8:
-                        getAllReminder();
-                        break;
-                    case 9:
-                        mBottomDialog.dismiss();
-                        break;
-                }
-            }
-        };
     }
 
     void getReminder() {
         OkHttpClient mOkHttpClient = new OkHttpClient();
         HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/reminder").newBuilder();
-        url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getToken());
+        url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         Request request = new Request.Builder()
                 .url(url_builder.build())
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -151,9 +128,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_add_reminder:
-                Log.e("WOCAO", "add_reminder, wait to be done");
                 showBottomDialog();
-//                startActivityForResult(new Intent(getContext(), AddRminderActivity.class), 1);
                 break;
         }
     }
@@ -226,7 +201,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                         //    指定下拉列表的显示数据
 
-                        final List<Channel> channels = CurrentUser.getInstance().getChannels();
+                        final List<Channel> channels = CurrentUser.getInstance().getSubscribeChannels();
                         String[] shownChannels = new String[channels.size()+1];
                         shownChannels[0] = "own";
                         for (int i  = 1; i < shownChannels.length; i ++) {
@@ -264,8 +239,8 @@ public class ReminderFragment extends Fragment implements View.OnClickListener {
                             new_type = "0";
                             new_channel_id = String.valueOf(mChannel.getId());
                         }
-                        postReminder();
-                        handler.sendEmptyMessage(9);
+//                        postReminder();
+//                        handler.sendEmptyMessage(9);
                     }
                 });
 
@@ -274,102 +249,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener {
         mBottomDialog.show();
     }
 
-    void getAllReminder(){
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/reminder").newBuilder();
-        url_builder.addEncodedQueryParameter("token",CurrentUser.getInstance().getToken());
-        Request request = new Request.Builder()
-                .url(url_builder.build())
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .build();
-        Call call = mOkHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String json = response.body().string();
-                int result = 2;
-                Log.e("WOCAO", json);
-
-                try {
-                    JSONObject jsonObject = new JSONObject(json);
-                    if (jsonObject.getInt("ret") == StateCode.TOKEN_INVALID) {
-                        result = 1;
-                    } else if (jsonObject.getInt("ret") == StateCode.OK) {
-                        result = 0;
-                        CurrentUser.getInstance().setReminders((List<Reminder>) new Gson().fromJson(jsonObject.getString("reminders"),new TypeToken<List<Reminder>>(){}.getType()));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                handler.sendEmptyMessage(result);
-            }
-
-        });
-    }
-
-
-    void postReminder(){
-            OkHttpClient mOkHttpClient = new OkHttpClient();
-            HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/reminder").newBuilder();
-            url_builder.addEncodedQueryParameter("token",CurrentUser.getInstance().getToken());
-            RequestBody formBody = new FormBody.Builder()
-                    .add(Reminder.TITLE,new_title)
-                    .add(Reminder.CONTENT,new_content)
-                    .add(Reminder.DUE,new_due)
-                    .add(Reminder.PRIORITY,new_priority)
-                    .add(Reminder.TYPE,new_type)
-                    .add(Reminder.CHANNEL_ID,new_channel_id)
-                    .build();
-            Request request = new Request.Builder()
-                    .url(url_builder.build())
-                    .post(formBody)
-                    .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                    .build();
-            Call call = mOkHttpClient.newCall(request);
-            call.enqueue(new Callback() {
-                @Override
-                public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                }
-
-                @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    String json = response.body().string();
-                    int result = 2;
-                    Log.e("WOCAO", json);
-
-                    try {
-                        JSONObject jsonObject = new JSONObject(json);
-                        if (jsonObject.getInt("ret") == StateCode.CHANNEL_ID_ERROR) {
-                            result = 1;
-                        } else if (jsonObject.getInt("ret") == StateCode.OK) {
-                            handler.sendEmptyMessage(8);
-                            result = 0;
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                }
-
-            });
-
-    }
 
 
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        getReminder();
-        Log.e("WOCAO", "msg from on activity result");
-    }
-
-    void showToast(String content) {
-        Toast.makeText(getContext(), content, Toast.LENGTH_SHORT).show();
-    }
 }

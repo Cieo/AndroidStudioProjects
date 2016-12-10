@@ -8,6 +8,13 @@ class Channel {
     private int id, type;
     private String name, last_update;
     public static final String ACTION = "action";
+    public static final int UNSUBSCRIBE = 0;
+    public static final int EXIT = 1;
+    public static final int JOIN = 0;
+    public static final int CREATOR = 1;
+    public static final int SUBSCRIBE = 2;
+    public static final String NAME = "name";
+
 
     public Channel(int id, int type, String name, String last_update) {
         this.id = id;

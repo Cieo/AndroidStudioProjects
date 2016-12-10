@@ -83,7 +83,7 @@ public class ChannelFragment extends Fragment implements View.OnClickListener {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
                     case 0:
-                        channelAdapter.setChannels(CurrentUser.getInstance().getChannels());
+                        channelAdapter.setChannels(CurrentUser.getInstance().getUnsubscribeChannels());
                         channelAdapter.notifyDataSetChanged();
                         break;
                     case 1:
@@ -100,7 +100,7 @@ public class ChannelFragment extends Fragment implements View.OnClickListener {
                 }
             }
         };
-        channelAdapter = new ChannelAdapter(getContext(), CurrentUser.getInstance().getChannels());
+        channelAdapter = new ChannelAdapter(getContext(), CurrentUser.getInstance().getUnsubscribeChannels());
         channelAdapter.setHandler(handler);
         channel_list.setLayoutManager(new LinearLayoutManager(getContext()));
         channel_list.setAdapter(channelAdapter);
@@ -138,7 +138,7 @@ public class ChannelFragment extends Fragment implements View.OnClickListener {
     void getAllChannel() {
         OkHttpClient mOkHttpClient = new OkHttpClient();
         HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/channel").newBuilder();
-        url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getToken());
+        url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         Request request = new Request.Builder()
                 .url(url_builder.build())
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
@@ -162,7 +162,7 @@ public class ChannelFragment extends Fragment implements View.OnClickListener {
                         result = 1;
                     } else if (jsonObject.getInt("ret") == StateCode.OK) {
                         result = 0;
-                        CurrentUser.getInstance().setChannels((List<Channel>) new Gson().fromJson(jsonObject.getString("channels"), new TypeToken<List<Channel>>() {
+                        CurrentUser.getInstance().setUnsubscribeChannels((List<Channel>) new Gson().fromJson(jsonObject.getString("channels"), new TypeToken<List<Channel>>() {
                         }.getType()));
                     }
                 } catch (JSONException e) {
@@ -177,7 +177,7 @@ public class ChannelFragment extends Fragment implements View.OnClickListener {
     void postChannel() {
         OkHttpClient mOkHttpClient = new OkHttpClient();
         HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/channel").newBuilder();
-        url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getToken());
+        url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         RequestBody formBody = new FormBody.Builder()
                 .add("name", new_name)
                 .build();

@@ -7,8 +7,10 @@ package com.example.cieo233.unittest;
 class User {
     private String username, password;
     private int id;
+    private String token;
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
+
 
 
 
@@ -16,6 +18,26 @@ class User {
         this.username = username;
         this.password = password;
         this.id = id;
+    }
+
+    public User(String username, String password, int id, String token) {
+        this.username = username;
+        this.password = password;
+        this.id = id;
+        this.token = token;
+    }
+
+    public User(String username, String password) {
+        this.username = username;
+        this.password = password;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 
     public User(String username, int id) {

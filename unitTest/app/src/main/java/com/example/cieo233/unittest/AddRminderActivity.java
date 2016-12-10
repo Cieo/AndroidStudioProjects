@@ -43,19 +43,19 @@ import okhttp3.Response;
  */
 
 public class AddRminderActivity extends AppCompatActivity implements View.OnClickListener {
-    @BindView(R.id.reminder_create_title)
+    @BindView(R.id.reminder_detail_title)
     EditText reminder_create_title;
-    @BindView(R.id.reminder_create_content)
+    @BindView(R.id.reminder_detail_content)
     EditText reminder_create_content;
-    @BindView(R.id.reminder_create_remark)
+    @BindView(R.id.reminder_detail_remark)
     EditText reminder_create_remark;
-    @BindView(R.id.reminder_create_channel)
+    @BindView(R.id.reminder_detail_channel)
     EditText reminder_create_channel;
-    @BindView(R.id.reminder_create_priority)
+    @BindView(R.id.reminder_detail_priority)
     EditText reminder_create_priority;
     @BindView(R.id.reminder_create_submit)
     Button reminder_create_submit;
-    @BindView(R.id.reminder_create_date)
+    @BindView(R.id.reminder_detail_date)
     TextView reminder_create_date;
     private Handler handler;
     ProgressDialog progressDialog;
@@ -146,9 +146,6 @@ public class AddRminderActivity extends AppCompatActivity implements View.OnClic
             case R.id.reminder_create_submit:
                 postReminder();
                 break;
-            case R.id.reminder_create_date:
-                showSublimePicker();
-                break;
         }
     }
 
@@ -158,7 +155,7 @@ public class AddRminderActivity extends AppCompatActivity implements View.OnClic
             progressDialog.show();
             OkHttpClient mOkHttpClient = new OkHttpClient();
             HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/reminder").newBuilder();
-            url_builder.addEncodedQueryParameter("token",CurrentUser.getInstance().getToken());
+            url_builder.addEncodedQueryParameter("token",CurrentUser.getInstance().getUser().getToken());
             RequestBody formBody = new FormBody.Builder()
                     .add(Reminder.TITLE,title)
                     .add(Reminder.CONTENT,content)

@@ -15,6 +15,8 @@ class Reminder {
     public static final String TYPE = "type";
     public static final String CHANNEL_ID = "channel_id";
     public static final String PRIORITY = "priority";
+    public static final String REMARK = "remark";
+    public static final String STATE = "state";
 
     public Reminder(Channel channel, String title, String content, String due, String remark, String last_update, int id, int priority, int type, int creater_id, int state) {
         this.channel = channel;

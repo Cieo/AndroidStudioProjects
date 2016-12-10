@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:padding="16dp">
+    android:layout_width="match_parent"
+    android:padding="16dp"
+    android:layout_height="match_parent">
 
     <TextView
-        android:gravity="center"
-        android:id="@+id/login_title"
+        android:id="@+id/signup_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="Codo"
-        app:layout_marginTopPercent = "20%"
         android:textColor="#00A8FE"
         android:textSize="50sp"
-        android:typeface="serif" />
+        android:typeface="serif"
+        app:layout_marginTopPercent="20%" />
 
 
     <com.rengwuxian.materialedittext.MaterialEditText
@@ -22,39 +22,48 @@
         android:id="@+id/edit_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"
         app:met_floatingLabel="highlight"
         app:met_floatingLabelText="Username"
         app:met_floatingLabelAlwaysShown="true"
         app:met_primaryColor="#00A8FE"
-        android:text="Cieo2333" />
+        android:maxLines="1" />
 
 
     <com.rengwuxian.materialedittext.MaterialEditText
         app:layout_marginTopPercent = "55%"
+        android:id="@+id/edit_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         app:met_floatingLabel="highlight"
         app:met_floatingLabelText="Password"
         app:met_floatingLabelAlwaysShown="true"
         app:met_primaryColor="#00A8FE"
-        android:id="@+id/edit_password"
+        android:maxLines="1" />
+
+    <com.rengwuxian.materialedittext.MaterialEditText
+        app:layout_marginTopPercent = "70%"
+        android:id="@+id/edit_confirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLines="1"
-        android:text="Cieo2333" />
+        app:met_floatingLabel="highlight"
+        app:met_floatingLabelText="Confirm Password"
+        app:met_floatingLabelAlwaysShown="true"
+        app:met_primaryColor="#00A8FE"
+        android:maxLines="1" />
 
     <Button
-        app:layout_marginTopPercent = "70%"
-        android:id="@+id/btn_login"
+        app:layout_marginTopPercent = "85%"
+        android:id="@+id/btn_signup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#00A8FE"
-        android:text="Login" />
+        android:text="Create" />
 
     <TextView
-        app:layout_marginTopPercent = "82%"
-        android:id="@+id/text_create_account"
+        app:layout_marginTopPercent = "97%"
+        android:id="@+id/text_login"
+        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="No account yet? Create one" />
+        android:text="Already a member? Login" />
 </android.support.percent.PercentRelativeLayout>

@@ -9,17 +9,42 @@ import java.util.List;
 
 class CurrentUser {
     private static CurrentUser currentUser;
-    private String token;
     private User user;
-    private List<Channel> channels;
+    private List<Channel> unsubscribeChannels;
+    private List<Channel> creatorChannels;
+    private List<Channel> subscribeChannels;
     private List<Reminder> reminders;
 
-    public List<Channel> getChannels() {
-        return channels;
+    public List<Channel> getAllChannels(){
+        List<Channel> allChannel = new ArrayList<>();
+        allChannel.addAll(unsubscribeChannels);
+        allChannel.addAll(subscribeChannels);
+        allChannel.addAll(creatorChannels);
+        return allChannel;
     }
 
-    public void setChannels(List<Channel> channels) {
-        this.channels = channels;
+    public List<Channel> getUnsubscribeChannels() {
+        return unsubscribeChannels;
+    }
+
+    public void setUnsubscribeChannels(List<Channel> unsubscribeChannels) {
+        this.unsubscribeChannels = unsubscribeChannels;
+    }
+
+    public List<Channel> getCreatorChannels() {
+        return creatorChannels;
+    }
+
+    public void setCreatorChannels(List<Channel> creatorChannels) {
+        this.creatorChannels = creatorChannels;
+    }
+
+    public List<Channel> getSubscribeChannels() {
+        return subscribeChannels;
+    }
+
+    public void setSubscribeChannels(List<Channel> subscribeChannels) {
+        this.subscribeChannels = subscribeChannels;
     }
 
     public List<Reminder> getReminders() {
@@ -30,8 +55,10 @@ class CurrentUser {
         this.reminders = reminders;
     }
 
-    public CurrentUser(){
-        channels = new ArrayList<>();
+    public CurrentUser() {
+        unsubscribeChannels = new ArrayList<>();
+        subscribeChannels = new ArrayList<>();
+        creatorChannels = new ArrayList<>();
         reminders = new ArrayList<>();
     }
 
@@ -40,14 +67,6 @@ class CurrentUser {
             currentUser = new CurrentUser();
         }
         return currentUser;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     public User getUser() {
