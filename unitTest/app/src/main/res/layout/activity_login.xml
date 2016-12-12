@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.percent.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zhy.android.percent.support.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -45,6 +45,7 @@
     <Button
         app:layout_marginTopPercent = "70%"
         android:id="@+id/btn_login"
+        android:textColor="#ffffff"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#00A8FE"
@@ -57,4 +58,4 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:text="No account yet? Create one" />
-</android.support.percent.PercentRelativeLayout>
+</com.zhy.android.percent.support.PercentRelativeLayout>

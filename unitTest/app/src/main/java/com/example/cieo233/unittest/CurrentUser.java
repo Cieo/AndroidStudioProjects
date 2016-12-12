@@ -15,7 +15,7 @@ class CurrentUser {
     private List<Channel> subscribeChannels;
     private List<Reminder> reminders;
 
-    public List<Channel> getAllChannels(){
+    public List<Channel> getAllChannels() {
         List<Channel> allChannel = new ArrayList<>();
         allChannel.addAll(unsubscribeChannels);
         allChannel.addAll(subscribeChannels);
@@ -23,19 +23,19 @@ class CurrentUser {
         return allChannel;
     }
 
-    public List<Channel> getUnsubscribeChannels() {
+    List<Channel> getUnsubscribeChannels() {
         return unsubscribeChannels;
     }
 
-    public void setUnsubscribeChannels(List<Channel> unsubscribeChannels) {
+    void setUnsubscribeChannels(List<Channel> unsubscribeChannels) {
         this.unsubscribeChannels = unsubscribeChannels;
     }
 
-    public List<Channel> getCreatorChannels() {
+    List<Channel> getCreatorChannels() {
         return creatorChannels;
     }
 
-    public void setCreatorChannels(List<Channel> creatorChannels) {
+    void setCreatorChannels(List<Channel> creatorChannels) {
         this.creatorChannels = creatorChannels;
     }
 
@@ -43,37 +43,37 @@ class CurrentUser {
         return subscribeChannels;
     }
 
-    public void setSubscribeChannels(List<Channel> subscribeChannels) {
+    void setSubscribeChannels(List<Channel> subscribeChannels) {
         this.subscribeChannels = subscribeChannels;
     }
 
-    public List<Reminder> getReminders() {
+    List<Reminder> getReminders() {
         return reminders;
     }
 
-    public void setReminders(List<Reminder> reminders) {
+    void setReminders(List<Reminder> reminders) {
         this.reminders = reminders;
     }
 
-    public CurrentUser() {
+    private CurrentUser() {
         unsubscribeChannels = new ArrayList<>();
         subscribeChannels = new ArrayList<>();
         creatorChannels = new ArrayList<>();
         reminders = new ArrayList<>();
     }
 
-    public static CurrentUser getInstance() {
+    static CurrentUser getInstance() {
         if (currentUser == null) {
             currentUser = new CurrentUser();
         }
         return currentUser;
     }
 
-    public User getUser() {
+    User getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    void setUser(User user) {
         this.user = user;
     }
 }

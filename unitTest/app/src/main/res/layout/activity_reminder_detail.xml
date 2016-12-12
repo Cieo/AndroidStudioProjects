@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentRelativeLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+        android:id="@+id/calendar"
+        app:mcv_selectionColor="@color/colorAccent"
+        app:mcv_showOtherDates="all"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
+    <com.roughike.swipeselector.SwipeSelector
+        android:layout_below="@id/calendar"
+        app:swipe_indicatorSize="0dp"
+        android:id="@+id/swipeSelector"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_heightPercent = "8.5%" />
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:gravity="center"
+        android:maxLines="1"
+        app:met_hideUnderline="true"
+        android:layout_below="@id/swipeSelector"
+        android:text="Title #Channel#Test"
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:gravity="center"
+        android:layout_below="@id/title"
+        android:text="Content"
+        app:met_hideUnderline="true"
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
+</com.zhy.android.percent.support.PercentRelativeLayout>

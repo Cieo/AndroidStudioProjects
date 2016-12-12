@@ -1,12 +1,11 @@
 package com.example.cieo233.unittest;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
@@ -22,12 +21,14 @@ public class ReminderAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List<Reminder> reminders;
-    private Reminder mReminder;
-    private ReminderHolder mHolder;
+    private String[] color = {"#FF8BC322", "#FF03A9F4", "#FF03A9F4"};
+    private Interface.recyclerViewClickListener recyclerViewClickListener;
 
-    public ReminderAdapter(Context context, List<Reminder> reminders) {
+
+    public ReminderAdapter(Context context, List<Reminder> reminders, Interface.recyclerViewClickListener recyclerViewClickListener) {
         this.context = context;
         this.reminders = reminders;
+        this.recyclerViewClickListener = recyclerViewClickListener;
     }
 
     public void setContext(Context context) {
@@ -40,52 +41,73 @@ public class ReminderAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new ReminderHolder(LayoutInflater.from(context).inflate(R.layout.reminder_item,parent,false));
+        return new ReminderHolder(LayoutInflater.from(context).inflate(R.layout.reminder_item, parent, false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        mHolder = (ReminderHolder) holder;
-        mReminder = reminders.get(position);
-        mHolder.getReminder_description().setText(mReminder.getContent());
-        mHolder.getReminder_time().setText(mReminder.getDue());
-        mHolder.getReminder_title().setText(mReminder.getTitle());
+        ReminderHolder mHolder = (ReminderHolder) holder;
+        Reminder mReminder = reminders.get(position);
+        mHolder.getReminderContent().setText(mReminder.getContent());
+        mHolder.getReminderTitle().setText(mReminder.getTitle());
+        mHolder.getReminderPriority().setBackgroundColor(Color.parseColor(color[mReminder.getPriority()]));
+        if (mReminder.getDue() != null){
+            String[] splits = mReminder.getDue().split(" ");
+            mHolder.getReminderDueDate().setText(splits[0].substring(5));
+            mHolder.getReminderDueTime().setText(splits[1].substring(0,5));
+        } else {
+            mHolder.getReminderDueDate().setText("");
+            mHolder.getReminderDueTime().setText("");
+        }
+
     }
 
     @Override
     public int getItemCount() {
-        return reminders == null?0:reminders.size();
+        return reminders == null ? 0 : reminders.size();
     }
 
     class ReminderHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.reminder_time)
-        TextView reminder_time;
-        @BindView(R.id.reminder_title)
-        TextView reminder_title;
-        @BindView(R.id.reminder_description)
-        TextView reminder_description;
-        @BindView(R.id.reminder_type)
-        ImageView reminder_type;
+        @BindView(R.id.reminderDueDate)
+        TextView reminderDueDate;
+        @BindView(R.id.reminderDueTime)
+        TextView reminderDueTime;
+        @BindView(R.id.reminderTitle)
+        TextView reminderTitle;
+        @BindView(R.id.reminderContent)
+        TextView reminderContent;
+        @BindView(R.id.reminderPriority)
+        TextView reminderPriority;
 
         public ReminderHolder(View view) {
             super(view);
-            ButterKnife.bind(this,view);
+            ButterKnife.bind(this, view);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    recyclerViewClickListener.recyclerViewListClicked(reminders.get(getLayoutPosition()));
+                }
+            });
         }
 
-        public TextView getReminder_time() {
-            return reminder_time;
+        public TextView getReminderDueDate() {
+            return reminderDueDate;
         }
 
-        public TextView getReminder_title() {
-            return reminder_title;
+        public TextView getReminderDueTime() {
+            return reminderDueTime;
         }
 
-        public TextView getReminder_description() {
-            return reminder_description;
+        public TextView getReminderTitle() {
+            return reminderTitle;
         }
 
-        public ImageView getReminder_type() {
-            return reminder_type;
+        public TextView getReminderContent() {
+            return reminderContent;
+        }
+
+        public TextView getReminderPriority() {
+            return reminderPriority;
         }
     }
 

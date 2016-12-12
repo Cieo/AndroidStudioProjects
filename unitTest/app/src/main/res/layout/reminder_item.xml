@@ -1,33 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="16dp"
+<com.zhy.android.percent.support.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <ImageView
-        android:src="@mipmap/ic_launcher"
-        android:elevation="2dp"
-        android:id="@+id/reminder_type"
-        android:layout_width="15dp"
-        android:layout_height="15dp" />
+    android:layout_height="wrap_content"
+    android:background="@drawable/item_style"
+    android:padding="16dp">
+
     <TextView
-        android:layout_marginStart="40dp"
+        android:id="@+id/reminderPriority"
+        android:layout_width="10dp"
+        android:layout_height="10dp"
+        android:layout_alignParentStart="true"
+        android:layout_centerInParent="true"
+        android:background="#8BC322"
+        app:layout_heightPercent="8%w"
+        app:layout_widthPercent="1%" />
+
+    <TextView
+        android:id="@+id/reminderTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxEms="14"
+        android:maxLines="1"
         android:text="Make new client project"
-        android:id="@+id/reminder_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        app:layout_marginLeftPercent="5%" />
+
     <TextView
-        android:text="5pm"
-        android:id="@+id/reminder_time"
+        android:id="@+id/reminderDueDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:textSize="10dp" />
+
     <TextView
-        android:layout_marginTop="4dp"
-        android:textSize="8dp"
-        android:text="Web Project"
-        android:layout_alignLeft="@id/reminder_title"
-        android:layout_below="@id/reminder_title"
-        android:id="@+id/reminder_description"
+        android:id="@+id/reminderDueTime"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-</RelativeLayout>
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/reminderDueDate"
+        android:textSize="10dp"
+        app:layout_marginTopPercent="1%" />
+
+    <TextView
+        android:id="@+id/reminderContent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/reminderTitle"
+        android:layout_below="@id/reminderTitle"
+        android:maxEms="26"
+        android:maxLines="1"
+        android:text="Web Project"
+        android:textSize="8dp"
+        app:layout_marginTopPercent="1%" />
+</com.zhy.android.percent.support.PercentRelativeLayout>

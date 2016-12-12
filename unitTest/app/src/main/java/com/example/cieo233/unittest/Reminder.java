@@ -1,13 +1,15 @@
 package com.example.cieo233.unittest;
 
+import java.io.Serializable;
+
 /**
  * Created by Cieo233 on 12/4/2016.
  */
 
-class Reminder {
+class Reminder implements Serializable {
     private Channel channel;
     private String title, content, due, remark, last_update;
-    private int id, priority, type, creater_id, state;
+    private int id, priority, type, creatorID, state;
 
     public static final String TITLE = "title";
     public static final String CONTENT = "content";
@@ -18,7 +20,7 @@ class Reminder {
     public static final String REMARK = "remark";
     public static final String STATE = "state";
 
-    public Reminder(Channel channel, String title, String content, String due, String remark, String last_update, int id, int priority, int type, int creater_id, int state) {
+    public Reminder(Channel channel, String title, String content, String due, String remark, String last_update, int id, int priority, int type, int creatorID, int state) {
         this.channel = channel;
         this.title = title;
         this.content = content;
@@ -28,11 +30,11 @@ class Reminder {
         this.id = id;
         this.priority = priority;
         this.type = type;
-        this.creater_id = creater_id;
+        this.creatorID = creatorID;
         this.state = state;
     }
 
-    public Reminder(String title, String content, String due, String remark, String last_update, int id, int priority, int type, int creater_id, int state) {
+    public Reminder(String title, String content, String due, String remark, String last_update, int id, int priority, int type, int creatorID, int state) {
         this.title = title;
         this.content = content;
         this.due = due;
@@ -41,8 +43,41 @@ class Reminder {
         this.id = id;
         this.priority = priority;
         this.type = type;
-        this.creater_id = creater_id;
+        this.creatorID = creatorID;
         this.state = state;
+    }
+
+    public Reminder(String title, String content, String due, int priority, int type, Channel channel) {
+        this.title = title;
+        this.content = content;
+        this.due = due;
+        this.priority = priority;
+        this.type = type;
+        this.channel = channel;
+    }
+
+    public Reminder(String title, String content, String due, int priority, int type) {
+        this.title = title;
+        this.content = content;
+        this.due = due;
+        this.priority = priority;
+        this.type = type;
+    }
+
+    public Reminder(Channel channel, String title, String content, String due, int priority, int type) {
+        this.channel = channel;
+        this.title = title;
+        this.content = content;
+        this.due = due;
+        this.priority = priority;
+        this.type = type;
+    }
+
+    public Reminder(String title, String content, int priority, int type) {
+        this.title = title;
+        this.content = content;
+        this.priority = priority;
+        this.type = type;
     }
 
     public Channel getChannel() {
@@ -117,12 +152,12 @@ class Reminder {
         this.type = type;
     }
 
-    public int getCreater_id() {
-        return creater_id;
+    public int getCreatorID() {
+        return creatorID;
     }
 
-    public void setCreater_id(int creater_id) {
-        this.creater_id = creater_id;
+    public void setCreatorID(int creatorID) {
+        this.creatorID = creatorID;
     }
 
     public int getState() {

@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:paddingTop="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="16dp"
     android:layout_height="match_parent"
     android:orientation="vertical">
-    <RelativeLayout
+    <com.zhy.android.percent.support.PercentRelativeLayout
+        android:background="@color/colorAccent"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
+            app:layout_marginLeftPercent="5%w"
             android:id="@+id/title"
-            android:layout_marginStart="40dp"
             android:textSize="25sp"
-            android:text="My Tasks"
+            android:textColor="#ffffff"
+            android:text="Reminders"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         <TextView
             android:layout_marginTop="4dp"
+            android:textColor="#ffffff"
             android:alpha="0.8"
             android:text="Otocobar 2016"
             android:layout_below="@id/title"
@@ -24,13 +29,18 @@
             android:layout_alignStart="@id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
-        <android.support.design.widget.FloatingActionButton
-            android:translationZ="2dp"
+        <ImageView
+            android:background="@drawable/icon_style"
+            android:layout_centerInParent="true"
+            app:layout_marginRightPercent="5%w"
+            android:src="@mipmap/ic_add_white_48dp"
             android:id="@+id/btn_add_reminder"
             android:layout_alignParentEnd="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-    </RelativeLayout>
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_heightPercent="10%w"
+            app:layout_widthPercent="10%w" />
+    </com.zhy.android.percent.support.PercentRelativeLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/reminder_list"
         android:layout_width="match_parent"
