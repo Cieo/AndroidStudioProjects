@@ -1,10 +1,12 @@
 package com.example.cieo233.unittest;
 
+import java.io.Serializable;
+
 /**
  * Created by Cieo233 on 12/4/2016.
  */
 
-class User {
+class User implements Serializable {
     private String username, password;
     private int id;
     private String token;

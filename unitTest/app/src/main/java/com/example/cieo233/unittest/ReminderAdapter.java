@@ -3,6 +3,7 @@ package com.example.cieo233.unittest;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,7 @@ public class ReminderAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private List<Reminder> reminders;
-    private String[] color = {"#FF8BC322", "#FF03A9F4", "#FF03A9F4"};
+    private String[] color = {"#FF8BC322", "#FF03A9F4", "#FFE91E63"};
     private Interface.recyclerViewClickListener recyclerViewClickListener;
 
 
@@ -48,13 +49,15 @@ public class ReminderAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ReminderHolder mHolder = (ReminderHolder) holder;
         Reminder mReminder = reminders.get(position);
+
         mHolder.getReminderContent().setText(mReminder.getContent());
         mHolder.getReminderTitle().setText(mReminder.getTitle());
         mHolder.getReminderPriority().setBackgroundColor(Color.parseColor(color[mReminder.getPriority()]));
-        if (mReminder.getDue() != null){
+
+        if (mReminder.getDue() != null) {
             String[] splits = mReminder.getDue().split(" ");
             mHolder.getReminderDueDate().setText(splits[0].substring(5));
-            mHolder.getReminderDueTime().setText(splits[1].substring(0,5));
+            mHolder.getReminderDueTime().setText(splits[1].substring(0, 5));
         } else {
             mHolder.getReminderDueDate().setText("");
             mHolder.getReminderDueTime().setText("");
@@ -86,6 +89,13 @@ public class ReminderAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View view) {
                     recyclerViewClickListener.recyclerViewListClicked(reminders.get(getLayoutPosition()));
+                }
+            });
+            view.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View view) {
+                    recyclerViewClickListener.recyclerViewListLongClicked(reminders.get(getAdapterPosition()));
+                    return true;
                 }
             });
         }

@@ -1,10 +1,12 @@
 package com.example.cieo233.unittest;
 
+import java.io.Serializable;
+
 /**
  * Created by Cieo233 on 12/4/2016.
  */
 
-class Channel {
+class Channel implements Serializable {
     private int id, type;
     private String name, last_update;
     public static final String ACTION = "action";

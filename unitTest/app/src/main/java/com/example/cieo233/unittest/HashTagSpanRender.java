@@ -17,7 +17,7 @@ class HashTagSpanRenderer implements AwesomeTextHandler.ViewSpanRenderer, Awesom
     @Override
     public View getView(String text, Context context) {
         TextView view = new TextView(context);
-        view.setText(text.substring(8));
+        view.setText(text.substring(5,text.indexOf("##!##",4)));
         view.setTextSize(dipsToPixels(context, textSizeInDips));
         view.setBackgroundResource(backgroundResource);
         view.setTextColor(Color.parseColor("#ffffff"));

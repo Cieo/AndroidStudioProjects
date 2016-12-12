@@ -43,9 +43,10 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
     TextView fragment_reminder_date;
     @BindView(R.id.btn_add_reminder)
     ImageView btnAddReminder;
-    private Handler createRminderHandler;
+    private Handler createReminderHandler;
     private Handler showAllReminderHandler;
     private Handler reminderFragmentHandler;
+    private Handler deleteReminderHandler;
     private ReminderAdapter reminderAdapter;
     private BottomDialog mBottomDialog;
     private final int Done = 0;
@@ -65,7 +66,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
         reminderAdapter = new ReminderAdapter(getContext(), CurrentUser.getInstance().getReminders(), this);
         reminderList.setLayoutManager(new LinearLayoutManager(getContext()));
         reminderList.setAdapter(reminderAdapter);
-        createRminderHandler = new Handler(new Handler.Callback() {
+        createReminderHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
                 switch (message.what) {
@@ -103,6 +104,21 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                     case Done:
                         mBottomDialog.dismiss();
                         break;
+                }
+                return false;
+            }
+        });
+        deleteReminderHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                switch (message.what) {
+                    case StateCode.OK:
+                        Log.e("DeleteReminder", "删除成功");
+                        break;
+                    case StateCode.TOKEN_INVALID:
+                        Log.e("DeleteReminder", "删除失败");
+                        reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
+                        reminderAdapter.notifyDataSetChanged();
                 }
                 return false;
             }
@@ -220,7 +236,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                             type = 0;
                         }
                         Reminder newReminder = new Reminder(newChannel, newTitle.getText().toString(), newContent.getText().toString(), reminderDue, 1, type);
-                        CodoAPI.createReminder(newReminder, createRminderHandler);
+                        CodoAPI.createReminder(newReminder, createReminderHandler);
 
                         reminderFragmentHandler.sendEmptyMessage(Done);
 
@@ -236,14 +252,29 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void recyclerViewListClicked(Object data) {
         Reminder selectedReminder = (Reminder) data;
-        Log.e("TestInterface",selectedReminder.getTitle());
-        Intent intent = new Intent(getContext(),ReminderDetailActivity.class);
+        Log.e("TestInterface", selectedReminder.getTitle());
+        Intent intent = new Intent(getContext(), ReminderDetailActivity.class);
         intent.putExtra("Data", selectedReminder);
         startActivity(intent);
     }
 
     @Override
-    public void recyclerViewListLongClicked(Object data) {
+    public void recyclerViewListLongClicked(final Object data) {
 
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("确认删除?").setPositiveButton("确定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                removeReminder(data);
+            }
+        }).create().show();
+    }
+
+    void removeReminder(Object data) {
+        List<Reminder> tempReminders = CurrentUser.getInstance().getReminders();
+        tempReminders.remove(data);
+        reminderAdapter.setReminders(tempReminders);
+        reminderAdapter.notifyDataSetChanged();
+        CodoAPI.deleteReminder((Reminder) data, deleteReminderHandler);
     }
 }
