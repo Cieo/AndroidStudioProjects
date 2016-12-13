@@ -80,6 +80,10 @@ class Reminder implements Serializable {
         this.type = type;
     }
 
+    public Reminder() {
+
+    }
+
     public Channel getChannel() {
         return channel;
     }

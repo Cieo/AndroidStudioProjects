@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -36,7 +37,7 @@ import me.shaohui.bottomdialog.BottomDialog;
  * Created by Cieo233 on 12/4/2016.
  */
 
-public class ReminderFragment extends Fragment implements View.OnClickListener, Interface.recyclerViewClickListener {
+public class ReminderFragment extends Fragment implements View.OnClickListener, Interface.RecyclerViewClickListener {
     @BindView(R.id.reminder_list)
     RecyclerView reminderList;
     @BindView(R.id.frament_reminder_date)
@@ -47,9 +48,12 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
     private Handler showAllReminderHandler;
     private Handler reminderFragmentHandler;
     private Handler deleteReminderHandler;
+    private Handler updateReminderHandler;
     private ReminderAdapter reminderAdapter;
     private BottomDialog mBottomDialog;
     private final int Done = 0;
+    private final int KEEPCHANGE = 0;
+    private final int DROPCHANGE = 1;
 
     @Nullable
     @Override
@@ -119,6 +123,32 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                         Log.e("DeleteReminder", "删除失败");
                         reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
                         reminderAdapter.notifyDataSetChanged();
+                        break;
+                    case StateCode.PERMISSION_DENY:
+                        Log.e("DeleteReminder", "删除失败");
+                        reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
+                        reminderAdapter.notifyDataSetChanged();
+                        break;
+                }
+                return false;
+            }
+        });
+        updateReminderHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                switch (message.what) {
+                    case StateCode.OK:
+                        Log.e("UpdateReminder", "更新成功");
+                        break;
+                    case StateCode.URLIDINVALID:
+                        reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
+                        reminderAdapter.notifyDataSetChanged();
+                        Log.e("UpdateReminder", "更新失败");
+                        break;
+                    case StateCode.TOKEN_INVALID:
+                        reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
+                        reminderAdapter.notifyDataSetChanged();
+                        Log.e("UpdateReminder", "更新失败");
                 }
                 return false;
             }
@@ -255,7 +285,28 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
         Log.e("TestInterface", selectedReminder.getTitle());
         Intent intent = new Intent(getContext(), ReminderDetailActivity.class);
         intent.putExtra("Data", selectedReminder);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (resultCode) {
+            case KEEPCHANGE:
+                Reminder dataIn = (Reminder) data.getSerializableExtra("DataIn");
+                Reminder dataOut = (Reminder) data.getSerializableExtra("DataOut");
+                List<Reminder> tempReminders = CurrentUser.getInstance().getReminders();
+                for (Reminder i : tempReminders) {
+                    if (i.getId() == dataIn.getId()) {
+                        tempReminders.set(tempReminders.indexOf(i), dataOut);
+                    }
+                }
+                reminderAdapter.setReminders(tempReminders);
+                reminderAdapter.notifyDataSetChanged();
+                CodoAPI.updateReminder(dataOut, updateReminderHandler);
+                break;
+            case DROPCHANGE:
+                break;
+        }
     }
 
     @Override

@@ -132,7 +132,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 break;
             case R.id.text_create_account:
                 startActivity(new Intent(this, RegisterActivity.class));
-                finish();
                 break;
         }
     }

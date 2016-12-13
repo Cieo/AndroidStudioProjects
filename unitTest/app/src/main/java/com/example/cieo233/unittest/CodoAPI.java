@@ -175,14 +175,21 @@ public class CodoAPI {
         OkHttpClient mOkHttpClient = new OkHttpClient();
         HttpUrl.Builder urlBuilder = HttpUrl.parse("http://api.sysu.space/api/reminder/" + reminder.getId()).newBuilder();
         urlBuilder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
-        RequestBody formBody = new FormBody.Builder()
-                .add(Reminder.TITLE, reminder.getTitle())
-                .add(Reminder.CONTENT, reminder.getDue())
-                .add(Reminder.DUE, reminder.getDue())
-                .add(Reminder.PRIORITY, String.valueOf(reminder.getPriority()))
-                .add(Reminder.REMARK, reminder.getRemark())
-                .add(Reminder.STATE, String.valueOf(reminder.getState()))
-                .build();
+        FormBody.Builder bodyBuilder = new FormBody.Builder();
+        bodyBuilder.add(Reminder.TITLE, reminder.getTitle());
+        bodyBuilder.add(Reminder.PRIORITY, String.valueOf(reminder.getPriority()));
+        bodyBuilder.build();
+        if (reminder.getContent() != null){
+            bodyBuilder.add(Reminder.CONTENT, reminder.getContent());
+        } else {
+            bodyBuilder.add(Reminder.CONTENT, "");
+        }
+        if (reminder.getDue() != null){
+            bodyBuilder.add(Reminder.DUE, reminder.getDue());
+        } else {
+            bodyBuilder.add(Reminder.DUE, "");
+        }
+        RequestBody formBody = bodyBuilder.build();
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
                 .post(formBody)

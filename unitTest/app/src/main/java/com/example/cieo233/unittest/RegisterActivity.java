@@ -102,7 +102,6 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 }
                 break;
             case R.id.text_login:
-                startActivity(new Intent(this,LoginActivity.class));
                 finish();
                 break;
         }

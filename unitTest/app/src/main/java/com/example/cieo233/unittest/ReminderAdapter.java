@@ -3,7 +3,6 @@ package com.example.cieo233.unittest;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,10 +22,10 @@ public class ReminderAdapter extends RecyclerView.Adapter {
     private Context context;
     private List<Reminder> reminders;
     private String[] color = {"#FF8BC322", "#FF03A9F4", "#FFE91E63"};
-    private Interface.recyclerViewClickListener recyclerViewClickListener;
+    private Interface.RecyclerViewClickListener recyclerViewClickListener;
 
 
-    public ReminderAdapter(Context context, List<Reminder> reminders, Interface.recyclerViewClickListener recyclerViewClickListener) {
+    public ReminderAdapter(Context context, List<Reminder> reminders, Interface.RecyclerViewClickListener recyclerViewClickListener) {
         this.context = context;
         this.reminders = reminders;
         this.recyclerViewClickListener = recyclerViewClickListener;

@@ -18,6 +18,7 @@ class StateCode {
     public static final int PERMISSION_DENY = 11;
     public static final int JOIN_OR_EXIT_CHANNEL_FAIL = 20;
     public static final int CHANNEL_ID_ERROR = -1;
+    public static final int URLIDINVALID = -1;
 
     public static final int PUBLIC_REMINDER = 0;
     public static final int PRIVATE_REMINDER = 1;

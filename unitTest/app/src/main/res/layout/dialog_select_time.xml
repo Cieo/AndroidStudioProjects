@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.zhy.android.percent.support.PercentRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorAccent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <ImageView
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/icon_style"
+        android:id="@+id/check"
+        android:src="@mipmap/ic_check_white_48dp"
+        app:layout_heightPercent = "10%w"
+        app:layout_marginRightPercent = "5%w"
+        app:layout_widthPercent = "10%w"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+    <LinearLayout
+        android:layout_below="@id/check"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="8dp">
+
+        <com.aigestudio.wheelpicker.WheelPicker
+            android:id="@+id/hourSelector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            app:wheel_atmospheric="true"
+            app:wheel_curved="false"
+            app:wheel_cyclic="true"
+            app:wheel_item_text_color="#ffffff"
+            app:wheel_item_text_size="18dp"
+            app:wheel_same_width="true"
+            app:wheel_visible_item_count="5" />
+
+        <TextView
+            android:id="@+id/divide"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:text=":"
+            android:textColor="#ffffff"
+            android:textSize="20sp" />
+
+        <com.aigestudio.wheelpicker.WheelPicker
+            android:id="@+id/minuteSelector"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            app:wheel_atmospheric="true"
+            app:wheel_curved="false"
+            app:wheel_cyclic="true"
+            app:wheel_item_text_color="#ffffff"
+            app:wheel_item_text_size="18dp"
+            app:wheel_same_width="true"
+            app:wheel_visible_item_count="5" />
+    </LinearLayout>
+</com.zhy.android.percent.support.PercentRelativeLayout>
