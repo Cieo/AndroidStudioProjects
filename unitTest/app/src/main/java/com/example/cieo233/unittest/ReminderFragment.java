@@ -9,6 +9,7 @@ import android.support.annotation.BoolRes;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -37,13 +38,15 @@ import me.shaohui.bottomdialog.BottomDialog;
  * Created by Cieo233 on 12/4/2016.
  */
 
-public class ReminderFragment extends Fragment implements View.OnClickListener, Interface.RecyclerViewClickListener {
+public class ReminderFragment extends Fragment implements View.OnClickListener, Interface.RecyclerViewClickListener, SwipeRefreshLayout.OnRefreshListener {
     @BindView(R.id.reminder_list)
     RecyclerView reminderList;
     @BindView(R.id.frament_reminder_date)
     TextView fragment_reminder_date;
     @BindView(R.id.btn_add_reminder)
     ImageView btnAddReminder;
+    @BindView(R.id.swipeRefresh)
+    SwipeRefreshLayout swipeRefresh;
     private Handler createReminderHandler;
     private Handler showAllReminderHandler;
     private Handler reminderFragmentHandler;
@@ -70,6 +73,8 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
         reminderAdapter = new ReminderAdapter(getContext(), CurrentUser.getInstance().getReminders(), this);
         reminderList.setLayoutManager(new LinearLayoutManager(getContext()));
         reminderList.setAdapter(reminderAdapter);
+        swipeRefresh.setOnRefreshListener(this);
+        swipeRefresh.setColorSchemeResources(R.color.colorAccent);
         createReminderHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
@@ -93,6 +98,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                         Log.e("ShowAllRminder", "获取备忘录成功");
                         reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
                         reminderAdapter.notifyDataSetChanged();
+                        swipeRefresh.setRefreshing(false);
                         break;
                     case StateCode.TOKEN_INVALID:
                         Log.e("ShowAllReminder", "获取备忘录失败");
@@ -327,5 +333,10 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
         reminderAdapter.setReminders(tempReminders);
         reminderAdapter.notifyDataSetChanged();
         CodoAPI.deleteReminder((Reminder) data, deleteReminderHandler);
+    }
+
+    @Override
+    public void onRefresh() {
+        CodoAPI.getReminders(showAllReminderHandler);
     }
 }

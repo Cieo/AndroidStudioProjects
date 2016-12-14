@@ -41,10 +41,14 @@
             app:layout_heightPercent="10%w"
             app:layout_widthPercent="10%w" />
     </com.zhy.android.percent.support.PercentRelativeLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/reminder_list"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefresh"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/reminder_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </android.support.v7.widget.RecyclerView>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>
