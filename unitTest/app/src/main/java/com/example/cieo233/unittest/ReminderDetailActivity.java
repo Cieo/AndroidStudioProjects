@@ -1,5 +1,6 @@
 package com.example.cieo233.unittest;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,8 +11,13 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.method.KeyListener;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -71,6 +77,9 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
     private final int DONE = 0;
     private final int KEEPCHANGE = 0;
     private final int DROPCHANGE = 1;
+    boolean keyBoardShown;
+    InputMethodManager inputMethodManager;
+    float downX, downY, upX, upY;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -82,6 +91,8 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
     }
 
     void init() {
+        keyBoardShown = false;
+        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         checkDoubleClick = new CalendarDay[3];
         inReminder = (Reminder) getIntent().getSerializableExtra("Data");
         inChannel = inReminder.getChannel();

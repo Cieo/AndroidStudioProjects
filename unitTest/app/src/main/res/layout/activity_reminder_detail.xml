@@ -1,70 +1,89 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.zhy.android.percent.support.PercentRelativeLayout
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <com.prolificinteractive.materialcalendarview.MaterialCalendarView
-        android:id="@+id/calendar"
-        app:mcv_selectionColor="@color/colorAccent"
-        app:mcv_showOtherDates="all"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    android:layout_height="wrap_content">
 
-    </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
-    <com.roughike.swipeselector.SwipeSelector
-        android:layout_below="@id/calendar"
-        app:swipe_indicatorSize="0dp"
-        android:id="@+id/swipeSelector"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_heightPercent = "8.5%" />
-    <HorizontalScrollView
-        android:layout_centerHorizontal="true"
-        android:layout_width="wrap_content"
-        android:id="@+id/channelAndTitle"
-        android:scrollbars="none"
-        android:layout_below="@id/swipeSelector"
-        android:layout_height="wrap_content">
-        <LinearLayout
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:overScrollMode="always"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+        android:layout_height="match_parent">
+
+        <com.zhy.android.percent.support.PercentRelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="true"
+            android:focusableInTouchMode="true">
+
+            <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+                android:id="@+id/calendar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:mcv_selectionColor="@color/colorAccent"
+                app:mcv_showOtherDates="all">
+
+            </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
+
+            <com.roughike.swipeselector.SwipeSelector
+                android:id="@+id/swipeSelector"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_below="@id/calendar"
+                app:layout_heightPercent="8.5%"
+                app:swipe_indicatorSize="0dp" />
+
+            <HorizontalScrollView
+                android:id="@+id/channelAndTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/swipeSelector"
+                android:layout_centerHorizontal="true"
+                android:scrollbars="none">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    android:overScrollMode="always">
+
+                    <TextView
+                        android:id="@+id/channel"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:maxLines="1" />
+
+                    <com.rengwuxian.materialedittext.MaterialEditText
+                        android:id="@+id/title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        app:met_hideUnderline="true" />
+                </LinearLayout>
+
+            </HorizontalScrollView>
+
             <TextView
-                android:layout_marginEnd="10dp"
-                android:maxLines="1"
-                android:id="@+id/channel"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:id="@+id/divideLine"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_below="@+id/channelAndTitle"
+                android:background="@color/colorAccent" />
+
+
             <com.rengwuxian.materialedittext.MaterialEditText
-                android:maxLines="1"
-                android:inputType="text"
-                app:met_hideUnderline="true"
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-    </HorizontalScrollView>
-
-    <TextView
-        android:id="@+id/divideLine"
-        android:layout_below="@+id/channelAndTitle"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/colorAccent"/>
-    <com.rengwuxian.materialedittext.MaterialEditText
-        android:gravity="center"
-        android:layout_below="@id/divideLine"
-        android:text="Content"
-        app:met_hideUnderline="true"
-        android:id="@+id/content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+                android:id="@+id/content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divideLine"
+                android:gravity="start"
+                android:text="Content"
+                app:met_hideUnderline="true" />
 
 
-</com.zhy.android.percent.support.PercentRelativeLayout>
+        </com.zhy.android.percent.support.PercentRelativeLayout>
+    </ScrollView>
+
+</android.support.design.widget.CoordinatorLayout>
+
