@@ -62,7 +62,7 @@ class CurrentUser {
         reminders = new ArrayList<>();
     }
 
-    static CurrentUser getInstance() {
+    static synchronized CurrentUser getInstance() {
         if (currentUser == null) {
             currentUser = new CurrentUser();
         }

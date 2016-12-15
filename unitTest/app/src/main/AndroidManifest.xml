@@ -25,7 +25,9 @@
         <activity android:name=".ReminderDetailActivity" android:windowSoftInputMode="adjustPan">
 
         </activity>
+        <service android:name=".SyncService">
 
+        </service>
     </application>
 
 </manifest>

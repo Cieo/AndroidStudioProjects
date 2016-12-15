@@ -19,7 +19,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity {
 
     @BindView(R.id.view_pager)
     ViewPager view_pager;
@@ -31,15 +31,29 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        startService(new Intent(this,SyncService.class));
         init();
     }
 
-    void init(){
+    void init() {
         fragments = new ArrayList<>();
         fragments.add(new ReminderFragment());
         fragments.add(new ChannelFragment());
-        fragment_adapter = new FragmentAdapter(getSupportFragmentManager(),fragments);
+        fragment_adapter = new FragmentAdapter(getSupportFragmentManager(), fragments);
         view_pager.setAdapter(fragment_adapter);
     }
 
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(Intent.ACTION_MAIN);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addCategory(Intent.CATEGORY_HOME);
+        this.startActivity(intent);
+    }
+
+    @Override
+    protected void onDestroy() {
+        stopService(new Intent(this,SyncService.class));
+        super.onDestroy();
+    }
 }

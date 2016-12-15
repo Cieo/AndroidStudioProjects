@@ -3,12 +3,19 @@ package com.example.cieo233.unittest;
 import android.content.Context;
 import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,11 +31,43 @@ public class ReminderAdapter extends RecyclerView.Adapter {
     private String[] color = {"#FF8BC322", "#FF03A9F4", "#FFE91E63"};
     private Interface.RecyclerViewClickListener recyclerViewClickListener;
 
+    Comparator<Reminder> comparator;
 
     public ReminderAdapter(Context context, List<Reminder> reminders, Interface.RecyclerViewClickListener recyclerViewClickListener) {
         this.context = context;
         this.reminders = reminders;
         this.recyclerViewClickListener = recyclerViewClickListener;
+
+        comparator = new Comparator<Reminder>() {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.CHINA);
+
+            @Override
+            public int compare(Reminder reminder, Reminder t1) {
+                try {
+                    if (simpleDateFormat.parse(reminder.getDue()).before(simpleDateFormat.parse(t1.getDue()))) {
+                        return -1;
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                return 1;
+            }
+        };
+        sortReminders();
+    }
+
+    private void sortReminders() {
+        List<Reminder> tempReminders = new ArrayList<>();
+        for (Reminder i : reminders) {
+            if (i.getDue() != null) {
+                tempReminders.add(i);
+            }
+        }
+        for (Reminder i : tempReminders) {
+            reminders.remove(i);
+        }
+        Collections.sort(tempReminders, comparator);
+        reminders.addAll(tempReminders);
     }
 
     public void setContext(Context context) {
@@ -37,6 +76,7 @@ public class ReminderAdapter extends RecyclerView.Adapter {
 
     public void setReminders(List<Reminder> reminders) {
         this.reminders = reminders;
+        sortReminders();
     }
 
     @Override

@@ -1,7 +1,10 @@
 package com.example.cieo233.unittest;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,6 +32,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,6 +61,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
     private final int Done = 0;
     private final int KEEPCHANGE = 0;
     private final int DROPCHANGE = 1;
+    BroadcastReceiver syncReciver;
 
     @Nullable
     @Override
@@ -159,6 +164,16 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                 return false;
             }
         });
+        syncReciver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
+                reminderAdapter.notifyDataSetChanged();
+                Log.e("TestSync", "备忘录同步完成");
+            }
+        };
+        IntentFilter intentFilter = new IntentFilter("Cieo.SyncReminderComplete");
+        getContext().registerReceiver(syncReciver,intentFilter);
     }
 
 
@@ -338,5 +353,11 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
     @Override
     public void onRefresh() {
         CodoAPI.getReminders(showAllReminderHandler);
+    }
+
+    @Override
+    public void onDestroy() {
+        getContext().unregisterReceiver(syncReciver);
+        super.onDestroy();
     }
 }
