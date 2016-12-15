@@ -33,6 +33,9 @@
 
             <HorizontalScrollView
                 android:id="@+id/channelAndTitle"
+                android:paddingBottom="8dp"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/swipeSelector"
@@ -73,14 +76,35 @@
 
 
             <com.rengwuxian.materialedittext.MaterialEditText
+                android:padding="16dp"
                 android:id="@+id/content"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:hint="add Your Content here"
+                android:layout_height="match_parent"
                 android:layout_below="@id/divideLine"
                 android:gravity="start"
                 android:text="Content"
                 app:met_hideUnderline="true" />
-
+            <TextView
+                android:padding="16dp"
+                android:textSize="18sp"
+                android:id="@+id/contentText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/divideLine"
+                android:visibility="gone"
+                android:text="Content"
+                app:met_hideUnderline="true" />
+            <com.rengwuxian.materialedittext.MaterialEditText
+                android:padding="16dp"
+                android:id="@+id/remark"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@id/contentText"
+                android:gravity="start"
+                android:text="Remark"
+                android:hint="add Your Remark here"
+                app:met_hideUnderline="true" />
 
         </com.zhy.android.percent.support.PercentRelativeLayout>
     </ScrollView>

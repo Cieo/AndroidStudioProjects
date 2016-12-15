@@ -64,6 +64,10 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
     TextView channel;
     @BindView(R.id.content)
     MaterialEditText content;
+    @BindView(R.id.contentText)
+    TextView contentText;
+    @BindView(R.id.remark)
+    MaterialEditText remark;
 
     Reminder inReminder;
     Channel inChannel;
@@ -77,9 +81,7 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
     private final int DONE = 0;
     private final int KEEPCHANGE = 0;
     private final int DROPCHANGE = 1;
-    boolean keyBoardShown;
-    InputMethodManager inputMethodManager;
-    float downX, downY, upX, upY;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,8 +93,6 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
     }
 
     void init() {
-        keyBoardShown = false;
-        inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         checkDoubleClick = new CalendarDay[3];
         inReminder = (Reminder) getIntent().getSerializableExtra("Data");
         inChannel = inReminder.getChannel();
@@ -132,11 +132,21 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
         awesomeEditTextHandler.setText(strTitle);
         swipeSelector.selectItemAt(inReminder.getPriority());
         content.setText(inReminder.getContent());
-
+        contentText.setText(inReminder.getContent());
+        remark.setText(inReminder.getRemark());
+        if (inReminder.getType() == 1){
+            content.setVisibility(View.VISIBLE);
+            contentText.setVisibility(View.GONE);
+            remark.setVisibility(View.GONE);
+        } else{
+            content.setVisibility(View.GONE);
+            contentText.setVisibility(View.VISIBLE);
+            remark.setVisibility(View.VISIBLE);
+        }
 
         if (inReminder.getDue() != null) {
-            selectedMinute = inReminder.getDue().substring(14,16);
-            selectedHour = inReminder.getDue().substring(11,13);
+            selectedMinute = inReminder.getDue().substring(14, 16);
+            selectedHour = inReminder.getDue().substring(11, 13);
             selectedSecond = inReminder.getDue().substring(17);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.CHINA);
             try {
@@ -169,7 +179,7 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
                 return true;
             }
         }
-        if (inReminder.getDue() == null && newReminder.getDue() != null){
+        if (inReminder.getDue() == null && newReminder.getDue() != null) {
             Log.e("TestCheckChange", "DifferentDueNew");
             return true;
         }
@@ -178,9 +188,30 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
             return true;
         }
         if (!(Objects.equals(inReminder.getContent(), newReminder.getContent()))) {
+            if (inReminder.getContent() == null && Objects.equals(newReminder.getContent(), "")){
+                return false;
+            }
             Log.e("TestCheckChange", "DifferentContent");
             return true;
         }
+        if (inReminder.getRemark() != null && newReminder.getRemark() != null) {
+            if (!(Objects.equals(inReminder.getRemark(), newReminder.getRemark()))) {
+                Log.e("TestCheckChange", "DifferentRemark");
+                Log.e("TestCheckChange", inReminder.getRemark());
+                Log.e("TestCheckChange", newReminder.getRemark());
+                return true;
+            }
+        }
+        if (inReminder.getRemark() == null && newReminder.getRemark() != null) {
+            if (Objects.equals(newReminder.getRemark(), "")){
+                return false;
+            }
+            Log.e("TestCheckChange", "DifferentRemarkNew");
+            Log.e("TestCheckChange", newReminder.getRemark());
+
+            return true;
+        }
+
         return false;
     }
 
@@ -201,18 +232,18 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
         newReminder.setCreatorID(inReminder.getCreatorID());
         newReminder.setId(inReminder.getId());
         newReminder.setLast_update(inReminder.getLast_update());
-        newReminder.setRemark(inReminder.getRemark());
+        newReminder.setRemark(remark.getText().toString());
         newReminder.setState(inReminder.getState());
         newReminder.setType(inReminder.getType());
-        if (checkChange()){
+        if (checkChange()) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setMessage("保存更改?").setPositiveButton("保存", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     Intent intent = new Intent();
-                    intent.putExtra("DataOut",newReminder);
-                    intent.putExtra("DataIn",inReminder);
-                    setResult(KEEPCHANGE,intent);
+                    intent.putExtra("DataOut", newReminder);
+                    intent.putExtra("DataIn", inReminder);
+                    setResult(KEEPCHANGE, intent);
                     finish();
 
                 }
