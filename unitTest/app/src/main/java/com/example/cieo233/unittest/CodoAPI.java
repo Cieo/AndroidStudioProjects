@@ -33,6 +33,7 @@ public class CodoAPI {
         RequestBody formBody = new FormBody.Builder()
                 .add("username", user.getUsername())
                 .add("password", user.getPassword())
+                .add("expiry_time", String.valueOf(Integer.MAX_VALUE))
                 .build();
         Request request = new Request.Builder()
                 .url("http://api.sysu.space/api/user/login")

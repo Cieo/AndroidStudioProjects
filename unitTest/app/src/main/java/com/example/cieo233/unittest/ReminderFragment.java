@@ -20,6 +20,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -197,6 +198,8 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
             ImageView dateTime, channel, create;
             Channel newChannel;
             MaterialEditText newTitle, newContent;
+            TextView showDate, showChannel;
+            HorizontalScrollView showChannelScroll;
 
             SublimePickerFragment.Callback mFragmentCallback = new SublimePickerFragment.Callback() {
                 @Override
@@ -220,6 +223,8 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
             void updateDateTime(Calendar targetDate) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.CHINA);
                 reminderDue = dateFormat.format(targetDate.getTime());
+                showDate.setVisibility(View.VISIBLE);
+                showDate.setText(reminderDue.substring(5,11));
             }
 
             void showSublimePicker() {
@@ -249,6 +254,10 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                 newTitle = (MaterialEditText) v.findViewById(R.id.title);
                 newContent = (MaterialEditText) v.findViewById(R.id.content);
 
+                showChannel = (TextView) v.findViewById(R.id.showChannel);
+                showDate = (TextView) v.findViewById(R.id.showDate);
+                showChannelScroll = (HorizontalScrollView) v.findViewById(R.id.showChannelScroll);
+
                 channel = (ImageView) v.findViewById(R.id.iconChannel);
                 channel.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -265,11 +274,14 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                         builder.setItems(shownChannels, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                showChannelScroll.setVisibility(View.VISIBLE);
                                 if (which == 0) {
                                     newChannel = null;
+                                    showChannel.setText("Own");
                                     return;
                                 }
                                 newChannel = channels.get(which - 1);
+                                showChannel.setText(newChannel.getName());
                             }
                         });
                         builder.show();

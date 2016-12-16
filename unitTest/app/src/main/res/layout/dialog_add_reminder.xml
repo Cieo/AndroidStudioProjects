@@ -43,9 +43,23 @@
         app:layout_marginTopPercent="1%"
         app:layout_widthPercent="10%w" />
 
+    <TextView
+        android:visibility="invisible"
+        android:background="@drawable/dialog_item_style"
+        android:maxLines="1"
+        android:textSize="18sp"
+        android:textColor="@color/colorAccent"
+        android:id="@+id/showDate"
+        android:maxLength="5"
+        app:layout_marginBottomPercent = "2%w"
+        android:layout_alignBottom="@id/iconDate"
+        android:layout_toEndOf="@id/iconDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <ImageView
         android:background="@drawable/icon_style"
-        android:layout_toEndOf="@id/iconDate"
+        android:layout_toEndOf="@id/showDate"
         android:id="@+id/iconChannel"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -55,6 +69,26 @@
         app:layout_marginTopPercent="1%"
         app:layout_marginLeftPercent="5%w"
         app:layout_widthPercent="10%w" />
+    <HorizontalScrollView
+        android:id="@+id/showChannelScroll"
+        android:visibility="invisible"
+        android:scrollbars="none"
+        android:layout_width="wrap_content"
+        android:layout_alignBottom="@id/iconDate"
+        app:layout_marginBottomPercent = "2%w"
+        app:layout_marginLeftPercent = "1%w"
+        app:layout_widthPercent="40%w"
+        android:layout_toEndOf="@id/iconChannel"
+        android:layout_height="wrap_content">
+        <TextView
+            android:background="@drawable/dialog_item_style"
+            android:maxLines="1"
+            android:textSize="18sp"
+            android:textColor="@color/colorAccent"
+            android:id="@+id/showChannel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </HorizontalScrollView>
 
     <ImageView
         android:background="@drawable/icon_style"
