@@ -190,6 +190,11 @@ public class CodoAPI {
         } else {
             bodyBuilder.add(Reminder.DUE, "");
         }
+        if (reminder.getRemark() != null){
+            bodyBuilder.add(Reminder.REMARK, reminder.getRemark());
+        } else {
+            bodyBuilder.add(Reminder.REMARK, "");
+        }
         RequestBody formBody = bodyBuilder.build();
         Request request = new Request.Builder()
                 .url(urlBuilder.build())

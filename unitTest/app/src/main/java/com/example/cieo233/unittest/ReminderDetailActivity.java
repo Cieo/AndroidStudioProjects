@@ -134,11 +134,11 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
         content.setText(inReminder.getContent());
         contentText.setText(inReminder.getContent());
         remark.setText(inReminder.getRemark());
-        if (inReminder.getType() == 1){
+        if (inReminder.getType() == 1) {
             content.setVisibility(View.VISIBLE);
             contentText.setVisibility(View.GONE);
             remark.setVisibility(View.GONE);
-        } else{
+        } else {
             content.setVisibility(View.GONE);
             contentText.setVisibility(View.VISIBLE);
             remark.setVisibility(View.VISIBLE);
@@ -188,7 +188,7 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
             return true;
         }
         if (!(Objects.equals(inReminder.getContent(), newReminder.getContent()))) {
-            if (inReminder.getContent() == null && Objects.equals(newReminder.getContent(), "")){
+            if (inReminder.getContent() == null && Objects.equals(newReminder.getContent(), "")) {
                 return false;
             }
             Log.e("TestCheckChange", "DifferentContent");
@@ -203,7 +203,7 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
             }
         }
         if (inReminder.getRemark() == null && newReminder.getRemark() != null) {
-            if (Objects.equals(newReminder.getRemark(), "")){
+            if (Objects.equals(newReminder.getRemark(), "")) {
                 return false;
             }
             Log.e("TestCheckChange", "DifferentRemarkNew");
@@ -236,25 +236,30 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
         newReminder.setState(inReminder.getState());
         newReminder.setType(inReminder.getType());
         if (checkChange()) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setMessage("保存更改?").setPositiveButton("保存", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    Intent intent = new Intent();
-                    intent.putExtra("DataOut", newReminder);
-                    intent.putExtra("DataIn", inReminder);
-                    setResult(KEEPCHANGE, intent);
-                    finish();
-
-                }
-            }).setNegativeButton("不保存", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    setResult(DROPCHANGE);
-                    finish();
-
-                }
-            }).create().show();
+            Intent intent = new Intent();
+            intent.putExtra("DataOut", newReminder);
+            intent.putExtra("DataIn", inReminder);
+            setResult(KEEPCHANGE, intent);
+            finish();
+//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//            builder.setMessage("保存更改?").setPositiveButton("保存", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    Intent intent = new Intent();
+//                    intent.putExtra("DataOut", newReminder);
+//                    intent.putExtra("DataIn", inReminder);
+//                    setResult(KEEPCHANGE, intent);
+//                    finish();
+//
+//                }
+//            }).setNegativeButton("不保存", new DialogInterface.OnClickListener() {
+//                @Override
+//                public void onClick(DialogInterface dialogInterface, int i) {
+//                    setResult(DROPCHANGE);
+//                    finish();
+//
+//                }
+//            }).create().show();
         } else {
             setResult(DROPCHANGE);
             finish();

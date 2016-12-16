@@ -63,6 +63,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
     private final int KEEPCHANGE = 0;
     private final int DROPCHANGE = 1;
     BroadcastReceiver syncReciver;
+    String[] month = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
     @Nullable
     @Override
@@ -70,12 +71,15 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
         super.onCreateView(inflater, container, savedInstanceState);
         View fragment_reminder = inflater.inflate(R.layout.fragment_reminder, container, false);
         ButterKnife.bind(this, fragment_reminder);
-        setResponse();
         init();
+        setResponse();
         return fragment_reminder;
     }
 
     void init() {
+        Calendar today = Calendar.getInstance();
+        fragment_reminder_date.setText(month[today.get(Calendar.MONTH)] + " " + today.get(Calendar.DAY_OF_MONTH) + " " + today.get(Calendar.YEAR));
+
         reminderAdapter = new ReminderAdapter(getContext(), CurrentUser.getInstance().getReminders(), this);
         reminderList.setLayoutManager(new LinearLayoutManager(getContext()));
         reminderList.setAdapter(reminderAdapter);
@@ -174,7 +178,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
             }
         };
         IntentFilter intentFilter = new IntentFilter("Cieo.SyncReminderComplete");
-        getContext().registerReceiver(syncReciver,intentFilter);
+        getContext().registerReceiver(syncReciver, intentFilter);
     }
 
 
@@ -224,7 +228,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.CHINA);
                 reminderDue = dateFormat.format(targetDate.getTime());
                 showDate.setVisibility(View.VISIBLE);
-                showDate.setText(reminderDue.substring(5,11));
+                showDate.setText(reminderDue.substring(5, 11));
             }
 
             void showSublimePicker() {
