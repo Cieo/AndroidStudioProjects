@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private float[] values = new float[3];
     private float[] r = new float[9];
 
-    private boolean hasMagnet, hasAccelerate, hasLocation;
+    private boolean hasMagnet, hasAccelerate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -114,7 +114,6 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         toDegree = 0;
         showDegree = 0;
         hasAccelerate = false;
-        hasLocation = false;
         hasMagnet = false;
         geocoder = new Geocoder(this, Locale.CHINA);
         compass = (ImageView) findViewById(R.id.compass);
@@ -152,7 +151,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             accelerometerValues = sensorEvent.values.clone();
             hasAccelerate = true;
             float power[] = sensorEvent.values.clone();
-            if ((Math.abs(power[0]) +  Math.abs(power[1]) + Math.abs(power[2])) > 100){
+            if ((Math.abs(power[0]) +  Math.abs(power[1]) + Math.abs(power[2])) > 90){
                 shakeCheck += 1;
             }
             if (shakeCheck == 2){
