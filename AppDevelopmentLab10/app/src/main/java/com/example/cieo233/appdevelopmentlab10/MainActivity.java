@@ -63,33 +63,21 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     void setResponse() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Log.e("WOCAO,GPS", "GPS pass");
         if (gpsProvider != null) {
-            Log.e("WOCAO,GPS", "GPS not null");
             Location location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             if (location != null) {
                 showLocation(location);
             } else {
-                Log.e("WOCAO,GPS", "LastLocation null");
             }
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 3000, 1, this);
         }
         if (netProvider != null) {
-            Log.e("WOCAO,Network", "Network not null");
             Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
             if (location != null) {
                 showLocation(location);
             } else {
-                Log.e("WOCAO,Network", "LastLocation null");
             }
             locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 1, this);
         }
@@ -151,10 +139,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
             accelerometerValues = sensorEvent.values.clone();
             hasAccelerate = true;
             float power[] = sensorEvent.values.clone();
-            if ((Math.abs(power[0]) +  Math.abs(power[1]) + Math.abs(power[2])) > 90){
+            if ((Math.abs(power[0]) + Math.abs(power[1]) + Math.abs(power[2])) > 90) {
                 shakeCheck += 1;
             }
-            if (shakeCheck == 2){
+            if (shakeCheck == 2) {
                 shakeCheck = 0;
                 shakeCount += 1;
                 shake.setText("摇一摇次数：" + String.valueOf(shakeCount));
