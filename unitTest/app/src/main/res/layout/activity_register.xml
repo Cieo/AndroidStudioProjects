@@ -36,6 +36,7 @@
         android:layout_height="wrap_content"
         app:met_floatingLabel="highlight"
         app:met_floatingLabelText="Password"
+        android:inputType="textPassword"
         app:met_floatingLabelAlwaysShown="true"
         app:met_primaryColor="#00A8FE"
         android:maxLines="1" />
@@ -47,6 +48,7 @@
         android:layout_height="wrap_content"
         app:met_floatingLabel="highlight"
         app:met_floatingLabelText="Confirm Password"
+        android:inputType="textPassword"
         app:met_floatingLabelAlwaysShown="true"
         app:met_primaryColor="#00A8FE"
         android:maxLines="1" />
