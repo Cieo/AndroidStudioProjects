@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zhy.android.percent.support.PercentRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:padding="16dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
     <CheckBox
@@ -11,22 +12,34 @@
     <TextView
         android:layout_marginStart="40dp"
         android:text="AI"
-        android:id="@+id/channel_name"
+        android:id="@+id/channelName"
+        android:maxLines="1"
+        app:layout_widthPercent = "60%w"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
-        android:text="5pm"
-        android:id="@+id/channel_time"
-        android:layout_alignParentEnd="true"
+        android:id="@+id/channelUpdateDate"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:textSize="10dp" />
+
+    <TextView
+        android:id="@+id/channelUpdateTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@id/channelUpdateDate"
+        android:textSize="10dp"
+        app:layout_marginTopPercent="1%" />
+
     <TextView
         android:layout_marginTop="4dp"
         android:textSize="8dp"
         android:text="1923"
-        android:layout_alignLeft="@id/channel_name"
-        android:layout_below="@id/channel_name"
-        android:id="@+id/channel_id"
+        android:layout_alignLeft="@id/channelName"
+        android:layout_below="@id/channelName"
+        android:id="@+id/channelID"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-</RelativeLayout>
+</com.zhy.android.percent.support.PercentRelativeLayout>

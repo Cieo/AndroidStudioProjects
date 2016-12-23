@@ -1,22 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.zhy.android.percent.support.PercentRelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/colorAccent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
     android:padding="16dp">
-
-    <EditText
-        android:text="Title"
-        android:id="@+id/name"
-        android:layout_width="match_parent"
+    <com.rengwuxian.materialedittext.MaterialEditText
+        android:gravity="center"
+        android:id="@+id/channelName"
+        android:hint="Your Channel Name"
+        app:met_textColorHint="#ffffff"
+        app:met_textColor="#ffffff"
+        app:met_hideUnderline="true"
+        android:layout_width="wrap_content"
+        app:layout_widthPercent="80%w"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp" />
+        />
 
-    <Button
-        android:id="@+id/create"
-        android:text="Create"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/btnCreate"
+        android:layout_alignParentEnd="true"
+        android:src="@mipmap/ic_send_white_48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_widthPercent="10%w"
+        app:layout_heightPercent="10%w"/>
+
+</com.zhy.android.percent.support.PercentRelativeLayout>

@@ -8,6 +8,7 @@ class StateCode {
     public static final int JOIN_CHANNEL = 0;
     public static final int EXIT_CHANNEL = 1;
 
+    public static final int CHANNEL_NAME_DUPLICATE_ERROR = 1;
     public static final int ID_NOT_FOUND = -1;
     public static final int DATABASE_CONNECTION_ERROR = -2;
     public static final int OK = 0;

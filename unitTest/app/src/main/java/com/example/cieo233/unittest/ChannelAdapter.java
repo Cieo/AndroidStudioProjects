@@ -1,34 +1,18 @@
 package com.example.cieo233.unittest;
 
 import android.content.Context;
-import android.nfc.cardemulation.HostNfcFService;
-import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by Cieo233 on 12/7/2016.
@@ -39,21 +23,14 @@ public class ChannelAdapter extends RecyclerView.Adapter {
     private List<Channel> channels;
     private Channel mChannel;
     private ChannelHolder mHolder;
-    private Handler handler;
-    private boolean resut1;
+    private Interface.RecyclerViewCheckboxClickListener recyclerViewCheckboxClickListener;
 
-    public ChannelAdapter(Context context, List<Channel> channels) {
+    public ChannelAdapter(Context context, List<Channel> channels, Interface.RecyclerViewCheckboxClickListener recyclerViewCheckboxClickListener) {
         this.context = context;
         this.channels = channels;
+        this.recyclerViewCheckboxClickListener = recyclerViewCheckboxClickListener;
     }
 
-    public Handler getHandler() {
-        return handler;
-    }
-
-    public void setHandler(Handler handler) {
-        this.handler = handler;
-    }
 
     public Context getContext() {
         return context;
@@ -81,103 +58,17 @@ public class ChannelAdapter extends RecyclerView.Adapter {
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
         mHolder = (ChannelHolder) holder;
         mChannel = channels.get(position);
-        mHolder.getChannel_name().setText(mChannel.getName());
-        mHolder.getChannel_id().setText(String.valueOf(mChannel.getId()));
-        mHolder.getChannel_time().setText(mChannel.getLast_update());
-        mHolder.getChannel_type().setTag(channels.get(position));
-        if (mChannel.getType() == 1 || mChannel.getType() == 2) {
-            mHolder.getChannel_type().setChecked(true);
+        mHolder.getChannelName().setText(mChannel.getName());
+        mHolder.getChannelID().setText(String.valueOf(mChannel.getId()));
+        mHolder.getChannelType().setTag(channels.get(position));
+        String[] splits = mChannel.getLast_update().split(" ");
+        mHolder.getChannelUpdateDate().setText(splits[0].substring(5));
+        mHolder.getChannelUpdateTime().setText(splits[1].substring(0, 5));
+        if (mChannel.getType() == 2) {
+            mHolder.getChannelType().setChecked(true);
         } else {
-            mHolder.getChannel_type().setChecked(false);
+            mHolder.getChannelType().setChecked(false);
         }
-    }
-
-    void joinChannel(Channel channel, Handler handler1) {
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/channel/" + String.valueOf(channel.getId())).newBuilder();
-        url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
-        RequestBody formBody = new FormBody.Builder()
-                .add(Channel.ACTION, String.valueOf(0))
-                .build();
-        Log.e("WOCAO", url_builder.build().toString());
-        Log.e("WOCAO", formBody.toString());
-        Request request = new Request.Builder()
-                .url(url_builder.build())
-                .post(formBody)
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .build();
-        Call call = mOkHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String json = response.body().string();
-                int result = 2;
-                Log.e("WOCAO", json);
-
-                try {
-                    JSONObject jsonObject = new JSONObject(json);
-                    if (jsonObject.getInt("ret") == StateCode.CHANNEL_ID_ERROR) {
-                        result = 1;
-                    } else if (jsonObject.getInt("ret") == StateCode.OK) {
-                        result = 0;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-        });
-
-    }
-
-    void exitChannel(Channel channel) {
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/channel/" + String.valueOf(channel.getId())).newBuilder();
-        url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
-        RequestBody formBody = new FormBody.Builder()
-                .add(Channel.ACTION, String.valueOf(1))
-                .build();
-        Request request = new Request.Builder()
-                .url(url_builder.build())
-                .post(formBody)
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .build();
-        Log.e("WOCAO", url_builder.build().toString());
-        Log.e("WOCAO", formBody.toString());
-        Call call = mOkHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String json = response.body().string();
-                int result = 2;
-                Log.e("WOCAO", json);
-
-                try {
-                    JSONObject jsonObject = new JSONObject(json);
-                    if (jsonObject.getInt("ret") == StateCode.CHANNEL_ID_ERROR) {
-                        result = 1;
-                    } else if (jsonObject.getInt("ret") == StateCode.OK) {
-                        handler.sendEmptyMessage(8);
-                        result = 0;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-        });
 
     }
 
@@ -189,34 +80,50 @@ public class ChannelAdapter extends RecyclerView.Adapter {
 
     class ChannelHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.channel_type)
-        CheckBox channel_type;
-        @BindView(R.id.channel_name)
-        TextView channel_name;
-        @BindView(R.id.channel_id)
-        TextView channel_id;
-        @BindView(R.id.channel_time)
-        TextView channel_time;
+        CheckBox channelType;
+        @BindView(R.id.channelName)
+        TextView channelName;
+        @BindView(R.id.channelID)
+        TextView channelID;
+        @BindView(R.id.channelUpdateDate)
+        TextView channelUpdateDate;
+        @BindView(R.id.channelUpdateTime)
+        TextView channelUpdateTime;
 
 
         ChannelHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            channelType.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b){
+                        recyclerViewCheckboxClickListener.recyclerViewCheckboxChecked(channels.get(getLayoutPosition()));
+                    } else {
+                        recyclerViewCheckboxClickListener.recyclerViewCheckboxUnchecked(channels.get(getLayoutPosition()));
+                    }
+                }
+            });
         }
 
-        CheckBox getChannel_type() {
-            return channel_type;
+        CheckBox getChannelType() {
+            return channelType;
         }
 
-        TextView getChannel_name() {
-            return channel_name;
+        TextView getChannelName() {
+            return channelName;
         }
 
-        TextView getChannel_id() {
-            return channel_id;
+        TextView getChannelID() {
+            return channelID;
         }
 
-        TextView getChannel_time() {
-            return channel_time;
+        public TextView getChannelUpdateDate() {
+            return channelUpdateDate;
+        }
+
+        public TextView getChannelUpdateTime() {
+            return channelUpdateTime;
         }
     }
 }

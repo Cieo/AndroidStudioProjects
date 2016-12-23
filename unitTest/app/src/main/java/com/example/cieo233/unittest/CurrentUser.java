@@ -19,7 +19,6 @@ class CurrentUser {
         List<Channel> allChannel = new ArrayList<>();
         allChannel.addAll(unsubscribeChannels);
         allChannel.addAll(subscribeChannels);
-        allChannel.addAll(creatorChannels);
         return allChannel;
     }
 

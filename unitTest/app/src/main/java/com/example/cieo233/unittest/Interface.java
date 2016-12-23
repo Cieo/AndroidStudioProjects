@@ -17,4 +17,9 @@ public class Interface {
         public void awesomeTextChannelClicked(Object data);
     }
 
+    public interface RecyclerViewCheckboxClickListener{
+        public void recyclerViewCheckboxChecked(Object data);
+        public void recyclerViewCheckboxUnchecked(Object data);
+    }
+
 }

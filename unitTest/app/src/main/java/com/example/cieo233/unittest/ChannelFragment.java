@@ -1,65 +1,48 @@
 package com.example.cieo233.unittest;
 
-import android.content.DialogInterface;
 import android.os.Message;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
-import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
-import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.roughike.swipeselector.SwipeItem;
-import com.roughike.swipeselector.SwipeSelector;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.Calendar;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import me.shaohui.bottomdialog.BottomDialog;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.FormBody;
-import okhttp3.HttpUrl;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 /**
  * Created by Cieo233 on 12/7/2016.
  */
 
-public class ChannelFragment extends Fragment implements View.OnClickListener {
+public class ChannelFragment extends Fragment implements View.OnClickListener, SwipeRefreshLayout.OnRefreshListener, Interface.RecyclerViewCheckboxClickListener {
     @BindView(R.id.channel_list)
     RecyclerView channel_list;
-    @BindView(R.id.btn_add_channel)
-    FloatingActionButton btn_add_channel;
-    private Handler handler;
+    @BindView(R.id.btnAddChannel)
+    ImageView btn_add_channel;
+    @BindView(R.id.fragmentChannelDate)
+    TextView fragmentChannelDate;
+    @BindView(R.id.swipeRefresh)
+    SwipeRefreshLayout swipeRefreshLayout;
     private ChannelAdapter channelAdapter;
     BottomDialog mBottomDialog;
-    String new_name;
+    Handler createChannelHandler, exitChannelHandler, joinChannelHandler, fragmentChannelHandler, getChannelHandler;
+    int result;
+    final int DONE = 3;
+    String[] month = {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+
 
     @Nullable
     @Override
@@ -77,56 +60,116 @@ public class ChannelFragment extends Fragment implements View.OnClickListener {
     }
 
     void init() {
+        Calendar today = Calendar.getInstance();
+        fragmentChannelDate.setText(month[today.get(Calendar.MONTH)] + " " + today.get(Calendar.DAY_OF_MONTH) + " " + today.get(Calendar.YEAR));
 
-        handler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case 0:
-                        channelAdapter.setChannels(CurrentUser.getInstance().getUnsubscribeChannels());
-                        channelAdapter.notifyDataSetChanged();
-                        break;
-                    case 1:
-                        showToast("用户身份无效");
-                        break;
-                    case 2:
-                        showToast("未知错误");
-                        break;
-                    case 8:
-                        getAllChannel();
-                        break;
-                    case 9:
-                        mBottomDialog.dismiss();
-                }
-            }
-        };
-        channelAdapter = new ChannelAdapter(getContext(), CurrentUser.getInstance().getUnsubscribeChannels());
-        channelAdapter.setHandler(handler);
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorAccent);
+        swipeRefreshLayout.setOnRefreshListener(this);
+
+        result = 0;
+        channelAdapter = new ChannelAdapter(getContext(), CurrentUser.getInstance().getAllChannels(),this);
         channel_list.setLayoutManager(new LinearLayoutManager(getContext()));
         channel_list.setAdapter(channelAdapter);
+        createChannelHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                switch (message.what){
+                    case StateCode.OK:
+                        CodoAPI.getChannels(getChannelHandler);
+                        Log.e("CreateChannelHandler","Create success");
+                        break;
+                    case StateCode.CHANNEL_NAME_DUPLICATE_ERROR:
+                        Log.e("CreateChannelHandler","Create fail");
+                        channelAdapter.setChannels(CurrentUser.getInstance().getAllChannels());
+                        channelAdapter.notifyDataSetChanged();
+                        break;
+                }
+                return false;
+            }
+        });
+        joinChannelHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                switch (message.what){
+                    case StateCode.OK:
+                        Log.e("JoinChannelHandler","Join success");
+                        CodoAPI.getChannels(getChannelHandler);
+                        break;
+                    case StateCode.JOIN_OR_EXIT_CHANNEL_FAIL:
+                        Log.e("JoinChannelHandler","Join fail");
+                        channelAdapter.setChannels(CurrentUser.getInstance().getAllChannels());
+                        channelAdapter.notifyDataSetChanged();
+                        break;
+                }
+                return false;
+            }
+        });
+        exitChannelHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                switch (message.what){
+                    case StateCode.OK:
+                        Log.e("ExitChannelHandler","Exit success");
+                        CodoAPI.getChannels(getChannelHandler);
+                        break;
+                    case StateCode.JOIN_OR_EXIT_CHANNEL_FAIL:
+                        Log.e("ExitChannelHandler","Exit fail");
+                        channelAdapter.setChannels(CurrentUser.getInstance().getAllChannels());
+                        channelAdapter.notifyDataSetChanged();
+                        break;
+                }
+                return false;
+            }
+        });
+        getChannelHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                switch (message.what){
+                    case StateCode.OK:
+                        result += 1;
+                        if (result == DONE){
+                            result = 0;
+                            swipeRefreshLayout.setRefreshing(false);
+                            channelAdapter.setChannels(CurrentUser.getInstance().getAllChannels());
+                            channelAdapter.notifyDataSetChanged();
+                        }
+                        break;
+                    case StateCode.TOKEN_INVALID:
+                        break;
+                }
+                return false;
+            }
+        });
+        fragmentChannelHandler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                switch (message.what){
+                    case DONE:
+                        mBottomDialog.dismiss();
+                        break;
+                }
+                return false;
+            }
+        });
     }
 
-    void showToast(String content) {
-        Toast.makeText(getContext(), content, Toast.LENGTH_SHORT).show();
-    }
 
     void showBottomDialog() {
         mBottomDialog = BottomDialog.create(getActivity().getSupportFragmentManager()).setViewListener(new BottomDialog.ViewListener() {
-            EditText new_channel;
-            Button create;
+            MaterialEditText new_channel;
+            ImageView create;
 
             @Override
             public void bindView(View v) {
-                new_channel = (EditText) v.findViewById(R.id.name);
-                create = (Button) v.findViewById(R.id.create);
+                new_channel = (MaterialEditText) v.findViewById(R.id.channelName);
+                create = (ImageView) v.findViewById(R.id.btnCreate);
                 create.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View view) {
-                        new_name = new_channel.getText().toString();
-                        Log.e("WOCAO", new_name);
-                        postChannel();
-                        handler.sendEmptyMessage(9);
+                        Channel newChannel = new Channel(new_channel.getText().toString());
+                        CodoAPI.createChannel(newChannel,createChannelHandler);
+                        fragmentChannelHandler.sendEmptyMessage(DONE);
                     }
                 });
 
@@ -135,94 +178,37 @@ public class ChannelFragment extends Fragment implements View.OnClickListener {
         mBottomDialog.show();
     }
 
-    void getAllChannel() {
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/channel").newBuilder();
-        url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
-        Request request = new Request.Builder()
-                .url(url_builder.build())
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .build();
-        Call call = mOkHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
 
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String json = response.body().string();
-                int result = 2;
-                Log.e("WOCAO", json);
-
-                try {
-                    JSONObject jsonObject = new JSONObject(json);
-                    if (jsonObject.getInt("ret") == StateCode.TOKEN_INVALID) {
-                        result = 1;
-                    } else if (jsonObject.getInt("ret") == StateCode.OK) {
-                        result = 0;
-                        CurrentUser.getInstance().setUnsubscribeChannels((List<Channel>) new Gson().fromJson(jsonObject.getString("channels"), new TypeToken<List<Channel>>() {
-                        }.getType()));
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                handler.sendEmptyMessage(result);
-            }
-
-        });
-    }
-
-    void postChannel() {
-        OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/channel").newBuilder();
-        url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
-        RequestBody formBody = new FormBody.Builder()
-                .add("name", new_name)
-                .build();
-        Request request = new Request.Builder()
-                .url(url_builder.build())
-                .post(formBody)
-                .addHeader("Content-Type", "application/x-www-form-urlencoded")
-                .build();
-        Call call = mOkHttpClient.newCall(request);
-        call.enqueue(new Callback() {
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-            }
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                String json = response.body().string();
-                int result = 2;
-                Log.e("WOCAO", json);
-
-                try {
-                    JSONObject jsonObject = new JSONObject(json);
-                    if (jsonObject.getInt("ret") == StateCode.CHANNEL_ID_ERROR) {
-                        result = 1;
-                    } else if (jsonObject.getInt("ret") == StateCode.OK) {
-                        handler.sendEmptyMessage(8);
-                        result = 0;
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-
-            }
-
-        });
-
-    }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_add_channel:
+            case R.id.btnAddChannel:
                 showBottomDialog();
                 break;
+        }
+    }
+
+    @Override
+    public void onRefresh() {
+        CodoAPI.getChannels(getChannelHandler);
+    }
+
+    @Override
+    public void recyclerViewCheckboxChecked(Object data) {
+        Channel joinChannel = (Channel) data;
+        if (joinChannel.getType() != 2){
+            Log.e("ChannelChecked",joinChannel.getName());
+        CodoAPI.joinChannel(joinChannel,joinChannelHandler);
+        }
+    }
+
+    @Override
+    public void recyclerViewCheckboxUnchecked(Object data) {
+        Channel exitChannel = (Channel) data;
+        if (exitChannel.getType() != 0){
+            Log.e("ChannelUnchecked",((Channel) data).getName());
+        CodoAPI.exitChannel(exitChannel,exitChannelHandler);
         }
     }
 }
