@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.database.CursorIndexOutOfBoundsException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,7 +15,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,17 +59,18 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         setResponse();
     }
 
-    void onPreloadDone(){
+    void onPreloadDone() {
         int DONE = 4;
-        if (result == DONE){
+        if (result == DONE) {
+            result = 0;
             loginDialog.dismiss();
-            startActivity(new Intent(this,MainActivity.class));
+            startActivity(new Intent(this, MainActivity.class));
             finish();
         }
     }
 
     void init() {
-        sharedPreferences = getSharedPreferences("token",0);
+        sharedPreferences = getSharedPreferences("currentUser", 0);
         editor = sharedPreferences.edit();
         loginDialog = new ProgressDialog(this);
         loginDialog.setMessage("Logining");
@@ -69,13 +78,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         loginHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
-                switch (message.what){
+                switch (message.what) {
                     case StateCode.USER_NAME_AND_PASSWORD_MISSMATCH:
-                        Log.e("Login","密码错误");
+                        Log.e("Login", "密码错误");
                         loginDialog.dismiss();
                         break;
                     case StateCode.OK:
-                        Log.e("Login","登陆成功");
+                        Log.e("Login", "登陆成功");
                         editor.putString("password", CurrentUser.getInstance().getUser().getPassword());
                         editor.putString("token", CurrentUser.getInstance().getUser().getToken());
                         editor.putString("username", CurrentUser.getInstance().getUser().getUsername());
@@ -91,13 +100,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         channelHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
-                switch (message.what){
+                switch (message.what) {
                     case StateCode.TOKEN_INVALID:
-                        Log.e("GetChannel","获取频道失败");
+                        Log.e("GetChannel", "获取频道失败");
                         loginDialog.dismiss();
                         break;
                     case StateCode.OK:
-                        Log.e("GetChannel","获取频道成功");
+                        Log.e("GetChannel", "获取频道成功");
                         result += 1;
                         onPreloadDone();
                         break;
@@ -108,13 +117,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         reminderHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
-                switch (message.what){
+                switch (message.what) {
                     case StateCode.TOKEN_INVALID:
-                        Log.e("GetReminder","获取备忘录失败");
+                        Log.e("GetReminder", "获取备忘录失败");
                         loginDialog.dismiss();
                         break;
                     case StateCode.OK:
-                        Log.e("GetReminder","获取备忘录成功");
+                        Log.e("GetReminder", "获取备忘录成功");
                         result += 1;
                         onPreloadDone();
                         break;
@@ -124,18 +133,30 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         });
     }
 
-    void checkToken(){
-        Log.e("CheckToken","Inside CheckToken");
-        String token = sharedPreferences.getString("token",null);
-        String username = sharedPreferences.getString("username",null);
-        String password = sharedPreferences.getString("password",null);
-        int id = sharedPreferences.getInt("id",0);
-        if (token != null){
-            loginDialog.show();
-            CurrentUser.getInstance().setUser(new User(username,password,id,token));
-            Log.e("CheckToken","Login through Token");
-            loginHandler.sendEmptyMessage(StateCode.OK);
+    void checkToken() {
+        Log.e("CheckToken", "Inside CheckToken");
+        loginDialog.show();
+        Gson gson = new Gson();
+        CurrentUser.getInstance().setUser(gson.fromJson(sharedPreferences.getString("user", ""), User.class));
+        CurrentUser.getInstance().setReminders((List<Reminder>) gson.fromJson(sharedPreferences.getString("reminders", ""), new TypeToken<List<Reminder>>() {
+        }.getType()));
+        CurrentUser.getInstance().setSubscribeChannels((List<Channel>) gson.fromJson(sharedPreferences.getString("subscribeChannel", ""), new TypeToken<List<Channel>>() {
+        }.getType()));
+        CurrentUser.getInstance().setUnsubscribeChannels((List<Channel>) gson.fromJson(sharedPreferences.getString("unsubscribeChannel", ""), new TypeToken<List<Channel>>() {
+        }.getType()));
+        CurrentUser.getInstance().setCreatorChannels((List<Channel>) gson.fromJson(sharedPreferences.getString("creatorChannel", ""), new TypeToken<List<Channel>>() {
+        }.getType()));
+        if (CurrentUser.getInstance().getUser().getToken() != null){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    result = 4;
+                    onPreloadDone();
+                }
+            },150);
+
         }
+        Log.e("CheckToken", "Login through Token");
     }
 
     void setResponse() {
@@ -160,10 +181,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_login:
-                if (valid()){
+                if (valid()) {
                     loginDialog.show();
-                    Log.e("LoginButton","Login through Button");
-                    CodoAPI.userLogin(new User(username,password),loginHandler);
+                    Log.e("LoginButton", "Login through Button");
+                    CodoAPI.userLogin(new User(username, password), loginHandler);
                 }
                 break;
             case R.id.text_create_account:

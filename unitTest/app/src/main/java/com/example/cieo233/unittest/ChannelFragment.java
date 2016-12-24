@@ -151,6 +151,10 @@ public class ChannelFragment extends Fragment implements View.OnClickListener, S
                 return false;
             }
         });
+
+        if (GeneralUtils.isNetConnected(getContext())){
+            CodoAPI.getChannels(getChannelHandler);
+        }
     }
 
 

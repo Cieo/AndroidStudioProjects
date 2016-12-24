@@ -1,6 +1,8 @@
 package com.example.cieo233.unittest;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.widget.Toast;
 
 /**
@@ -10,5 +12,20 @@ import android.widget.Toast;
 public class GeneralUtils {
     public static void showToast(Context context, String content){
         Toast.makeText(context,content,Toast.LENGTH_SHORT).show();
+    }
+
+    public static boolean isNetConnected(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null) {
+            NetworkInfo[] infos = cm.getAllNetworkInfo();
+            if (infos != null) {
+                for (NetworkInfo ni : infos) {
+                    if (ni.isConnected()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

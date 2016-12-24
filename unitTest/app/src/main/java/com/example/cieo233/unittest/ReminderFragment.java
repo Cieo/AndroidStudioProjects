@@ -95,6 +95,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                         break;
                     case StateCode.PARAMETER_EMPTY:
                         Log.e("CreateReminder", "备忘录参数错误");
+                        CodoAPI.getReminders(showAllReminderHandler);
                         break;
                 }
                 return false;
@@ -137,13 +138,11 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                         break;
                     case StateCode.TOKEN_INVALID:
                         Log.e("DeleteReminder", "删除失败");
-                        reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
-                        reminderAdapter.notifyDataSetChanged();
+                        CodoAPI.getReminders(showAllReminderHandler);
                         break;
                     case StateCode.PERMISSION_DENY:
                         Log.e("DeleteReminder", "删除失败");
-                        reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
-                        reminderAdapter.notifyDataSetChanged();
+                        CodoAPI.getReminders(showAllReminderHandler);
                         break;
                 }
                 return false;
@@ -157,13 +156,11 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                         Log.e("UpdateReminder", "更新成功");
                         break;
                     case StateCode.URLIDINVALID:
-                        reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
-                        reminderAdapter.notifyDataSetChanged();
+                        CodoAPI.getReminders(showAllReminderHandler);
                         Log.e("UpdateReminder", "更新失败");
                         break;
                     case StateCode.TOKEN_INVALID:
-                        reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
-                        reminderAdapter.notifyDataSetChanged();
+                        CodoAPI.getReminders(showAllReminderHandler);
                         Log.e("UpdateReminder", "更新失败");
                 }
                 return false;
@@ -179,6 +176,10 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
         };
         IntentFilter intentFilter = new IntentFilter("Cieo.SyncReminderComplete");
         getContext().registerReceiver(syncReciver, intentFilter);
+
+        if (GeneralUtils.isNetConnected(getContext())){
+            CodoAPI.getReminders(showAllReminderHandler);
+        }
     }
 
 
@@ -331,13 +332,12 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
             case KEEPCHANGE:
                 Reminder dataIn = (Reminder) data.getSerializableExtra("DataIn");
                 Reminder dataOut = (Reminder) data.getSerializableExtra("DataOut");
-                List<Reminder> tempReminders = CurrentUser.getInstance().getReminders();
-                for (Reminder i : tempReminders) {
+                for (Reminder i : CurrentUser.getInstance().getReminders()) {
                     if (i.getId() == dataIn.getId()) {
-                        tempReminders.set(tempReminders.indexOf(i), dataOut);
+                        CurrentUser.getInstance().getReminders().set(CurrentUser.getInstance().getReminders().indexOf(i), dataOut);
                     }
                 }
-                reminderAdapter.setReminders(tempReminders);
+                reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
                 reminderAdapter.notifyDataSetChanged();
                 CodoAPI.updateReminder(dataOut, updateReminderHandler);
                 break;
@@ -359,9 +359,8 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
     }
 
     void removeReminder(Object data) {
-        List<Reminder> tempReminders = CurrentUser.getInstance().getReminders();
-        tempReminders.remove(data);
-        reminderAdapter.setReminders(tempReminders);
+        CurrentUser.getInstance().getReminders().remove(data);
+        reminderAdapter.setReminders(CurrentUser.getInstance().getReminders());
         reminderAdapter.notifyDataSetChanged();
         CodoAPI.deleteReminder((Reminder) data, deleteReminderHandler);
     }
