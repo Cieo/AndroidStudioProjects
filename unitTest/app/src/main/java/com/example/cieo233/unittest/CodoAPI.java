@@ -36,7 +36,7 @@ public class CodoAPI {
                 .add("expiry_time", String.valueOf(Integer.MAX_VALUE))
                 .build();
         Request request = new Request.Builder()
-                .url("http://api.sysu.space/api/user/login")
+                .url("http://api.codo.32ph.com/api/user/login")
                 .post(formBody)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                 .build();
@@ -70,7 +70,7 @@ public class CodoAPI {
                 .add("password", user.getPassword())
                 .build();
         Request request = new Request.Builder()
-                .url("http://api.sysu.space/api/user/register")
+                .url("http://api.codo.32ph.com/api/user/register")
                 .post(formBody)
                 .addHeader("Content-Type", "application/x-www-form-urlencoded")
                 .build();
@@ -96,7 +96,7 @@ public class CodoAPI {
 
     public static void getReminders(final Handler handler) {
         OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://api.sysu.space/api/reminder").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://api.codo.32ph.com/api/reminder").newBuilder();
         urlBuilder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
@@ -128,7 +128,7 @@ public class CodoAPI {
 
     public static void createReminder(Reminder reminder, final Handler handler) {
         OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://api.sysu.space/api/reminder").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://api.codo.32ph.com/api/reminder").newBuilder();
         urlBuilder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         FormBody.Builder bodyBuilder = new FormBody.Builder();
         bodyBuilder.add(Reminder.TITLE, reminder.getTitle());
@@ -174,7 +174,7 @@ public class CodoAPI {
 
     public static void updateReminder(Reminder reminder, final Handler handler) {
         OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://api.sysu.space/api/reminder/" + reminder.getId()).newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://api.codo.32ph.com/api/reminder/" + reminder.getId()).newBuilder();
         urlBuilder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         FormBody.Builder bodyBuilder = new FormBody.Builder();
         bodyBuilder.add(Reminder.TITLE, reminder.getTitle());
@@ -223,7 +223,7 @@ public class CodoAPI {
 
     public static void deleteReminder(Reminder reminder, final Handler handler) {
         OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://api.sysu.space/api/reminder/" + reminder.getId()).newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://api.codo.32ph.com/api/reminder/" + reminder.getId()).newBuilder();
         urlBuilder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         Request request = new Request.Builder()
                 .url(urlBuilder.build())
@@ -252,7 +252,7 @@ public class CodoAPI {
 
     public static void getChannels(final Handler handler) {
         OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://api.sysu.space/api/channel").newBuilder();
+        HttpUrl.Builder urlBuilder = HttpUrl.parse("http://api.codo.32ph.com/api/channel").newBuilder();
         urlBuilder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         urlBuilder.addEncodedQueryParameter("type", String.valueOf(Channel.UNSUBSCRIBE));
         Request request = new Request.Builder()
@@ -282,7 +282,7 @@ public class CodoAPI {
             }
         });
 
-        urlBuilder = HttpUrl.parse("http://api.sysu.space/api/channel").newBuilder();
+        urlBuilder = HttpUrl.parse("http://api.codo.32ph.com/api/channel").newBuilder();
         urlBuilder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         urlBuilder.addEncodedQueryParameter("type", String.valueOf(Channel.SUBSCRIBE));
         request = new Request.Builder()
@@ -312,7 +312,7 @@ public class CodoAPI {
             }
         });
 
-        urlBuilder = HttpUrl.parse("http://api.sysu.space/api/channel").newBuilder();
+        urlBuilder = HttpUrl.parse("http://api.codo.32ph.com/api/channel").newBuilder();
         urlBuilder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         urlBuilder.addEncodedQueryParameter("type", String.valueOf(Channel.CREATOR));
         request = new Request.Builder()
@@ -345,7 +345,7 @@ public class CodoAPI {
 
     public static void createChannel(Channel channel, final Handler handler){
         OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/channel").newBuilder();
+        HttpUrl.Builder url_builder = HttpUrl.parse("http://api.codo.32ph.com/api/channel").newBuilder();
         url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         RequestBody formBody = new FormBody.Builder()
                 .add(Channel.NAME, channel.getName())
@@ -380,7 +380,7 @@ public class CodoAPI {
 
     public static void joinChannel(Channel channel, final Handler handler){
         OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/channel/" + String.valueOf(channel.getId())).newBuilder();
+        HttpUrl.Builder url_builder = HttpUrl.parse("http://api.codo.32ph.com/api/channel/" + String.valueOf(channel.getId())).newBuilder();
         url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         RequestBody formBody = new FormBody.Builder()
                 .add(Channel.ACTION, String.valueOf(Channel.JOIN))
@@ -413,7 +413,7 @@ public class CodoAPI {
 
     public static void exitChannel(Channel channel, final Handler handler){
         OkHttpClient mOkHttpClient = new OkHttpClient();
-        HttpUrl.Builder url_builder = HttpUrl.parse("http://api.sysu.space/api/channel/" + String.valueOf(channel.getId())).newBuilder();
+        HttpUrl.Builder url_builder = HttpUrl.parse("http://api.codo.32ph.com/api/channel/" + String.valueOf(channel.getId())).newBuilder();
         url_builder.addEncodedQueryParameter("token", CurrentUser.getInstance().getUser().getToken());
         RequestBody formBody = new FormBody.Builder()
                 .add(Channel.ACTION, String.valueOf(Channel.EXIT))
