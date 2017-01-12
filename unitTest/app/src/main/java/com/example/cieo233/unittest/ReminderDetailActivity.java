@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.aigestudio.wheelpicker.WheelPicker;
+import com.aitangba.swipeback.SwipeBackActivity;
 import com.jmpergar.awesometext.AwesomeTextHandler;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
@@ -38,7 +39,7 @@ import me.shaohui.bottomdialog.BottomDialog;
  * Created by Cieo233 on 12/5/2016.
  */
 
-public class ReminderDetailActivity extends AppCompatActivity implements Interface.AwesomeTextChannelClickListener, OnDateSelectedListener {
+public class ReminderDetailActivity extends SwipeBackActivity implements Interface.AwesomeTextChannelClickListener, OnDateSelectedListener {
 
     @BindView(R.id.calendar)
     MaterialCalendarView calendarView;
@@ -201,8 +202,9 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
         return false;
     }
 
+
     @Override
-    public void onBackPressed() {
+    public void finish() {
         CalendarDay selectedDate = calendarView.getSelectedDate();
         String strDue = null;
         if (selectedDate != null) {
@@ -226,30 +228,10 @@ public class ReminderDetailActivity extends AppCompatActivity implements Interfa
             intent.putExtra("DataOut", newReminder);
             intent.putExtra("DataIn", inReminder);
             setResult(KEEPCHANGE, intent);
-            finish();
-//            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-//            builder.setMessage("保存更改?").setPositiveButton("保存", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialogInterface, int i) {
-//                    Intent intent = new Intent();
-//                    intent.putExtra("DataOut", newReminder);
-//                    intent.putExtra("DataIn", inReminder);
-//                    setResult(KEEPCHANGE, intent);
-//                    finish();
-//
-//                }
-//            }).setNegativeButton("不保存", new DialogInterface.OnClickListener() {
-//                @Override
-//                public void onClick(DialogInterface dialogInterface, int i) {
-//                    setResult(DROPCHANGE);
-//                    finish();
-//
-//                }
-//            }).create().show();
         } else {
             setResult(DROPCHANGE);
-            finish();
         }
+        super.finish();
     }
 
     @Override
