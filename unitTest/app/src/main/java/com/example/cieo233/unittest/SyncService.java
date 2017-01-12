@@ -9,6 +9,13 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -20,10 +27,12 @@ public class SyncService extends Service {
     Handler syncReminderHandler;
     Handler syncChannelHandler;
     Timer timer;
+    SimpleDateFormat simpleDateFormat;
 
     @Override
     public void onCreate() {
         Log.e("SeriveCreated", "同步服务创建成功");
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm:ss", Locale.CHINA);
         syncReminderHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
@@ -69,12 +78,14 @@ public class SyncService extends Service {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
+                Log.e("TestSync","同步成功啦");
+                checkTime();
                 syncChannel();
                 syncReminder();
             }
         };
         timer = new Timer();
-        timer.schedule(timerTask, 1000 * 600);
+        timer.schedule(timerTask, 1000 * 10, 1000 * 10);
         return START_STICKY;
     }
 
@@ -98,6 +109,28 @@ public class SyncService extends Service {
 
     void syncReminder() {
         CodoAPI.getReminders(syncReminderHandler);
+    }
+
+    void checkTime(){
+        List<Reminder> reminders = CurrentUser.getInstance().getReminders();
+        for (Reminder reminder : reminders){
+            if (reminder.getDue() != null){
+                Log.e("TestNotification",reminder.getDue().substring(0,19));
+                try {
+                    Date time = simpleDateFormat.parse(reminder.getDue().substring(0,19));
+                    Calendar current = Calendar.getInstance();
+                    if (current.getTime().before(time)){
+                        current.add(Calendar.MINUTE,30);
+                        if (current.getTime().after(time)){
+                            Log.e("TestNotification","还有三十分钟就到钟啦！");
+                            GeneralUtils.showNotification(this,reminder.getTitle());
+                        }
+                    }
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }

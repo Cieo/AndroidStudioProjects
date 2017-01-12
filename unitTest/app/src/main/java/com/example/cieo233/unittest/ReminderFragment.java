@@ -226,7 +226,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
 
 
             void updateDateTime(Calendar targetDate) {
-                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm", Locale.CHINA);
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd kk:mm", Locale.CHINA);
                 reminderDue = dateFormat.format(targetDate.getTime());
                 showDate.setVisibility(View.VISIBLE);
                 showDate.setText(reminderDue.substring(5, 11));
