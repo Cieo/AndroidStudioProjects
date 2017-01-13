@@ -135,7 +135,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
     void checkToken() {
         Log.e("CheckToken", "Inside CheckToken");
-        loginDialog.show();
+
         Gson gson = new Gson();
         CurrentUser.getInstance().setUser(gson.fromJson(sharedPreferences.getString("user", ""), User.class));
         CurrentUser.getInstance().setReminders((List<Reminder>) gson.fromJson(sharedPreferences.getString("reminders", ""), new TypeToken<List<Reminder>>() {
@@ -146,16 +146,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }.getType()));
         CurrentUser.getInstance().setCreatorChannels((List<Channel>) gson.fromJson(sharedPreferences.getString("creatorChannel", ""), new TypeToken<List<Channel>>() {
         }.getType()));
-        if (CurrentUser.getInstance().getUser().getToken() != null){
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    result = 4;
-                    onPreloadDone();
-                }
-            },150);
+        if (CurrentUser.getInstance().getUser() != null) {
+            if (CurrentUser.getInstance().getUser().getToken() != null) {
+                loginDialog.show();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        result = 4;
+                        onPreloadDone();
+                    }
+                }, 150);
 
+            }
         }
+
         Log.e("CheckToken", "Login through Token");
     }
 
