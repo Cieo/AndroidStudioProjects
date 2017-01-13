@@ -85,7 +85,7 @@ public class SyncService extends Service {
             }
         };
         timer = new Timer();
-        timer.schedule(timerTask, 1000 * 10, 1000 * 10);
+        timer.schedule(timerTask, 1000 * 10, 1000 * 1000);
         return START_STICKY;
     }
 

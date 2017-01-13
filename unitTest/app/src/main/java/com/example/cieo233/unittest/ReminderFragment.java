@@ -27,6 +27,7 @@ import android.widget.TextView;
 import com.appeaser.sublimepickerlibrary.datepicker.SelectedDate;
 import com.appeaser.sublimepickerlibrary.helpers.SublimeOptions;
 import com.appeaser.sublimepickerlibrary.recurrencepicker.SublimeRecurrencePicker;
+import com.google.gson.Gson;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.text.SimpleDateFormat;
@@ -304,6 +305,7 @@ public class ReminderFragment extends Fragment implements View.OnClickListener, 
                             type = 0;
                         }
                         Reminder newReminder = new Reminder(newChannel, newTitle.getText().toString(), newContent.getText().toString(), reminderDue, 1, type);
+                        Log.e("BugFixCreateChannel",new Gson().toJson(newReminder));
                         CodoAPI.createReminder(newReminder, createReminderHandler);
 
                         reminderFragmentHandler.sendEmptyMessage(Done);

@@ -15,7 +15,7 @@ class Reminder implements Serializable {
     public static final String CONTENT = "content";
     public static final String DUE = "due";
     public static final String TYPE = "type";
-    public static final String CHANNEL_ID = "channelID";
+    public static final String CHANNEL_ID = "channel_id";
     public static final String PRIORITY = "priority";
     public static final String REMARK = "remark";
     public static final String STATE = "state";

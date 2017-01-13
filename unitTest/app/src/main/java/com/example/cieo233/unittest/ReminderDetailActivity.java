@@ -1,6 +1,7 @@
 package com.example.cieo233.unittest;
 
 import android.content.Intent;
+import android.media.audiofx.LoudnessEnhancer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 
 import com.aigestudio.wheelpicker.WheelPicker;
 import com.aitangba.swipeback.SwipeBackActivity;
+import com.google.gson.Gson;
 import com.jmpergar.awesometext.AwesomeTextHandler;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 import com.prolificinteractive.materialcalendarview.CalendarMode;
@@ -121,11 +123,12 @@ public class ReminderDetailActivity extends SwipeBackActivity implements Interfa
         content.setText(inReminder.getContent());
         contentText.setText(inReminder.getContent());
         remark.setText(inReminder.getRemark());
-        if (inReminder.getType() == 1) {
+        if (inReminder.getType() == 1||(inReminder.getType()==0 && checkCreator(inChannel))) {
             content.setVisibility(View.VISIBLE);
             contentText.setVisibility(View.GONE);
             remark.setVisibility(View.GONE);
-        } else {
+        }
+        else {
             content.setVisibility(View.GONE);
             contentText.setVisibility(View.VISIBLE);
             remark.setVisibility(View.VISIBLE);
@@ -232,6 +235,16 @@ public class ReminderDetailActivity extends SwipeBackActivity implements Interfa
             setResult(DROPCHANGE);
         }
         super.finish();
+    }
+
+    boolean checkCreator(Channel toBeCheck){
+        List<Channel> channels = CurrentUser.getInstance().getCreatorChannels();
+        for (Channel channel : channels){
+            if (Objects.equals(channel.getName(), toBeCheck.getName()) && channel.getId() == toBeCheck.getId()){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

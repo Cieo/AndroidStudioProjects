@@ -135,6 +135,7 @@ public class CodoAPI {
         bodyBuilder.add(Reminder.PRIORITY, String.valueOf(reminder.getPriority()));
         bodyBuilder.add(Reminder.TYPE, String.valueOf(reminder.getType()));
         bodyBuilder.build();
+        Log.e("BugFixInCreate",new Gson().toJson(reminder));
         if (reminder.getChannel() != null){
             bodyBuilder.add(Reminder.CHANNEL_ID, String.valueOf(reminder.getChannel().getId()));
         }
