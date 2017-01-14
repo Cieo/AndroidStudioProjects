@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -70,6 +71,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
     void init() {
+        Typeface customFont = Typeface.createFromAsset(this.getAssets(),"Lato-Regular.ttf");
+        login_title.setTypeface(customFont);
         sharedPreferences = getSharedPreferences("currentUser", 0);
         editor = sharedPreferences.edit();
         loginDialog = new ProgressDialog(this);
