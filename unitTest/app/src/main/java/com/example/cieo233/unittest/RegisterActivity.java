@@ -1,6 +1,7 @@
 package com.example.cieo233.unittest;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -58,6 +59,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     void init() {
+        Typeface customFont = Typeface.createFromAsset(this.getAssets(),"Lato-Regular.ttf");
+        signup_title.setTypeface(customFont);
         registerHandler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
