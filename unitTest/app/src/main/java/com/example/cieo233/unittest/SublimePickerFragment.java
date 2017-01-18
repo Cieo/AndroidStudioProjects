@@ -1,19 +1,3 @@
-/*
- * Copyright 2015 Vikram Kakkar
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.cieo233.unittest;
 
 import android.app.FragmentManager;
@@ -36,14 +20,10 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class SublimePickerFragment extends DialogFragment {
-    // Date & Time formatter used for formatting
-    // text on the switcher button
     DateFormat mDateFormatter, mTimeFormatter;
 
-    // Picker
     SublimePicker mSublimePicker;
 
-    // Callback to activity
     Callback mCallback;
 
     SublimeListenerAdapter mListener = new SublimeListenerAdapter() {
@@ -52,8 +32,6 @@ public class SublimePickerFragment extends DialogFragment {
             if (mCallback != null) {
                 mCallback.onCancelled();
             }
-
-            // Should actually be called by activity inside `Callback.onCancelled()`
             dismiss();
         }
 
@@ -68,21 +46,18 @@ public class SublimePickerFragment extends DialogFragment {
                         hourOfDay, minute, recurrenceOption, recurrenceRule);
             }
 
-            // Should actually be called by activity inside `Callback.onCancelled()`
             dismiss();
         }
-// You can also override 'formatDate(Date)' & 'formatTime(Date)'
-        // to supply custom formatters.
     };
 
     public SublimePickerFragment() {
-        // Initialize formatters
+
         mDateFormatter = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault());
         mTimeFormatter = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
         mTimeFormatter.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
 
-    // Set activity callback
+
     public void setCallback(Callback callback) {
         mCallback = callback;
     }
@@ -93,12 +68,11 @@ public class SublimePickerFragment extends DialogFragment {
         mSublimePicker = (SublimePicker) getActivity()
                 .getLayoutInflater().inflate(R.layout.sublime_picker, container);
 
-        // Retrieve SublimeOptions
+
         Bundle arguments = getArguments();
         SublimeOptions options = null;
 
-        // Options can be null, in which case, default
-        // options are used.
+
         if (arguments != null) {
             options = arguments.getParcelable("SUBLIME_OPTIONS");
         }
@@ -108,8 +82,6 @@ public class SublimePickerFragment extends DialogFragment {
     }
 
 
-
-    // For communicating with the activity
     public interface Callback {
         void onCancelled();
 
