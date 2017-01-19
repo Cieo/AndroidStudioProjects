@@ -1,6 +1,7 @@
 package com.example.cieo233.notetest;
 
 import android.content.Context;
+import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -16,13 +19,15 @@ import java.util.List;
 
 public class DrawerRecyclerViewAdapter extends RecyclerView.Adapter {
 
-    private List<String> buttonTextList, badgeTextList;
     private Context context;
+    private HashMap<String, ImageFolder> imageFolders;
+    private List<String> keys;
+    private Interfaces.OnFolderClickedListener onFolderClickedListener;
 
-    public DrawerRecyclerViewAdapter(Context context, List<String> buttonTextList, List<String> badgeTextList) {
+    public DrawerRecyclerViewAdapter(Context context, HashMap<String, ImageFolder> imageFolders) {
         this.context = context;
-        this.buttonTextList = buttonTextList;
-        this.badgeTextList = badgeTextList;
+        this.imageFolders = imageFolders;
+        keys = new ArrayList<>(imageFolders.keySet());
     }
 
     @Override
@@ -31,15 +36,22 @@ public class DrawerRecyclerViewAdapter extends RecyclerView.Adapter {
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         MyViewHolder myViewHolder = (MyViewHolder) holder;
-        myViewHolder.setBadgeText(badgeTextList.get(position));
-        myViewHolder.setButtonText(buttonTextList.get(position));
+        myViewHolder.setBadgeText(String.valueOf(imageFolders.get(keys.get(position)).getFolderCount()));
+        myViewHolder.setButtonText(imageFolders.get(keys.get(position)).getFolderName());
+        myViewHolder.getButton().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onFolderClickedListener.onFolderClicked(imageFolders.get(keys.get(position)));
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
-        return buttonTextList.size();
+        return imageFolders.size();
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder{
@@ -59,5 +71,21 @@ public class DrawerRecyclerViewAdapter extends RecyclerView.Adapter {
         void setBadgeText(String content){
             badge.setText(content);
         }
+
+        public Button getButton() {
+            return button;
+        }
+
+        public TextView getBadge() {
+            return badge;
+        }
+    }
+
+    public void setImageFolders(HashMap<String, ImageFolder> imageFolders) {
+        this.imageFolders = imageFolders;
+    }
+
+    public void setOnFolderClickedListener(Interfaces.OnFolderClickedListener onFolderClickedListener) {
+        this.onFolderClickedListener = onFolderClickedListener;
     }
 }

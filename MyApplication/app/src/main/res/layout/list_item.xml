@@ -25,7 +25,7 @@
     <TextView
         android:gravity="center"
         android:id="@+id/badge"
-        android:layout_width="35dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/buttonMask"
         android:layout_alignBottom="@+id/buttonMask"

@@ -32,11 +32,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </android.support.v7.widget.Toolbar>
-            <TextView
+            <android.support.v7.widget.RecyclerView
+                android:padding="2dp"
+                android:id="@+id/contentRecyclerView"
                 android:layout_below="@id/toolbar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hello World!" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </android.support.v7.widget.RecyclerView>
         </RelativeLayout>
 
         <!--sideDrawer-->
@@ -137,7 +140,7 @@
 
                 <TextView
                     android:id="@+id/badge"
-                    android:layout_width="35dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignEnd="@+id/buttonMask"
                     android:layout_alignBottom="@+id/buttonMask"
