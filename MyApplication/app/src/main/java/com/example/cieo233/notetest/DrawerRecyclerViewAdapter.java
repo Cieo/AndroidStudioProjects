@@ -24,11 +24,17 @@ public class DrawerRecyclerViewAdapter extends RecyclerView.Adapter {
     private List<String> keys;
     private Interfaces.OnFolderClickedListener onFolderClickedListener;
 
-    public DrawerRecyclerViewAdapter(Context context, HashMap<String, ImageFolder> imageFolders) {
+    public DrawerRecyclerViewAdapter(Context context) {
         this.context = context;
-        this.imageFolders = imageFolders;
+        this.imageFolders = GlobalStorage.getInstance().getImageFolders();
         keys = new ArrayList<>(imageFolders.keySet());
     }
+
+    public void updateDateset(){
+        this.imageFolders = GlobalStorage.getInstance().getImageFolders();
+        notifyDataSetChanged();
+    }
+
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

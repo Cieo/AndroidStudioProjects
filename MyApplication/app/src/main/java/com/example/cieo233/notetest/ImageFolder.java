@@ -8,24 +8,24 @@ import java.util.List;
  */
 
 public class ImageFolder {
-    private List<String> urlList;
+    private List<ImageInfo> imageInfoList;
     private String folderName;
 
     public ImageFolder() {
-        urlList = new ArrayList<>();
+        imageInfoList = new ArrayList<>();
     }
 
     public ImageFolder(String folderName) {
         this.folderName = folderName;
-        urlList = new ArrayList<>();
+        imageInfoList = new ArrayList<>();
     }
 
-    public List<String> getUrlList() {
-        return urlList;
+    public List<ImageInfo> getImageInfoList() {
+        return imageInfoList;
     }
 
-    public void setUrlList(List<String> urlList) {
-        this.urlList = urlList;
+    public void setImageInfoList(List<ImageInfo> imageInfoList) {
+        this.imageInfoList = imageInfoList;
     }
 
     public String getFolderName() {
@@ -37,7 +37,7 @@ public class ImageFolder {
     }
 
     public int getFolderCount() {
-        return urlList.size();
+        return imageInfoList.size();
     }
 
 }

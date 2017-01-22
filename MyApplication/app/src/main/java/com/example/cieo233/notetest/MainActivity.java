@@ -1,15 +1,14 @@
 package com.example.cieo233.notetest;
 
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.database.Cursor;
-import android.media.audiofx.LoudnessEnhancer;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,64 +18,94 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
-    private Toolbar toolbar;
-    private DrawerLayout drawerLayout;
-    private RecyclerView recyclerView, contentRecyclerView;
-    private HashMap<String, ImageFolder> imageFolders;
-    private ImageFolder allImage;
-    private Button button;
-    private TextView badge;
-    private Interfaces.OnFolderClickedListener onFolderClickedListener;
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
+public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener, Interfaces.OnFolderClickedListener, Interfaces.OnImageClickedListener {
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.drawerLayout)
+    DrawerLayout drawerLayout;
+    @BindView(R.id.drawerLayoutContentRecyclerView)
+    RecyclerView drawerLayoutContentRecyclerView;
+    @BindView(R.id.drawerLayoutDrawerRecyclerView)
+    RecyclerView drawerLayoutDrawerRecyclerView;
+    @BindView(R.id.allImageButton)
+    Button allImageButton;
+    @BindView(R.id.allImageBadge)
+    TextView allImageBadge;
+    @BindView(R.id.popUpMenu)
+    RelativeLayout popUpMenu;
+    @BindView(R.id.popUpMenuShare)
+    ImageView popUpMenuShare;
+    @BindView(R.id.popUpMenuDelete)
+    ImageView popUpMenuDelete;
+    @BindView(R.id.popUpMenuMoveTo)
+    TextView popUpMenuMoveTo;
+
+    private boolean selectMode;
+    private Menu toolbarMenu;
+    String currentFolder;
+
     private ImageRecyclerViewAdapter imageRecyclerViewAdapter;
     private DrawerRecyclerViewAdapter drawerRecyclerViewAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         init();
-        getImage();
+        getImageFromContentProvider();
         setToolbar();
         setRecyclerView();
     }
 
-    void init(){
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
-        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        contentRecyclerView = (RecyclerView) findViewById(R.id.contentRecyclerView);
-        button = (Button) findViewById(R.id.button);
-        badge = (TextView) findViewById(R.id.badge);
-        imageFolders = new HashMap<>();
-        allImage = new ImageFolder("所有幻灯片");
-        onFolderClickedListener = new Interfaces.OnFolderClickedListener() {
-            @Override
-            public void onFolderClicked(ImageFolder clickedFolder) {
-                imageRecyclerViewAdapter.setImageFolder(clickedFolder);
-                imageRecyclerViewAdapter.notifyDataSetChanged();
-                Log.e("TestOnclick",clickedFolder.getFolderName()+"Clicked");
-                drawerLayout.closeDrawer(GravityCompat.START);
-            }
-        };
-        button.setOnClickListener(new View.OnClickListener() {
+
+    void notifyDatasetChange(){
+        drawerRecyclerViewAdapter.updateDateset();
+        imageRecyclerViewAdapter.updateDateset(currentFolder);
+        allImageBadge.setText(GlobalStorage.getInstance().getFolderCount("allImage"));
+    }
+
+    void init() {
+        currentFolder = "allImage";
+        selectMode = false;
+        allImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                imageRecyclerViewAdapter.setImageFolder(allImage);
+                currentFolder = "allImage";
+                imageRecyclerViewAdapter.setImageFolder(currentFolder);
                 imageRecyclerViewAdapter.notifyDataSetChanged();
-                Log.e("TestOnclick","AllImageClicked");
                 drawerLayout.closeDrawer(GravityCompat.START);
+            }
+        });
+
+        popUpMenuDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                GlobalStorage.getInstance().deleteSelected(getApplicationContext());
+                selectMode = !selectMode;
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE));
+                popUpMenu.setVisibility(View.GONE);
+                toolbarMenu.findItem(R.id.toolbarSelect).setTitle("选择");
+                notifyDatasetChange();
             }
         });
     }
 
-    void setToolbar(){
+    void setToolbar() {
         setSupportActionBar(toolbar);
         toolbar.setOnMenuItemClickListener(this);
         toolbar.setNavigationIcon(R.mipmap.ic_menu_black_24dp);
@@ -89,55 +118,88 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    void setRecyclerView(){
-        imageRecyclerViewAdapter = new ImageRecyclerViewAdapter(this,allImage);
-        drawerRecyclerViewAdapter = new DrawerRecyclerViewAdapter(this, imageFolders);
-        drawerRecyclerViewAdapter.setOnFolderClickedListener(onFolderClickedListener);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(drawerRecyclerViewAdapter);
-        contentRecyclerView.setLayoutManager(new GridLayoutManager(this,3));
-        contentRecyclerView.setAdapter(imageRecyclerViewAdapter);
-        button.setText(allImage.getFolderName());
-        badge.setText(String.valueOf(allImage.getFolderCount()));
+    void setRecyclerView() {
+        imageRecyclerViewAdapter = new ImageRecyclerViewAdapter(this);
+        imageRecyclerViewAdapter.setOnImageClickedListener(this);
+        imageRecyclerViewAdapter.setImageFolder("allImage");
+        drawerRecyclerViewAdapter = new DrawerRecyclerViewAdapter(this);
+        drawerRecyclerViewAdapter.setOnFolderClickedListener(this);
+        drawerLayoutDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        drawerLayoutDrawerRecyclerView.setAdapter(drawerRecyclerViewAdapter);
+        drawerLayoutContentRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        drawerLayoutContentRecyclerView.setAdapter(imageRecyclerViewAdapter);
+        allImageBadge.setText(GlobalStorage.getInstance().getFolderCount("allImage"));
     }
 
-    void getImage(){
+    void getImageFromContentProvider() {
+        GlobalStorage.getInstance().getImageFolders().clear();
 
         ContentResolver contentResolver = getContentResolver();
-        Uri targetUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
         String path = "/storage/emulated/0/";
-        Cursor cursor = contentResolver.query(targetUri, null, MediaStore.Images.Media.DATA + " like ?", new String[]{"%"+path+"%"}, null);
-        if (cursor!= null){
-            while (cursor.moveToNext()){
-                String url = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-                String folder = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
-                Log.e("TestContent", url);
-                Log.e("TestContent", folder);
-                allImage.getUrlList().add(url);
-                if (imageFolders.containsKey(folder)){
-                    imageFolders.get(folder).getUrlList().add(url);
+        Cursor cursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media.DATA + " like ?", new String[]{"%" + path + "%"}, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String imageURL = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+                String folderImageIn = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
+                if (GlobalStorage.getInstance().getImageFolders().containsKey(folderImageIn)) {
+                    GlobalStorage.getInstance().getImageFolders().get(folderImageIn).getImageInfoList().add(new ImageInfo(imageURL, folderImageIn));
                 } else {
-                    imageFolders.put(folder,new ImageFolder(folder));
-                    imageFolders.get(folder).getUrlList().add(url);
+                    GlobalStorage.getInstance().getImageFolders().put(folderImageIn, new ImageFolder(folderImageIn));
+                    GlobalStorage.getInstance().getImageFolders().get(folderImageIn).getImageInfoList().add(new ImageInfo(imageURL, folderImageIn));
                 }
             }
         }
-        Log.e("TestContent", String.valueOf(imageFolders.size()));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main,menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        this.toolbarMenu = menu;
         return true;
     }
 
     @Override
     public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.share:
-                Toast.makeText(this,"Share is clicked", Toast.LENGTH_SHORT).show();
+        switch (item.getItemId()) {
+            case R.id.toolbarSelect:
+                Toast.makeText(this, "Share is clicked", Toast.LENGTH_SHORT).show();
+                selectMode = !selectMode;
+                if (selectMode) {
+                    item.setTitle("取消");
+                    popUpMenu.setVisibility(View.VISIBLE);
+                } else {
+                    item.setTitle("选择");
+                    for (View checkBox : GlobalStorage.getInstance().getSelectedImageViewCheckBox()) {
+                        checkBox.setVisibility(View.GONE);
+                    }
+                    popUpMenu.setVisibility(View.GONE);
+                    GlobalStorage.getInstance().clearSeletecd();
+                }
                 break;
         }
         return true;
+    }
+
+    @Override
+    public void onFolderClicked(ImageFolder clickedFolder) {
+        currentFolder = clickedFolder.getFolderName();
+        imageRecyclerViewAdapter.setImageFolder(clickedFolder.getFolderName());
+        imageRecyclerViewAdapter.notifyDataSetChanged();
+        drawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    @Override
+    public void onImageClicked(ImageInfo clickedImageInfo, View checkBox) {
+        if (!selectMode) {
+            return;
+        }
+        GlobalStorage.getInstance().getSelectedImageInfo().add(clickedImageInfo);
+        if (checkBox.getVisibility() == View.VISIBLE) {
+            checkBox.setVisibility(View.GONE);
+            GlobalStorage.getInstance().getSelectedImageViewCheckBox().remove(checkBox);
+        } else {
+            checkBox.setVisibility(View.VISIBLE);
+            GlobalStorage.getInstance().getSelectedImageViewCheckBox().add(checkBox);
+        }
     }
 }
