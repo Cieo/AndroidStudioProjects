@@ -85,8 +85,4 @@ public class ImageRecyclerViewAdapter extends RecyclerView.Adapter{
         }
     }
 
-    public void setImageFolder(ImageFolder imageFolder) {
-        this.imageFolder = imageFolder;
-    }
-
 }

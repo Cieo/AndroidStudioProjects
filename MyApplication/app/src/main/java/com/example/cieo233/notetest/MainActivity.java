@@ -1,12 +1,9 @@
 package com.example.cieo233.notetest;
 
-import android.content.ContentResolver;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -14,25 +11,25 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import com.transitionseverywhere.AutoTransition;
+import com.transitionseverywhere.Slide;
+import com.transitionseverywhere.Transition;
+import com.transitionseverywhere.TransitionManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener, Interfaces.OnFolderClickedListener, Interfaces.OnImageClickedListener {
+public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener, Interfaces.OnFolderClickedListener, Interfaces.OnImageClickedListener, View.OnClickListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.drawerLayout)
@@ -53,6 +50,9 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     ImageView popUpMenuDelete;
     @BindView(R.id.popUpMenuMoveTo)
     TextView popUpMenuMoveTo;
+    @BindView(R.id.drawerLayoutContent)
+    RelativeLayout drawerLayoutContent;
+
 
     private boolean selectMode;
     private Menu toolbarMenu;
@@ -67,13 +67,13 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         init();
-        getImageFromContentProvider();
+        GlobalStorage.getInstance().getImageFromContentProvider(this);
         setToolbar();
         setRecyclerView();
     }
 
 
-    void notifyDatasetChange(){
+    void notifyDatasetChange() {
         drawerRecyclerViewAdapter.updateDateset();
         imageRecyclerViewAdapter.updateDateset(currentFolder);
         allImageBadge.setText(GlobalStorage.getInstance().getFolderCount("allImage"));
@@ -82,27 +82,8 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     void init() {
         currentFolder = "allImage";
         selectMode = false;
-        allImageButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentFolder = "allImage";
-                imageRecyclerViewAdapter.setImageFolder(currentFolder);
-                imageRecyclerViewAdapter.notifyDataSetChanged();
-                drawerLayout.closeDrawer(GravityCompat.START);
-            }
-        });
-
-        popUpMenuDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                GlobalStorage.getInstance().deleteSelected(getApplicationContext());
-                selectMode = !selectMode;
-                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE));
-                popUpMenu.setVisibility(View.GONE);
-                toolbarMenu.findItem(R.id.toolbarSelect).setTitle("选择");
-                notifyDatasetChange();
-            }
-        });
+        allImageButton.setOnClickListener(this);
+        popUpMenuDelete.setOnClickListener(this);
     }
 
     void setToolbar() {
@@ -131,25 +112,6 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         allImageBadge.setText(GlobalStorage.getInstance().getFolderCount("allImage"));
     }
 
-    void getImageFromContentProvider() {
-        GlobalStorage.getInstance().getImageFolders().clear();
-
-        ContentResolver contentResolver = getContentResolver();
-        String path = "/storage/emulated/0/";
-        Cursor cursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media.DATA + " like ?", new String[]{"%" + path + "%"}, null);
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                String imageURL = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
-                String folderImageIn = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
-                if (GlobalStorage.getInstance().getImageFolders().containsKey(folderImageIn)) {
-                    GlobalStorage.getInstance().getImageFolders().get(folderImageIn).getImageInfoList().add(new ImageInfo(imageURL, folderImageIn));
-                } else {
-                    GlobalStorage.getInstance().getImageFolders().put(folderImageIn, new ImageFolder(folderImageIn));
-                    GlobalStorage.getInstance().getImageFolders().get(folderImageIn).getImageInfoList().add(new ImageInfo(imageURL, folderImageIn));
-                }
-            }
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -162,16 +124,19 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     public boolean onMenuItemClick(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.toolbarSelect:
-                Toast.makeText(this, "Share is clicked", Toast.LENGTH_SHORT).show();
                 selectMode = !selectMode;
+                AutoTransition autoTransition = new AutoTransition();
+                autoTransition.setDuration(100);
                 if (selectMode) {
                     item.setTitle("取消");
+                    TransitionManager.beginDelayedTransition(drawerLayoutContent, autoTransition);
                     popUpMenu.setVisibility(View.VISIBLE);
                 } else {
                     item.setTitle("选择");
                     for (View checkBox : GlobalStorage.getInstance().getSelectedImageViewCheckBox()) {
                         checkBox.setVisibility(View.GONE);
                     }
+                    TransitionManager.beginDelayedTransition(drawerLayoutContent, autoTransition);
                     popUpMenu.setVisibility(View.GONE);
                     GlobalStorage.getInstance().clearSeletecd();
                 }
@@ -191,15 +156,45 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     @Override
     public void onImageClicked(ImageInfo clickedImageInfo, View checkBox) {
         if (!selectMode) {
-            return;
-        }
-        GlobalStorage.getInstance().getSelectedImageInfo().add(clickedImageInfo);
-        if (checkBox.getVisibility() == View.VISIBLE) {
-            checkBox.setVisibility(View.GONE);
-            GlobalStorage.getInstance().getSelectedImageViewCheckBox().remove(checkBox);
+            Intent intent = new Intent(this,PhotoDetailActivity.class);
+            intent.putExtra("imageURL",clickedImageInfo.getImageURL());
+            intent.putExtra("currentFolder",currentFolder);
+            intent.putExtra("currentPosition",GlobalStorage.getInstance().getImageFolder(currentFolder).getImageInfoList().indexOf(clickedImageInfo));
+            Log.e("index", String.valueOf(GlobalStorage.getInstance().getImageFolder(currentFolder).getImageInfoList().indexOf(clickedImageInfo)));
+            startActivity(intent);
+
         } else {
-            checkBox.setVisibility(View.VISIBLE);
-            GlobalStorage.getInstance().getSelectedImageViewCheckBox().add(checkBox);
+
+            GlobalStorage.getInstance().getSelectedImageInfo().add(clickedImageInfo);
+            if (checkBox.getVisibility() == View.VISIBLE) {
+                checkBox.setVisibility(View.GONE);
+                GlobalStorage.getInstance().getSelectedImageViewCheckBox().remove(checkBox);
+            } else {
+                checkBox.setVisibility(View.VISIBLE);
+                GlobalStorage.getInstance().getSelectedImageViewCheckBox().add(checkBox);
+            }
+        }
+
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.allImageButton:
+                currentFolder = "allImage";
+                imageRecyclerViewAdapter.setImageFolder(currentFolder);
+                imageRecyclerViewAdapter.notifyDataSetChanged();
+                drawerLayout.closeDrawer(GravityCompat.START);
+                break;
+            case R.id.popUpMenuDelete:
+                GlobalStorage.getInstance().deleteSelected(getApplicationContext());
+                selectMode = !selectMode;
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE));
+                popUpMenu.setVisibility(View.GONE);
+                toolbarMenu.findItem(R.id.toolbarSelect).setTitle("选择");
+                notifyDatasetChange();
+                break;
         }
     }
+
 }

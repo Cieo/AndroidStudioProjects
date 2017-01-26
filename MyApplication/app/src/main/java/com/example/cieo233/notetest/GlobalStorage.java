@@ -3,14 +3,17 @@ package com.example.cieo233.notetest;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Cieo233 on 1/22/2017.
@@ -40,6 +43,18 @@ public class GlobalStorage {
 
     public HashMap<String, ImageFolder> getImageFolders() {
         return imageFolders;
+    }
+
+    public ImageFolder getImageFolder(String folderName){
+        if (Objects.equals(folderName, "allImage")){
+            ImageFolder allImageFolder = new ImageFolder("allImage");
+            for (ImageFolder item : GlobalStorage.getInstance().getImageFolders().values()){
+                allImageFolder.getImageInfoList().addAll(item.getImageInfoList());
+            }
+            return allImageFolder;
+        } else {
+            return imageFolders.get(folderName);
+        }
     }
 
     public void setImageFolders(HashMap<String, ImageFolder> imageFolders) {
@@ -84,7 +99,7 @@ public class GlobalStorage {
     }
 
     public String getFolderCount(String folderName){
-        if (folderName == "allImage"){
+        if (Objects.equals(folderName, "allImage")){
             ImageFolder allImageFolder = new ImageFolder("allImage");
             for (ImageFolder item : GlobalStorage.getInstance().getImageFolders().values()){
                 allImageFolder.getImageInfoList().addAll(item.getImageInfoList());
@@ -92,6 +107,27 @@ public class GlobalStorage {
             return String.valueOf(allImageFolder.getFolderCount());
         }else {
             return String.valueOf(imageFolders.get(folderName).getFolderCount());
+        }
+    }
+
+
+    public void getImageFromContentProvider(Context context) {
+        imageFolders.clear();
+
+        ContentResolver contentResolver = context.getContentResolver();
+        String path = "/storage/emulated/0/";
+        Cursor cursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media.DATA + " like ?", new String[]{"%" + path + "%"}, null);
+        if (cursor != null) {
+            while (cursor.moveToNext()) {
+                String imageURL = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
+                String folderImageIn = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
+                if (imageFolders.containsKey(folderImageIn)) {
+                    imageFolders.get(folderImageIn).getImageInfoList().add(new ImageInfo(imageURL, folderImageIn));
+                } else {
+                    GlobalStorage.getInstance().getImageFolders().put(folderImageIn, new ImageFolder(folderImageIn));
+                    GlobalStorage.getInstance().getImageFolders().get(folderImageIn).getImageInfoList().add(new ImageInfo(imageURL, folderImageIn));
+                }
+            }
         }
     }
 
