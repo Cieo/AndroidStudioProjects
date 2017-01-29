@@ -3,7 +3,6 @@ package com.example.cieo233.notetest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
@@ -11,20 +10,18 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.transitionseverywhere.AutoTransition;
-import com.transitionseverywhere.Slide;
-import com.transitionseverywhere.Transition;
 import com.transitionseverywhere.TransitionManager;
+
+import java.util.Collections;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -110,6 +107,18 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         drawerLayoutContentRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         drawerLayoutContentRecyclerView.setAdapter(imageRecyclerViewAdapter);
         allImageBadge.setText(GlobalStorage.getInstance().getFolderCount("allImage"));
+        DragItemTouchHelper dragItemTouchHelper = new DragItemTouchHelper(new DragItemTouchHelperCallback(new DragItemTouchHelperCallback.OnItemTouchCallbackListener() {
+            @Override
+            public boolean onMove(int srcPosition, int targetPosition) {
+                if (GlobalStorage.getInstance().getImageFolder(currentFolder).getImageInfoList() != null){
+                    Collections.swap(GlobalStorage.getInstance().getImageFolder(currentFolder).getImageInfoList(),srcPosition,targetPosition);
+                    imageRecyclerViewAdapter.notifyItemMoved(srcPosition,targetPosition);
+                    return true;
+                }
+                return false;
+            }
+        }));
+        dragItemTouchHelper.attachToRecyclerView(drawerLayoutContentRecyclerView);
     }
 
 
