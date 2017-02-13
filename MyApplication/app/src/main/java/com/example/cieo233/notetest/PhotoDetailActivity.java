@@ -7,8 +7,10 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.DragEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -22,21 +24,27 @@ import butterknife.ButterKnife;
  * Created by Cieo233 on 1/24/2017.
  */
 
-public class PhotoDetailActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener {
+public class PhotoDetailActivity extends AppCompatActivity implements View.OnClickListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.photoViewPager)
     ViewPager photoViewPager;
     @BindView(R.id.bottomMenu)
     RelativeLayout bottomMenu;
-    @BindView(R.id.bottomMenuShare)
-    ImageView bottomMenuShare;
+    @BindView(R.id.toolbarBack)
+    ImageView toolbarBack;
+    @BindView(R.id.toolbarShare)
+    ImageView toolbarShare;
+    @BindView(R.id.bottomMenuOCR)
+    ImageView bottomMenuOCR;
+    @BindView(R.id.bottomMenuCreateNote)
+    ImageView bottomMenuCreateNote;
+    @BindView(R.id.bottomMenuEdit)
+    ImageView bottomMenuEdit;
     @BindView(R.id.bottomMenuDelete)
     ImageView bottomMenuDelete;
-    @BindView(R.id.bottomMenuMoveTo)
-    ImageView bottomMenuMoveTo;
 
-    private Menu toolbarMenu;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,29 +63,27 @@ public class PhotoDetailActivity extends AppCompatActivity implements Toolbar.On
 
     void setToolbar() {
         setSupportActionBar(toolbar);
-        toolbar.setOnMenuItemClickListener(this);
-        toolbar.setNavigationIcon(R.mipmap.ic_arrow_back_black_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
+        toolbarBack.setOnClickListener(this);
+        toolbarShare.setOnClickListener(this);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_photo_detail, menu);
-        this.toolbarMenu = menu;
-        return true;
-    }
 
     @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()){
-
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.toolbarBack:
+                break;
+            case R.id.toolbarShare:
+                break;
+            case R.id.bottomMenuOCR:
+                break;
+            case R.id.bottomMenuCreateNote:
+                break;
+            case R.id.bottomMenuEdit:
+                break;
+            case R.id.bottomMenuDelete:
+                break;
         }
-        return true;
     }
 }

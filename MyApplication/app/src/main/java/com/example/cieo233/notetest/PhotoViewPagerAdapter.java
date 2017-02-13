@@ -36,6 +36,8 @@ public class PhotoViewPagerAdapter extends PagerAdapter{
         return view;
     }
 
+
+
     @Override
     public int getCount() {
         return imageFolder.getFolderCount();
@@ -51,4 +53,6 @@ public class PhotoViewPagerAdapter extends PagerAdapter{
         View view = (View) object;
         container.removeView(view);
     }
+
+
 }

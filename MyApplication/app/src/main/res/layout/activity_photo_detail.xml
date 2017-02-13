@@ -1,20 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_height="match_parent">
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        app:contentInsetStart="0dp"
+        android:layout_height="33.75dp"
         android:background="#fee244">
-        <TextView
-            android:id="@+id/toolbarTitle"
-            android:layout_gravity="center"
-            android:textColor="#000"
-            android:text="NoteTest"
-            android:textSize="24sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <RelativeLayout
+            android:paddingBottom="5.625dp"
+            android:paddingTop="5.625dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <ImageView
+                android:layout_marginStart="11.25dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:src="@mipmap/btn_back_n"
+                android:id="@+id/toolbarBack"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_centerInParent="true"
+                android:id="@+id/toolbarTitle"
+                android:textColor="#030303"
+                android:text="照片详情"
+                android:textSize="16sp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+            <ImageView
+                android:layout_marginEnd="11.25dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/btn_share_n"
+                android:id="@+id/toolbarShare"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </RelativeLayout>
+
     </android.support.v7.widget.Toolbar>
     <android.support.v4.view.ViewPager
         android:layout_below="@id/toolbar"
@@ -23,33 +48,44 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
     <RelativeLayout
-        android:background="#fee244"
+        android:background="@color/mainColor1"
         android:id="@+id/bottomMenu"
         android:layout_alignParentBottom="true"
-        android:padding="12dp"
+        android:paddingTop="10dp"
+        android:gravity="center_vertical"
+        android:paddingBottom="10dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="54dp">
 
         <ImageView
+            android:layout_marginStart="39.375dp"
             android:layout_alignParentStart="true"
-            android:id="@+id/bottomMenuShare"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_title_black_24dp" />
+            android:id="@+id/bottomMenuOCR"
+            android:layout_width="31.5dp"
+            android:layout_height="31.5dp"
+            android:src="@mipmap/btn_ocr_n" />
         <ImageView
-            android:textColor="#000"
-            android:textSize="18sp"
-            android:src="@mipmap/ic_edit_black_24dp"
-            android:layout_centerInParent="true"
-            android:id="@+id/bottomMenuMoveTo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_marginStart="51.75dp"
+            android:layout_toEndOf="@id/bottomMenuOCR"
+            android:src="@mipmap/btn_keyboard_n"
+            android:id="@+id/bottomMenuCreateNote"
+            android:layout_width="31.5dp"
+            android:layout_height="31.5dp"/>
 
         <ImageView
-            android:layout_alignParentEnd="true"
+            android:layout_marginStart="51.75dp"
+            android:layout_toEndOf="@id/bottomMenuCreateNote"
+            android:id="@+id/bottomMenuEdit"
+            android:layout_width="31.5dp"
+            android:layout_height="31.5dp"
+            android:src="@mipmap/btn_handwriting_n" />
+
+        <ImageView
+            android:layout_marginStart="51.75dp"
+            android:layout_toEndOf="@id/bottomMenuEdit"
             android:id="@+id/bottomMenuDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/ic_delete_black_24dp" />
+            android:layout_width="31.5dp"
+            android:layout_height="31.5dp"
+            android:src="@mipmap/btn_delete_n" />
     </RelativeLayout>
 </RelativeLayout>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_margin="11.25dp"
+    android:background="@color/mainColor3"
+    android:id="@+id/noteThumbnail"
+    android:layout_width="146.25dp"
+    android:layout_height="180dp">
+    <ImageView
+        android:src="@mipmap/ic_add_box_white_48dp"
+        android:id="@+id/noteThumbnailAddOne"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

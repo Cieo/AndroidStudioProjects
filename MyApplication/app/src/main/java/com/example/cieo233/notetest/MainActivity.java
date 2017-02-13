@@ -1,7 +1,9 @@
 package com.example.cieo233.notetest;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.graphics.ColorUtils;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -12,9 +14,11 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -26,7 +30,7 @@ import java.util.Collections;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuItemClickListener, Interfaces.OnFolderClickedListener, Interfaces.OnImageClickedListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements Interfaces.OnFolderClickedListener, Interfaces.OnImageClickedListener, View.OnClickListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.drawerLayout)
@@ -49,10 +53,18 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     TextView popUpMenuMoveTo;
     @BindView(R.id.drawerLayoutContent)
     RelativeLayout drawerLayoutContent;
+    @BindView(R.id.toolbarSelect)
+    TextView toolbarSelect;
+    @BindView(R.id.toolbarMenu)
+    ImageView toolbarMenu;
+    @BindView(R.id.jumpToNote)
+    LinearLayout jumpToNote;
+
+
+    private int choosed,srcPosition, upX, upY, lastX, lastY;
 
 
     private boolean selectMode;
-    private Menu toolbarMenu;
     String currentFolder;
 
     private ImageRecyclerViewAdapter imageRecyclerViewAdapter;
@@ -77,23 +89,20 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
     }
 
     void init() {
+        srcPosition = -1;
+        choosed = -1;
         currentFolder = "allImage";
         selectMode = false;
         allImageButton.setOnClickListener(this);
         popUpMenuDelete.setOnClickListener(this);
+        jumpToNote.setOnClickListener(this);
     }
 
     void setToolbar() {
         setSupportActionBar(toolbar);
-        toolbar.setOnMenuItemClickListener(this);
-        toolbar.setNavigationIcon(R.mipmap.ic_menu_black_24dp);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                drawerLayout.openDrawer(GravityCompat.START);
-            }
-        });
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        toolbarMenu.setOnClickListener(this);
+        toolbarSelect.setOnClickListener(this);
     }
 
     void setRecyclerView() {
@@ -108,51 +117,50 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         drawerLayoutContentRecyclerView.setAdapter(imageRecyclerViewAdapter);
         allImageBadge.setText(GlobalStorage.getInstance().getFolderCount("allImage"));
         DragItemTouchHelper dragItemTouchHelper = new DragItemTouchHelper(new DragItemTouchHelperCallback(new DragItemTouchHelperCallback.OnItemTouchCallbackListener() {
+
             @Override
-            public boolean onMove(int srcPosition, int targetPosition) {
-                if (GlobalStorage.getInstance().getImageFolder(currentFolder).getImageInfoList() != null){
-                    Collections.swap(GlobalStorage.getInstance().getImageFolder(currentFolder).getImageInfoList(),srcPosition,targetPosition);
-                    imageRecyclerViewAdapter.notifyItemMoved(srcPosition,targetPosition);
-                    return true;
+            public void chooseDropTarget(RecyclerView.ViewHolder selected, RecyclerView.ViewHolder winner) {
+                srcPosition = selected.getAdapterPosition();
+                if (winner == null){
+                    if (drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed) != null){
+                        ImageRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed);
+                        myViewHolder.getImageItem().setBackgroundColor(Color.parseColor("#ffffff"));
+                        choosed = -1;
+                    }
+                } else {
+                    if (choosed != winner.getAdapterPosition()){
+                        ImageRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed);
+                        if (myViewHolder != null){
+                            myViewHolder.getImageItem().setBackgroundColor(Color.parseColor("#ffffff"));
+                        }
+                        choosed = winner.getAdapterPosition();
+                        myViewHolder = (ImageRecyclerViewAdapter.MyViewHolder) winner;
+                        myViewHolder.getImageItem().setBackgroundColor(Color.parseColor("#66ccff"));
+                    }
+
                 }
-                return false;
             }
+
+            @Override
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                if (actionState == 0){
+                    if (choosed != -1){
+                        ImageRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed);
+                        myViewHolder.getImageItem().setBackgroundColor(Color.parseColor("#ffffff"));
+                        ImageRecyclerViewAdapter.MyViewHolder srcViewHolder = (ImageRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(srcPosition);
+                        srcViewHolder.getImageItem().setVisibility(View.GONE);
+                        imageRecyclerViewAdapter.remove(srcPosition);
+                        srcPosition = -1;
+                        choosed = -1;
+                    }
+                }
+            }
+
+
         }));
         dragItemTouchHelper.attachToRecyclerView(drawerLayoutContentRecyclerView);
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        this.toolbarMenu = menu;
-        return true;
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.toolbarSelect:
-                selectMode = !selectMode;
-                AutoTransition autoTransition = new AutoTransition();
-                autoTransition.setDuration(100);
-                if (selectMode) {
-                    item.setTitle("取消");
-                    TransitionManager.beginDelayedTransition(drawerLayoutContent, autoTransition);
-                    popUpMenu.setVisibility(View.VISIBLE);
-                } else {
-                    item.setTitle("选择");
-                    for (View checkBox : GlobalStorage.getInstance().getSelectedImageViewCheckBox()) {
-                        checkBox.setVisibility(View.GONE);
-                    }
-                    TransitionManager.beginDelayedTransition(drawerLayoutContent, autoTransition);
-                    popUpMenu.setVisibility(View.GONE);
-                    GlobalStorage.getInstance().clearSeletecd();
-                }
-                break;
-        }
-        return true;
-    }
 
     @Override
     public void onFolderClicked(ImageFolder clickedFolder) {
@@ -173,13 +181,13 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             startActivity(intent);
 
         } else {
-
-            GlobalStorage.getInstance().getSelectedImageInfo().add(clickedImageInfo);
             if (checkBox.getVisibility() == View.VISIBLE) {
                 checkBox.setVisibility(View.GONE);
+                GlobalStorage.getInstance().getSelectedImageInfo().remove(clickedImageInfo);
                 GlobalStorage.getInstance().getSelectedImageViewCheckBox().remove(checkBox);
             } else {
                 checkBox.setVisibility(View.VISIBLE);
+                GlobalStorage.getInstance().getSelectedImageInfo().add(clickedImageInfo);
                 GlobalStorage.getInstance().getSelectedImageViewCheckBox().add(checkBox);
             }
         }
@@ -198,11 +206,36 @@ public class MainActivity extends AppCompatActivity implements Toolbar.OnMenuIte
             case R.id.popUpMenuDelete:
                 GlobalStorage.getInstance().deleteSelected(getApplicationContext());
                 selectMode = !selectMode;
-                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE));
                 popUpMenu.setVisibility(View.GONE);
-                toolbarMenu.findItem(R.id.toolbarSelect).setTitle("选择");
+                toolbarSelect.setText("选择");
                 notifyDatasetChange();
                 break;
+            case R.id.toolbarSelect:
+                selectMode = !selectMode;
+                AutoTransition autoTransition = new AutoTransition();
+                autoTransition.setDuration(100);
+                if (selectMode) {
+                    toolbarSelect.setText("取消");
+                    TransitionManager.beginDelayedTransition(drawerLayoutContent, autoTransition);
+                    popUpMenu.setVisibility(View.VISIBLE);
+                } else {
+                    toolbarSelect.setText("选择");
+                    for (View checkBox : GlobalStorage.getInstance().getSelectedImageViewCheckBox()) {
+                        checkBox.setVisibility(View.GONE);
+                    }
+                    TransitionManager.beginDelayedTransition(drawerLayoutContent, autoTransition);
+                    popUpMenu.setVisibility(View.GONE);
+                    GlobalStorage.getInstance().clearSeletecd();
+                }
+                break;
+            case R.id.toolbarMenu:
+                drawerLayout.openDrawer(GravityCompat.START);
+                break;
+            case R.id.jumpToNote:
+                Intent intent = new Intent(this,NoteListActivity.class);
+                startActivity(intent);
+                break;
+
         }
     }
 

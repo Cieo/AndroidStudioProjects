@@ -3,6 +3,9 @@ package com.example.cieo233.notetest;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
+
+import java.util.List;
 
 /**
  * Created by Cieo233 on 1/28/2017.
@@ -10,6 +13,8 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 
 public class DragItemTouchHelperCallback extends ItemTouchHelper.Callback {
     private OnItemTouchCallbackListener onItemTouchCallbackListener;
+
+
 
     public DragItemTouchHelperCallback(OnItemTouchCallbackListener onItemTouchCallbackListener) {
         this.onItemTouchCallbackListener = onItemTouchCallbackListener;
@@ -30,8 +35,28 @@ public class DragItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-        return onItemTouchCallbackListener != null && onItemTouchCallbackListener.onMove(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+        return false;
     }
+
+    @Override
+    public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+        super.onSelectedChanged(viewHolder, actionState);
+        if (onItemTouchCallbackListener != null){
+            onItemTouchCallbackListener.onSelectedChanged(viewHolder, actionState);
+        }
+        Log.e("TestOnSelectedChanged", String.valueOf(actionState));
+    }
+
+    @Override
+    public RecyclerView.ViewHolder chooseDropTarget(RecyclerView.ViewHolder selected, List<RecyclerView.ViewHolder> dropTargets, int curX, int curY) {
+
+        RecyclerView.ViewHolder winner = super.chooseDropTarget(selected, dropTargets, curX, curY);
+        if (onItemTouchCallbackListener != null){
+            onItemTouchCallbackListener.chooseDropTarget(selected,winner);
+        }
+        return winner;
+    }
+
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
@@ -41,7 +66,8 @@ public class DragItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
 
     public interface OnItemTouchCallbackListener {
-        boolean onMove(int srcPosition, int targetPosition);
+        void chooseDropTarget(RecyclerView.ViewHolder selected,RecyclerView.ViewHolder winner);
+        void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState);
     }
 
 

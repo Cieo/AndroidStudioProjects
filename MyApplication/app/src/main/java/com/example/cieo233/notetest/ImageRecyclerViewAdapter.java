@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 
@@ -24,6 +25,11 @@ public class ImageRecyclerViewAdapter extends RecyclerView.Adapter{
         this.context = context;
     }
 
+
+    void swap(int srcPosition, int targetPosition){
+
+    }
+
     void setImageFolder(String folderName){
         if (folderName == "allImage"){
             ImageFolder allImageFolder = new ImageFolder("allImage");
@@ -35,6 +41,8 @@ public class ImageRecyclerViewAdapter extends RecyclerView.Adapter{
             this.imageFolder = GlobalStorage.getInstance().getImageFolders().get(folderName);
         }
     }
+
+
 
 
     public void setOnImageClickedListener(Interfaces.OnImageClickedListener onImageClickedListener) {
@@ -64,16 +72,27 @@ public class ImageRecyclerViewAdapter extends RecyclerView.Adapter{
     }
 
     public void updateDateset(String currentFolder) {
-        imageFolder = GlobalStorage.getInstance().getImageFolders().get(currentFolder);
+        imageFolder = GlobalStorage.getInstance().getImageFolder(currentFolder);
         notifyDataSetChanged();
+    }
+
+    public void remove(int position){
+        imageFolder.getImageInfoList().remove(position);
+        notifyItemRemoved(position);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder{
         private ImageView imageView, checkBox;
+        private RelativeLayout imageItem;
         public MyViewHolder(View itemView) {
             super(itemView);
+            imageItem = (RelativeLayout) itemView.findViewById(R.id.imageItem);
             imageView = (ImageView) itemView.findViewById(R.id.image);
             checkBox = (ImageView) itemView.findViewById(R.id.checkBox);
+        }
+
+        public View getImageItem() {
+            return imageItem;
         }
 
         public ImageView getImageView() {
@@ -84,5 +103,7 @@ public class ImageRecyclerViewAdapter extends RecyclerView.Adapter{
             return checkBox;
         }
     }
+
+
 
 }

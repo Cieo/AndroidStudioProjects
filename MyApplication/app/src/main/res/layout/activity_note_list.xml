@@ -143,7 +143,7 @@
             <include layout="@layout/divide_line"/>
 
             <LinearLayout
-                android:id="@+id/jumpToNote"
+                android:id="@+id/jumpToSlide"
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="49.5dp">
@@ -154,7 +154,7 @@
                 <TextView
                     android:textSize="18sp"
                     android:layout_marginStart="22.5dp"
-                    android:text="所有笔记"
+                    android:text="所有幻灯片"
                     android:textColor="@color/subColor1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -179,7 +179,7 @@
                 <TextView
                     android:textColor="#fff"
                     android:textSize="18sp"
-                    android:text="添加新的相簿"
+                    android:text="添加新的笔记本"
                     android:layout_marginStart="22.5dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -202,7 +202,7 @@
                         android:layout_width="225dp"
                         android:layout_height="45dp"
                         android:background="@drawable/button_style_yellow"
-                        android:text="所有幻灯片" />
+                        android:text="所有笔记" />
                 </LinearLayout>
 
 

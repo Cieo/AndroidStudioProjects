@@ -14,4 +14,14 @@ public class Interfaces {
     public interface OnImageClickedListener{
         void onImageClicked(ImageInfo url, View checkBox);
     }
+
+    public interface OnNoteFolderClickedListener{
+        void onFolderClicked(NoteFolder clickedFolder);
+    }
+
+    public interface OnNoteClickedListener{
+        void onNoteClicked(NoteInfo clickedNote, View checkBox);
+        void onAddOneClicked();
+    }
+
 }
