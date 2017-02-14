@@ -107,6 +107,10 @@ public class NoteRecyclerViewAdapter extends RecyclerView.Adapter{
         return noteFolder==null?1:noteFolder.getNoteInfoList().size()+1;
     }
 
+    public NoteFolder getNoteFolder() {
+        return noteFolder;
+    }
+
     public void updateDateset(String currentFolder) {
         Log.e("TestUpdateDataset", currentFolder);
         noteFolder = GlobalStorage.getInstance().getNoteFolder(currentFolder);
@@ -114,8 +118,10 @@ public class NoteRecyclerViewAdapter extends RecyclerView.Adapter{
     }
 
     public void remove(int position){
-        noteFolder.getNoteInfoList().remove(position);
+
+        noteFolder.getNoteInfoList().remove(position-1);
         notifyItemRemoved(position);
+        notifyItemRangeChanged(position,noteFolder.getFolderCount());
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder{

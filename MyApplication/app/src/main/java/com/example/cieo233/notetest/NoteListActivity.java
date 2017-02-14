@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -55,6 +56,8 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
     TextView toolbarSelect;
     @BindView(R.id.toolbarMenu)
     ImageView toolbarMenu;
+    @BindView(R.id.jumpToSlide)
+    LinearLayout jumpToSlide;
 
     private int choosed,srcPosition, upX, upY, lastX, lastY;
 
@@ -64,6 +67,8 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
 
     private NoteRecyclerViewAdapter noteRecyclerViewAdapter;
     private NoteDrawerRecyclerViewAdapter noteDrawerRecyclerViewAdapter;
+    private NoteDatabaseHelper noteDatabaseHelper;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +76,8 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         setContentView(R.layout.activity_note_list);
         ButterKnife.bind(this);
         init();
-        NoteDatabaseHelper noteDatabaseHelper = new NoteDatabaseHelper(this,"note",null,1);
+        noteDatabaseHelper = new NoteDatabaseHelper(this,"note",null,1);
+        noteDatabaseHelper.clear();
         noteDatabaseHelper.insert(new NoteInfo("null","testFolder","testTime","testName1"));
         noteDatabaseHelper.insert(new NoteInfo("null","testFolder","testTime","testName2"));
         noteDatabaseHelper.insert(new NoteInfo("null","testFolder","testTime","testName3"));
@@ -100,6 +106,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         selectMode = false;
         allImageButton.setOnClickListener(this);
         popUpMenuDelete.setOnClickListener(this);
+        jumpToSlide.setOnClickListener(this);
     }
 
     void setToolbar() {
@@ -121,6 +128,58 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         drawerLayoutContentRecyclerView.setAdapter(noteRecyclerViewAdapter);
         noteRecyclerViewAdapter.setNoteFolder(currentFolder);
 
+        DragItemTouchHelper dragItemTouchHelper = new DragItemTouchHelper(new DragItemTouchHelperCallback(new DragItemTouchHelperCallback.OnItemTouchCallbackListener() {
+
+            @Override
+            public void chooseDropTarget(RecyclerView.ViewHolder selected, RecyclerView.ViewHolder winner) {
+                srcPosition = selected.getAdapterPosition();
+                if (winner == null){
+                    if (drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed) != null){
+                        NoteRecyclerViewAdapter.MyViewHolder myViewHolder = (NoteRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed);
+                        myViewHolder.getNoteThumbnail().setBackgroundColor(Color.parseColor("#9b9b9b"));
+                        choosed = -1;
+                    }
+                } else {
+                    if (winner.getAdapterPosition() == 0){
+                        return;
+                    }
+                    if (choosed != winner.getAdapterPosition()){
+                        NoteRecyclerViewAdapter.MyViewHolder myViewHolder = (NoteRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed);
+                        if (myViewHolder != null){
+                            myViewHolder.getNoteThumbnail().setBackgroundColor(Color.parseColor("#9b9b9b"));
+                        }
+                        choosed = winner.getAdapterPosition();
+                        myViewHolder = (NoteRecyclerViewAdapter.MyViewHolder) winner;
+                        myViewHolder.getNoteThumbnail().setBackgroundColor(Color.parseColor("#66ccff"));
+                    }
+
+                }
+            }
+
+            @Override
+            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
+                if (actionState == 0){
+                    if (choosed != -1){
+                        Log.e("TestChoosed", String.valueOf(choosed));
+                        NoteRecyclerViewAdapter.MyViewHolder myViewHolder = (NoteRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed);
+                        myViewHolder.getNoteThumbnail().setBackgroundColor(Color.parseColor("#9b9b9b"));
+                        NoteRecyclerViewAdapter.MyViewHolder srcViewHolder = (NoteRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(srcPosition);
+                        srcViewHolder.getNoteThumbnail().setVisibility(View.GONE);
+                        noteRecyclerViewAdapter.remove(srcPosition);
+                        noteDatabaseHelper.delete(noteRecyclerViewAdapter.getNoteFolder().getNoteInfoList().get(srcPosition-1).getNoteMark());
+                        GlobalStorage.getInstance().getNoteFromDataBase(getApplicationContext());
+                        allImageBadge.setText(GlobalStorage.getInstance().getNoteFolderCount("allNote"));
+                        noteDrawerRecyclerViewAdapter.updateDateset();
+                        // Todo
+                        srcPosition = -1;
+                        choosed = -1;
+                    }
+                }
+            }
+
+
+        }));
+        dragItemTouchHelper.attachToRecyclerView(drawerLayoutContentRecyclerView);
     }
 
 
@@ -159,6 +218,10 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
                 break;
             case R.id.toolbarMenu:
                 drawerLayout.openDrawer(GravityCompat.START);
+                break;
+            case R.id.jumpToSlide:
+                Intent intent = new Intent(this,MainActivity.class);
+                startActivity(intent);
                 break;
         }
     }

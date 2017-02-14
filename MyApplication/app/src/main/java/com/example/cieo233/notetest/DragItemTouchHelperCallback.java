@@ -22,6 +22,9 @@ public class DragItemTouchHelperCallback extends ItemTouchHelper.Callback {
 
     @Override
     public int getMovementFlags(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
+        if (viewHolder.getAdapterPosition() == 0){
+            return 0;
+        }
         RecyclerView.LayoutManager layoutManager = recyclerView.getLayoutManager();
         if (layoutManager instanceof GridLayoutManager) {
 
@@ -56,6 +59,8 @@ public class DragItemTouchHelperCallback extends ItemTouchHelper.Callback {
         }
         return winner;
     }
+
+
 
 
     @Override

@@ -7,8 +7,8 @@ package com.example.cieo233.notetest;
 public class NoteInfo {
     private String noteName, noteCreateTime, noteContent, noteBelongTo, noteMark;
 
-    public NoteInfo(String noteMark, String noteBelongTo, String noteCreateTime, String noteName) {
-        this.noteMark = noteMark;
+    public NoteInfo(String noteContent, String noteBelongTo, String noteCreateTime, String noteName) {
+        this.noteContent = noteContent;
         this.noteBelongTo = noteBelongTo;
         this.noteCreateTime = noteCreateTime;
         this.noteName = noteName;

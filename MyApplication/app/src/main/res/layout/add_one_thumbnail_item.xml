@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:padding="5dp"
     android:layout_margin="11.25dp"
-    android:background="@color/mainColor3"
+    android:background="@color/subColor1"
+    android:elevation="7dp"
     android:id="@+id/noteThumbnail"
     android:layout_width="146.25dp"
     android:layout_height="180dp">
     <ImageView
-        android:src="@mipmap/ic_add_box_white_48dp"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/btn_add_h"
         android:id="@+id/noteThumbnailAddOne"
+        android:layout_width="54dp"
+        android:layout_height="54dp" />
+    <TextView
+        android:textColor="@color/mainColor2"
+        android:gravity="center"
+        android:layout_marginTop="30dp"
+        android:layout_below="@id/noteThumbnailAddOne"
+        android:text="添加新的“幻记”"
+        android:textSize="18sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
 </RelativeLayout>

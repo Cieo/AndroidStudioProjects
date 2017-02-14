@@ -59,4 +59,11 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
         return database.update("note",contentValues,"_id=?",new String[]{noteInfo.getNoteMark()});
     }
 
+    public void clear(){
+        SQLiteDatabase database = getWritableDatabase();
+        String sql = "drop table if exists note";
+        database.execSQL(sql);
+        onCreate(database);
+    }
+
 }

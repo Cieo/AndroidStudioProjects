@@ -116,49 +116,6 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
         drawerLayoutContentRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
         drawerLayoutContentRecyclerView.setAdapter(imageRecyclerViewAdapter);
         allImageBadge.setText(GlobalStorage.getInstance().getFolderCount("allImage"));
-        DragItemTouchHelper dragItemTouchHelper = new DragItemTouchHelper(new DragItemTouchHelperCallback(new DragItemTouchHelperCallback.OnItemTouchCallbackListener() {
-
-            @Override
-            public void chooseDropTarget(RecyclerView.ViewHolder selected, RecyclerView.ViewHolder winner) {
-                srcPosition = selected.getAdapterPosition();
-                if (winner == null){
-                    if (drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed) != null){
-                        ImageRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed);
-                        myViewHolder.getImageItem().setBackgroundColor(Color.parseColor("#ffffff"));
-                        choosed = -1;
-                    }
-                } else {
-                    if (choosed != winner.getAdapterPosition()){
-                        ImageRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed);
-                        if (myViewHolder != null){
-                            myViewHolder.getImageItem().setBackgroundColor(Color.parseColor("#ffffff"));
-                        }
-                        choosed = winner.getAdapterPosition();
-                        myViewHolder = (ImageRecyclerViewAdapter.MyViewHolder) winner;
-                        myViewHolder.getImageItem().setBackgroundColor(Color.parseColor("#66ccff"));
-                    }
-
-                }
-            }
-
-            @Override
-            public void onSelectedChanged(RecyclerView.ViewHolder viewHolder, int actionState) {
-                if (actionState == 0){
-                    if (choosed != -1){
-                        ImageRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(choosed);
-                        myViewHolder.getImageItem().setBackgroundColor(Color.parseColor("#ffffff"));
-                        ImageRecyclerViewAdapter.MyViewHolder srcViewHolder = (ImageRecyclerViewAdapter.MyViewHolder) drawerLayoutContentRecyclerView.findViewHolderForAdapterPosition(srcPosition);
-                        srcViewHolder.getImageItem().setVisibility(View.GONE);
-                        imageRecyclerViewAdapter.remove(srcPosition);
-                        srcPosition = -1;
-                        choosed = -1;
-                    }
-                }
-            }
-
-
-        }));
-        dragItemTouchHelper.attachToRecyclerView(drawerLayoutContentRecyclerView);
     }
 
 

@@ -206,6 +206,7 @@ public class GlobalStorage {
     }
 
     public void getNoteFromDataBase(Context context){
+        noteFolders.clear();
         NoteDatabaseHelper noteDatabaseHelper = new NoteDatabaseHelper(context, "note",null,1);
         Cursor cursor = noteDatabaseHelper.select();
         while (cursor.moveToNext()){
