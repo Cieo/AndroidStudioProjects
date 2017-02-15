@@ -39,9 +39,9 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
     @BindView(R.id.drawerLayoutDrawerRecyclerView)
     RecyclerView drawerLayoutDrawerRecyclerView;
     @BindView(R.id.allImageButton)
-    Button allImageButton;
+    Button allNoteButton;
     @BindView(R.id.allImageBadge)
-    TextView allImageBadge;
+    TextView allNoteBadge;
     @BindView(R.id.popUpMenu)
     RelativeLayout popUpMenu;
     @BindView(R.id.popUpMenuShare)
@@ -68,7 +68,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
     private NoteRecyclerViewAdapter noteRecyclerViewAdapter;
     private NoteDrawerRecyclerViewAdapter noteDrawerRecyclerViewAdapter;
     private NoteDatabaseHelper noteDatabaseHelper;
-
+    private Button selectedDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +96,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
     void notifyDatasetChange() {
         noteDrawerRecyclerViewAdapter.updateDateset();
         noteRecyclerViewAdapter.updateDateset(currentFolder);
-        allImageBadge.setText(GlobalStorage.getInstance().getNoteFolderCount("allNote"));
+        allNoteBadge.setText(GlobalStorage.getInstance().getNoteFolderCount("allNote"));
     }
 
     void init() {
@@ -104,9 +104,11 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         choosed = -1;
         currentFolder = "allNote";
         selectMode = false;
-        allImageButton.setOnClickListener(this);
+        allNoteButton.setOnClickListener(this);
         popUpMenuDelete.setOnClickListener(this);
         jumpToSlide.setOnClickListener(this);
+        selectedDrawer = (Button) findViewById(R.id.allImageButton);
+        GlobalStorage.getInstance().setSelectedNoteDrawerButton(-1);
     }
 
     void setToolbar() {
@@ -123,7 +125,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         drawerLayoutDrawerRecyclerView.setAdapter(noteDrawerRecyclerViewAdapter);
         noteRecyclerViewAdapter = new NoteRecyclerViewAdapter(this);
         noteRecyclerViewAdapter.setOnNoteClickedListener(this);
-        allImageBadge.setText(GlobalStorage.getInstance().getNoteFolderCount("allNote"));
+        allNoteBadge.setText(GlobalStorage.getInstance().getNoteFolderCount("allNote"));
         drawerLayoutContentRecyclerView.setLayoutManager(new GridLayoutManager(this,2));
         drawerLayoutContentRecyclerView.setAdapter(noteRecyclerViewAdapter);
         noteRecyclerViewAdapter.setNoteFolder(currentFolder);
@@ -168,7 +170,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
                         noteRecyclerViewAdapter.remove(srcPosition);
                         noteDatabaseHelper.delete(noteRecyclerViewAdapter.getNoteFolder().getNoteInfoList().get(srcPosition-1).getNoteMark());
                         GlobalStorage.getInstance().getNoteFromDataBase(getApplicationContext());
-                        allImageBadge.setText(GlobalStorage.getInstance().getNoteFolderCount("allNote"));
+                        allNoteBadge.setText(GlobalStorage.getInstance().getNoteFolderCount("allNote"));
                         noteDrawerRecyclerViewAdapter.updateDateset();
                         // Todo
                         srcPosition = -1;
@@ -184,6 +186,20 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
 
 
 
+    void clearButtonBackground(){
+        if (selectedDrawer == null){
+            return;
+        }
+            selectedDrawer.setBackgroundResource(R.drawable.button_style_white);
+    }
+
+    void setButtonBackground(){
+        if (selectedDrawer == null){
+            return;
+        }
+        selectedDrawer.setBackgroundResource(R.drawable.button_style_yellow);
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -193,6 +209,10 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
                 noteRecyclerViewAdapter.setNoteFolder(currentFolder);
                 noteRecyclerViewAdapter.notifyDataSetChanged();
                 drawerLayout.closeDrawer(GravityCompat.START);
+                clearButtonBackground();
+                selectedDrawer = (Button) findViewById(R.id.allImageButton);
+                GlobalStorage.getInstance().setSelectedNoteDrawerButton(-1);
+                setButtonBackground();
                 break;
             case R.id.popUpMenuDelete:
                 GlobalStorage.getInstance().deleteSelectedNote(getApplicationContext());
@@ -227,11 +247,14 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
     }
 
     @Override
-    public void onFolderClicked(NoteFolder clickedFolder) {
+    public void onFolderClicked(NoteFolder clickedFolder, Button button) {
         currentFolder = clickedFolder.getFolderName();
         noteRecyclerViewAdapter.setNoteFolder(clickedFolder.getFolderName());
         noteRecyclerViewAdapter.notifyDataSetChanged();
         drawerLayout.closeDrawer(GravityCompat.START);
+        clearButtonBackground();
+        selectedDrawer = button;
+        setButtonBackground();
     }
 
     @Override

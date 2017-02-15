@@ -36,19 +36,31 @@ public class NoteDrawerRecyclerViewAdapter extends RecyclerView.Adapter {
 
 
     @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        MyViewHolder myViewHolder = (MyViewHolder) holder;
+        if (holder.getAdapterPosition() == GlobalStorage.getInstance().getSelectedNoteDrawerButton()){
+            myViewHolder.getButton().setBackgroundResource(R.drawable.button_style_yellow);
+        } else {
+            myViewHolder.getButton().setBackgroundResource(R.drawable.button_style_white);
+        }
+    }
+
+
+    @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item,parent,false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        MyViewHolder myViewHolder = (MyViewHolder) holder;
+        final MyViewHolder myViewHolder = (MyViewHolder) holder;
         myViewHolder.setBadgeText(String.valueOf(noteFolders.get(keys.get(position)).getFolderCount()));
         myViewHolder.setButtonText(noteFolders.get(keys.get(position)).getFolderName());
         myViewHolder.getButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onNoteFolderClickedListener.onFolderClicked(noteFolders.get(keys.get(position)));
+                onNoteFolderClickedListener.onFolderClicked(noteFolders.get(keys.get(position)),myViewHolder.getButton());
+                GlobalStorage.getInstance().setSelectedNoteDrawerButton(position);
             }
         });
     }

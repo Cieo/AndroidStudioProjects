@@ -35,6 +35,9 @@ public class GlobalStorage {
     private static Typeface FZLT;
     private static Typeface Roboto;
 
+    private int selectedNoteDrawerButton;
+    private int selectedImageDrawerButton;
+
     private GlobalStorage(){
         imageFolders = new HashMap<>();
         noteFolders = new HashMap<>();
@@ -42,6 +45,24 @@ public class GlobalStorage {
         selectedImageInfo = new ArrayList<>();
         selectedNoteInfo = new ArrayList<>();
         selectedNoteThumbnailCheckBox = new ArrayList<>();
+        selectedImageDrawerButton = -1;
+        selectedNoteDrawerButton = -1;
+    }
+
+    public int getSelectedNoteDrawerButton() {
+        return selectedNoteDrawerButton;
+    }
+
+    public void setSelectedNoteDrawerButton(int selectedNoteDrawerButton) {
+        this.selectedNoteDrawerButton = selectedNoteDrawerButton;
+    }
+
+    public int getSelectedImageDrawerButton() {
+        return selectedImageDrawerButton;
+    }
+
+    public void setSelectedImageDrawerButton(int selectedImageDrawerButton) {
+        this.selectedImageDrawerButton = selectedImageDrawerButton;
     }
 
     public static Typeface getFZLT(Context context) {

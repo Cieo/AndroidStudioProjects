@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
 
     private ImageRecyclerViewAdapter imageRecyclerViewAdapter;
     private DrawerRecyclerViewAdapter drawerRecyclerViewAdapter;
+    private Button selectedDrawer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +98,8 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
         allImageButton.setOnClickListener(this);
         popUpMenuDelete.setOnClickListener(this);
         jumpToNote.setOnClickListener(this);
+        selectedDrawer = (Button) findViewById(R.id.allImageButton);
+        GlobalStorage.getInstance().setSelectedImageDrawerButton(-1);
     }
 
     void setToolbar() {
@@ -120,11 +124,14 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
 
 
     @Override
-    public void onFolderClicked(ImageFolder clickedFolder) {
+    public void onFolderClicked(ImageFolder clickedFolder, Button button) {
         currentFolder = clickedFolder.getFolderName();
         imageRecyclerViewAdapter.setImageFolder(clickedFolder.getFolderName());
         imageRecyclerViewAdapter.notifyDataSetChanged();
         drawerLayout.closeDrawer(GravityCompat.START);
+        clearButtonBackground();
+        selectedDrawer = button;
+        setButtonBackground();
     }
 
     @Override
@@ -151,6 +158,20 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
 
     }
 
+    void clearButtonBackground(){
+        if (selectedDrawer == null){
+            return;
+        }
+        selectedDrawer.setBackgroundResource(R.drawable.button_style_white);
+    }
+
+    void setButtonBackground(){
+        if (selectedDrawer == null){
+            return;
+        }
+        selectedDrawer.setBackgroundResource(R.drawable.button_style_yellow);
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -159,6 +180,10 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
                 imageRecyclerViewAdapter.setImageFolder(currentFolder);
                 imageRecyclerViewAdapter.notifyDataSetChanged();
                 drawerLayout.closeDrawer(GravityCompat.START);
+                clearButtonBackground();
+                selectedDrawer = (Button) findViewById(R.id.allImageButton);
+                GlobalStorage.getInstance().setSelectedImageDrawerButton(-1);
+                setButtonBackground();
                 break;
             case R.id.popUpMenuDelete:
                 GlobalStorage.getInstance().deleteSelected(getApplicationContext());

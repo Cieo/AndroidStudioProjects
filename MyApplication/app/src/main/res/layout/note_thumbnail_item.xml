@@ -18,6 +18,7 @@
         android:textSize="12sp"
         android:textColor="@color/mainColor2"
         android:layout_below="@id/noteThumbnailTitle"
+        android:background="@mipmap/underline"
         android:id="@+id/noteThumbnailCreateTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

@@ -1,6 +1,7 @@
 package com.example.cieo233.notetest;
 
 import android.view.View;
+import android.widget.Button;
 
 /**
  * Created by Cieo233 on 1/19/2017.
@@ -8,7 +9,7 @@ import android.view.View;
 
 public class Interfaces {
     public interface OnFolderClickedListener{
-        void onFolderClicked(ImageFolder clickedFolder);
+        void onFolderClicked(ImageFolder clickedFolder, Button button);
     }
 
     public interface OnImageClickedListener{
@@ -16,7 +17,7 @@ public class Interfaces {
     }
 
     public interface OnNoteFolderClickedListener{
-        void onFolderClicked(NoteFolder clickedFolder);
+        void onFolderClicked(NoteFolder clickedFolder, Button button);
     }
 
     public interface OnNoteClickedListener{

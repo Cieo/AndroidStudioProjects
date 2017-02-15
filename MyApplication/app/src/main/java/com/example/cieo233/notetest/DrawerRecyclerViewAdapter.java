@@ -37,19 +37,30 @@ public class DrawerRecyclerViewAdapter extends RecyclerView.Adapter {
 
 
     @Override
+    public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
+        MyViewHolder myViewHolder = (MyViewHolder) holder;
+        if (holder.getAdapterPosition() == GlobalStorage.getInstance().getSelectedImageDrawerButton()){
+            myViewHolder.getButton().setBackgroundResource(R.drawable.button_style_yellow);
+        } else {
+            myViewHolder.getButton().setBackgroundResource(R.drawable.button_style_white);
+        }
+    }
+
+    @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item,parent,false));
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        MyViewHolder myViewHolder = (MyViewHolder) holder;
+        final MyViewHolder myViewHolder = (MyViewHolder) holder;
         myViewHolder.setBadgeText(String.valueOf(imageFolders.get(keys.get(position)).getFolderCount()));
         myViewHolder.setButtonText(imageFolders.get(keys.get(position)).getFolderName());
         myViewHolder.getButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onFolderClickedListener.onFolderClicked(imageFolders.get(keys.get(position)));
+                onFolderClickedListener.onFolderClicked(imageFolders.get(keys.get(position)), myViewHolder.getButton());
+                GlobalStorage.getInstance().setSelectedImageDrawerButton(position);
             }
         });
     }
