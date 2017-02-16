@@ -1,5 +1,6 @@
 package com.example.cieo233.notetest;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -69,6 +71,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
     private NoteDrawerRecyclerViewAdapter noteDrawerRecyclerViewAdapter;
     private NoteDatabaseHelper noteDatabaseHelper;
     private Button selectedDrawer;
+    private Dialog bottomDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,8 +110,19 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         allNoteButton.setOnClickListener(this);
         popUpMenuDelete.setOnClickListener(this);
         jumpToSlide.setOnClickListener(this);
+        popUpMenuShare.setOnClickListener(this);
         selectedDrawer = (Button) findViewById(R.id.allImageButton);
         GlobalStorage.getInstance().setSelectedNoteDrawerButton(-1);
+        bottomDialog = new Dialog(this,R.style.MaterialDialogSheet);
+        setDialog();
+    }
+
+    void setDialog(){
+        View view = getLayoutInflater().inflate(R.layout.bottom_dialog,null);
+        bottomDialog.setContentView(view);
+        bottomDialog.setCancelable(true);
+        bottomDialog.getWindow().setLayout(LinearLayout.LayoutParams.MATCH_PARENT,LinearLayout.LayoutParams.WRAP_CONTENT);
+        bottomDialog.getWindow().setGravity(Gravity.BOTTOM);
     }
 
     void setToolbar() {
@@ -242,6 +256,9 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
             case R.id.jumpToSlide:
                 Intent intent = new Intent(this,MainActivity.class);
                 startActivity(intent);
+                break;
+            case R.id.popUpMenuShare:
+                bottomDialog.show();
                 break;
         }
     }

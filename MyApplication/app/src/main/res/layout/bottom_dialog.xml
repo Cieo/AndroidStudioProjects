@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="171dp"
+    android:background="@color/subColor2"
+    android:orientation="vertical">
+    <TextView
+        android:gravity="center"
+        android:text="以图片形式分享"
+        android:id="@+id/shareGraph"
+        android:textColor="#030303"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="57dp" />
+    <include layout="@layout/divide_line"/>
+    <TextView
+        android:gravity="center"
+        android:text="以pdf形式分享"
+        android:id="@+id/sharePDF"
+        android:textColor="#030303"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="57dp" />
+    <include layout="@layout/divide_line"/>
+    <TextView
+        android:gravity="center"
+        android:text="以可编辑链接分享"
+        android:id="@+id/shareLink"
+        android:textColor="#030303"
+        android:textSize="18sp"
+        android:layout_width="match_parent"
+        android:layout_height="57dp" />
+</LinearLayout>
