@@ -208,7 +208,14 @@ public class GlobalStorage {
 
     public void getImageFromContentProvider(Context context) {
         imageFolders.clear();
-
+        NoteDatabaseHelper databaseHelper = new NoteDatabaseHelper(context,"note",null,1);
+        Cursor otherPath = databaseHelper.selectImageFolder();
+        while (otherPath.moveToNext()){
+            String path = otherPath.getString(1);
+            if (!imageFolders.containsKey(path)){
+                imageFolders.put(path,new ImageFolder(path));
+            }
+        }
         ContentResolver contentResolver = context.getContentResolver();
         String path = "/storage/emulated/0/";
         Cursor cursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, null, MediaStore.Images.Media.DATA + " like ?", new String[]{"%" + path + "%"}, null);
@@ -224,12 +231,21 @@ public class GlobalStorage {
                 }
             }
         }
+        cursor.close();
+        otherPath.close();
     }
 
     public void getNoteFromDataBase(Context context){
         noteFolders.clear();
         NoteDatabaseHelper noteDatabaseHelper = new NoteDatabaseHelper(context, "note",null,1);
         Cursor cursor = noteDatabaseHelper.select();
+        Cursor otherPath = noteDatabaseHelper.selectFolder();
+        while (otherPath.moveToNext()){
+            String path = otherPath.getString(1);
+            if (!noteFolders.containsKey(path)){
+                noteFolders.put(path,new NoteFolder(new ArrayList<NoteInfo>(),path));
+            }
+        }
         while (cursor.moveToNext()){
             NoteInfo noteInfo = new NoteInfo(cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(0));
             Log.e("testDatabase",noteInfo.toString());
@@ -243,6 +259,7 @@ public class GlobalStorage {
             }
         }
         cursor.close();
+        otherPath.close();
     }
 
     public HashMap<String, NoteFolder> getNoteFolders() {

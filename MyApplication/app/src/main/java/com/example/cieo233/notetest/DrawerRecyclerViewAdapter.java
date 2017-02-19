@@ -32,6 +32,7 @@ public class DrawerRecyclerViewAdapter extends RecyclerView.Adapter {
 
     public void updateDateset(){
         this.imageFolders = GlobalStorage.getInstance().getImageFolders();
+        keys = new ArrayList<>(imageFolders.keySet());
         notifyDataSetChanged();
     }
 

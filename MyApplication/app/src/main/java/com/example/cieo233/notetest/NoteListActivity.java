@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.annotation.LayoutRes;
 import android.support.annotation.Nullable;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -16,6 +17,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -60,6 +62,8 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
     ImageView toolbarMenu;
     @BindView(R.id.jumpToSlide)
     LinearLayout jumpToSlide;
+    @BindView(R.id.addNewNotebook)
+    LinearLayout addNewNotebook;
 
     private int choosed,srcPosition, upX, upY, lastX, lastY;
 
@@ -72,6 +76,9 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
     private NoteDatabaseHelper noteDatabaseHelper;
     private Button selectedDrawer;
     private Dialog bottomDialog;
+    private Dialog dialog;
+    private EditText createNewFolderEditText;
+    private TextView createNewFolderCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,6 +118,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         popUpMenuDelete.setOnClickListener(this);
         jumpToSlide.setOnClickListener(this);
         popUpMenuShare.setOnClickListener(this);
+        addNewNotebook.setOnClickListener(this);
         selectedDrawer = (Button) findViewById(R.id.allImageButton);
         GlobalStorage.getInstance().setSelectedNoteDrawerButton(-1);
         bottomDialog = new Dialog(this,R.style.MaterialDialogSheet);
@@ -259,6 +267,27 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
                 break;
             case R.id.popUpMenuShare:
                 bottomDialog.show();
+                break;
+            case R.id.addNewNotebook:
+                dialog = new Dialog(this);
+                dialog.setCancelable(true);
+                dialog.setContentView(R.layout.add_one_dialog);
+                dialog.getWindow().setLayout(1080, LinearLayout.LayoutParams.WRAP_CONTENT);
+                createNewFolderEditText = (EditText) dialog.findViewById(R.id.inputNewFolderName);
+                createNewFolderCheck = (TextView) dialog.findViewById(R.id.createNewFolderCheck);
+                createNewFolderCheck.setOnClickListener(this);
+                dialog.show();
+                break;
+            case R.id.createNewFolderCheck:
+                String folderName = createNewFolderEditText.getText().toString();
+                if (!folderName.isEmpty()){
+                    noteDatabaseHelper.createNoteFolder(folderName);
+                    GlobalStorage.getInstance().getNoteFromDataBase(this);
+                    currentFolder = folderName;
+                    noteRecyclerViewAdapter.setNoteFolder(currentFolder);
+                    notifyDatasetChange();
+                    dialog.dismiss();
+                }
                 break;
         }
     }

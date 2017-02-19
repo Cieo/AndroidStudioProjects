@@ -2,6 +2,7 @@ package com.example.cieo233.notetest;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +32,7 @@ public class NoteDrawerRecyclerViewAdapter extends RecyclerView.Adapter {
 
     public void updateDateset(){
         this.noteFolders = GlobalStorage.getInstance().getNoteFolders();
+        keys = new ArrayList<>(noteFolders.keySet());
         notifyDataSetChanged();
     }
 

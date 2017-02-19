@@ -169,7 +169,8 @@
             <include layout="@layout/divide_line"/>
 
             <LinearLayout
-                android:id="@+id/addNewAlbum"
+                android:id="@+id/addNewNotebook"
+                android:background="@drawable/switch_button"
                 android:gravity="center_vertical"
                 android:paddingStart="22.5dp"
                 android:paddingEnd="22.5dp"

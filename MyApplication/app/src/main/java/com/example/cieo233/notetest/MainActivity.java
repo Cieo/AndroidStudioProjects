@@ -1,5 +1,6 @@
 package com.example.cieo233.notetest;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -59,7 +61,8 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
     ImageView toolbarMenu;
     @BindView(R.id.jumpToNote)
     LinearLayout jumpToNote;
-
+    @BindView(R.id.addNewAlbum)
+    LinearLayout addNewAlbum;
 
     private int choosed,srcPosition, upX, upY, lastX, lastY;
 
@@ -69,7 +72,11 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
 
     private ImageRecyclerViewAdapter imageRecyclerViewAdapter;
     private DrawerRecyclerViewAdapter drawerRecyclerViewAdapter;
+    private NoteDatabaseHelper noteDatabaseHelper;
     private Button selectedDrawer;
+    private Dialog dialog;
+    private EditText createNewFolderEditText;
+    private TextView createNewFolderCheck;
 
 
     @Override
@@ -78,6 +85,7 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         init();
+        noteDatabaseHelper = new NoteDatabaseHelper(this,"note",null,1);
         GlobalStorage.getInstance().getImageFromContentProvider(this);
         setToolbar();
         setRecyclerView();
@@ -91,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
     }
 
     void init() {
+        noteDatabaseHelper = new NoteDatabaseHelper(this,"note",null,1);
         srcPosition = -1;
         choosed = -1;
         currentFolder = "allImage";
@@ -98,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
         allImageButton.setOnClickListener(this);
         popUpMenuDelete.setOnClickListener(this);
         jumpToNote.setOnClickListener(this);
+        addNewAlbum.setOnClickListener(this);
         selectedDrawer = (Button) findViewById(R.id.allImageButton);
         GlobalStorage.getInstance().setSelectedImageDrawerButton(-1);
     }
@@ -217,7 +227,27 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
                 Intent intent = new Intent(this,NoteListActivity.class);
                 startActivity(intent);
                 break;
-
+            case R.id.addNewAlbum:
+                dialog = new Dialog(this);
+                dialog.setCancelable(true);
+                dialog.setContentView(R.layout.add_one_dialog);
+                dialog.getWindow().setLayout(1080, LinearLayout.LayoutParams.WRAP_CONTENT);
+                createNewFolderEditText = (EditText) dialog.findViewById(R.id.inputNewFolderName);
+                createNewFolderCheck = (TextView) dialog.findViewById(R.id.createNewFolderCheck);
+                createNewFolderCheck.setOnClickListener(this);
+                dialog.show();
+                break;
+            case R.id.createNewFolderCheck:
+                String folderName = createNewFolderEditText.getText().toString();
+                if (!folderName.isEmpty()){
+                    noteDatabaseHelper.createImageFolder(folderName);
+                    GlobalStorage.getInstance().getImageFromContentProvider(this);
+                    currentFolder = folderName;
+                    imageRecyclerViewAdapter.setImageFolder(currentFolder);
+                    notifyDatasetChange();
+                    dialog.dismiss();
+                }
+                break;
         }
     }
 
