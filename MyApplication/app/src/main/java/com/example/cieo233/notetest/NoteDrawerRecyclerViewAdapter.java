@@ -30,17 +30,22 @@ public class NoteDrawerRecyclerViewAdapter extends RecyclerView.Adapter {
         keys = new ArrayList<>(noteFolders.keySet());
     }
 
-    public void updateDateset(){
+    public void updateDateSet(){
         this.noteFolders = GlobalStorage.getInstance().getNoteFolders();
         keys = new ArrayList<>(noteFolders.keySet());
         notifyDataSetChanged();
     }
 
 
+    public int getFolderViewHolderPosition(String folderName){
+        Log.e("testGetPosition", String.valueOf(keys.indexOf(folderName)));
+        return keys.indexOf(folderName);
+    }
+
     @Override
     public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
         MyViewHolder myViewHolder = (MyViewHolder) holder;
-        if (holder.getAdapterPosition() == GlobalStorage.getInstance().getSelectedNoteDrawerButton()){
+        if (holder.getAdapterPosition() == GlobalStorage.getInstance().getHighLightedNoteDrawerButton()){
             myViewHolder.getButton().setBackgroundResource(R.drawable.button_style_yellow);
         } else {
             myViewHolder.getButton().setBackgroundResource(R.drawable.button_style_white);
@@ -56,13 +61,13 @@ public class NoteDrawerRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final MyViewHolder myViewHolder = (MyViewHolder) holder;
-        myViewHolder.setBadgeText(String.valueOf(noteFolders.get(keys.get(position)).getFolderCount()));
+        myViewHolder.setBadgeText(String.valueOf(noteFolders.get(keys.get(position)).size()));
         myViewHolder.setButtonText(noteFolders.get(keys.get(position)).getFolderName());
         myViewHolder.getButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onNoteFolderClickedListener.onFolderClicked(noteFolders.get(keys.get(position)),myViewHolder.getButton());
-                GlobalStorage.getInstance().setSelectedNoteDrawerButton(position);
+                GlobalStorage.getInstance().setHighLightedNoteDrawerButton(position);
             }
         });
     }

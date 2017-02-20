@@ -67,7 +67,7 @@
                 android:paddingEnd="4.5dp"
                 android:paddingTop="7.875dp"
                 android:paddingBottom="7.875dp"
-                android:id="@+id/drawerLayoutContentRecyclerView"
+                android:id="@+id/contentRecyclerView"
                 android:layout_below="@id/toolbar"
                 android:layout_above="@+id/popUpMenu"
                 android:layout_width="match_parent"
@@ -137,7 +137,7 @@
                 <TextView
                     android:textColor="@color/subColor1"
                     android:layout_marginStart="11.25dp"
-                    android:id="@+id/username"
+                    android:id="@+id/userName"
                     android:textSize="14sp"
                     android:text="JetLuo"
                     android:layout_width="wrap_content"
@@ -198,12 +198,12 @@
                 android:paddingBottom="22.5dp">
 
                 <LinearLayout
-                    android:id="@+id/allImageButtonLayout"
+                    android:id="@+id/showAllNoteLayout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content">
 
                     <Button
-                        android:id="@+id/allImageButton"
+                        android:id="@+id/showAllNote"
                         android:textSize="18sp"
                         android:layout_width="225dp"
                         android:layout_height="45dp"
@@ -214,11 +214,11 @@
 
                 <TextView
                     android:gravity="center"
-                    android:id="@+id/allImageBadge"
+                    android:id="@+id/allNoteBadge"
                     android:layout_width="33.75dp"
                     android:layout_height="31.5dp"
-                    android:layout_alignEnd="@+id/allImageButtonLayout"
-                    android:layout_alignBottom="@+id/allImageButtonLayout"
+                    android:layout_alignEnd="@+id/showAllNoteLayout"
+                    android:layout_alignBottom="@+id/showAllNoteLayout"
                     android:text="12"
                     android:background="@drawable/badge_style"
                     android:textSize="12sp" />
@@ -232,7 +232,7 @@
                 android:paddingEnd="11.25dp"
                 android:paddingTop="11.25dp"
                 android:paddingBottom="11.25dp"
-                android:id="@+id/drawerLayoutDrawerRecyclerView"
+                android:id="@+id/drawerRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 

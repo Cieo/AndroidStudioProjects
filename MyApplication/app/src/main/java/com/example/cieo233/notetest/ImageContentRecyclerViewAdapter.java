@@ -11,30 +11,27 @@ import android.widget.RelativeLayout;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Cieo233 on 1/19/2017.
  */
 
-public class ImageRecyclerViewAdapter extends RecyclerView.Adapter{
+public class ImageContentRecyclerViewAdapter extends RecyclerView.Adapter{
     private ImageFolder imageFolder;
     private Context context;
     private Interfaces.OnImageClickedListener onImageClickedListener;
 
-    public ImageRecyclerViewAdapter(Context context) {
+    public ImageContentRecyclerViewAdapter(Context context) {
         this.context = context;
     }
 
 
-    void swap(int srcPosition, int targetPosition){
-
-    }
-
     void setImageFolder(String folderName){
-        if (folderName == "allImage"){
+        if (Objects.equals(folderName, "allImage")){
             ImageFolder allImageFolder = new ImageFolder("allImage");
             for (ImageFolder item : GlobalStorage.getInstance().getImageFolders().values()){
-                allImageFolder.getImageInfoList().addAll(item.getImageInfoList());
+                allImageFolder.addAll(item.getImageInfoList());
             }
             this.imageFolder = allImageFolder;
         } else {
@@ -57,28 +54,23 @@ public class ImageRecyclerViewAdapter extends RecyclerView.Adapter{
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final MyViewHolder myViewHolder = (MyViewHolder) holder;
-        Glide.with(context).load(imageFolder.getImageInfoList().get(position).getImageURL()).into(myViewHolder.getImageView());
+        Glide.with(context).load(imageFolder.get(position).getImageURL()).into(myViewHolder.getImageView());
         myViewHolder.getImageView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onImageClickedListener.onImageClicked(imageFolder.getImageInfoList().get(position),myViewHolder.getCheckBox());
+                onImageClickedListener.onImageClicked(imageFolder.get(position),myViewHolder.getCheckBox());
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return imageFolder.getImageInfoList().size();
+        return imageFolder.size();
     }
 
-    public void updateDateset(String currentFolder) {
+    public void updateDateSet(String currentFolder) {
         imageFolder = GlobalStorage.getInstance().getImageFolder(currentFolder);
         notifyDataSetChanged();
-    }
-
-    public void remove(int position){
-        imageFolder.getImageInfoList().remove(position);
-        notifyItemRemoved(position);
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder{

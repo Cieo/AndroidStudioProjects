@@ -12,30 +12,31 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Cieo233 on 1/19/2017.
  */
 
-public class NoteRecyclerViewAdapter extends RecyclerView.Adapter{
+public class NoteContentRecyclerViewAdapter extends RecyclerView.Adapter{
     private NoteFolder noteFolder;
     private Context context;
     private Interfaces.OnNoteClickedListener onNoteClickedListener;
 
-    public NoteRecyclerViewAdapter(Context context) {
+    public NoteContentRecyclerViewAdapter(Context context) {
         this.context = context;
     }
 
 
     void setNoteFolder(String folderName){
-        if (folderName == "allNote"){
-            NoteFolder allNoteFolder = new NoteFolder(new ArrayList<NoteInfo>(),"allNote");
+        if (Objects.equals(folderName, "allNote")){
+            NoteFolder allNoteFolder = new NoteFolder("allNote");
             for (NoteFolder item : GlobalStorage.getInstance().getNoteFolders().values()){
-                allNoteFolder.getNoteInfoList().addAll(item.getNoteInfoList());
+                allNoteFolder.addAll(item.getNoteInfoList());
             }
             this.noteFolder = allNoteFolder;
         } else {
-            this.noteFolder = GlobalStorage.getInstance().getNoteFolders().get(folderName);
+            this.noteFolder = GlobalStorage.getInstance().getNoteFolder(folderName);
         }
     }
 
@@ -65,7 +66,7 @@ public class NoteRecyclerViewAdapter extends RecyclerView.Adapter{
                 }
             });
         }else {
-            final NoteInfo noteInfo = noteFolder.getNoteInfoList().get(position-1);
+            final NoteInfo noteInfo = noteFolder.get(position-1);
             myViewHolder.getNoteThumbnail().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -88,7 +89,7 @@ public class NoteRecyclerViewAdapter extends RecyclerView.Adapter{
         if (holder.getAdapterPosition()!=0){
             Log.e("testAttachedToWindow", String.valueOf(holder.getAdapterPosition()-1));
             MyViewHolder myViewHolder = (MyViewHolder) holder;
-            if (GlobalStorage.getInstance().getSelectedNoteInfo().contains(noteFolder.getNoteInfoList().get(holder.getAdapterPosition()-1))){
+            if (GlobalStorage.getInstance().getSelectedNoteInfo().contains(noteFolder.get(holder.getAdapterPosition()-1))){
                 myViewHolder.getCheckBox().setVisibility(View.VISIBLE);
             }else {
                 myViewHolder.getCheckBox().setVisibility(View.GONE);
@@ -104,24 +105,24 @@ public class NoteRecyclerViewAdapter extends RecyclerView.Adapter{
 
     @Override
     public int getItemCount() {
-        return noteFolder==null?1:noteFolder.getNoteInfoList().size()+1;
+        return noteFolder==null?1:noteFolder.size()+1;
     }
 
     public NoteFolder getNoteFolder() {
         return noteFolder;
     }
 
-    public void updateDateset(String currentFolder) {
-        Log.e("TestUpdateDataset", currentFolder);
+    public void updateDateSet(String currentFolder) {
+        Log.e("TestUpdateDataSet", currentFolder);
         noteFolder = GlobalStorage.getInstance().getNoteFolder(currentFolder);
         notifyDataSetChanged();
     }
 
     public void remove(int position){
 
-        noteFolder.getNoteInfoList().remove(position-1);
+        noteFolder.remove(position-1);
         notifyItemRemoved(position);
-        notifyItemRangeChanged(position,noteFolder.getFolderCount());
+        notifyItemRangeChanged(position,noteFolder.size());
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder{

@@ -1,7 +1,6 @@
 package com.example.cieo233.notetest;
 
 import android.content.Context;
-import android.media.Image;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,30 +16,33 @@ import java.util.List;
  * Created by Cieo233 on 1/19/2017.
  */
 
-public class DrawerRecyclerViewAdapter extends RecyclerView.Adapter {
+public class ImageDrawerRecyclerViewAdapter extends RecyclerView.Adapter {
 
     private Context context;
     private HashMap<String, ImageFolder> imageFolders;
     private List<String> keys;
-    private Interfaces.OnFolderClickedListener onFolderClickedListener;
+    private Interfaces.OnImageFolderClickedListener onImageFolderClickedListener;
 
-    public DrawerRecyclerViewAdapter(Context context) {
+    public ImageDrawerRecyclerViewAdapter(Context context) {
         this.context = context;
         this.imageFolders = GlobalStorage.getInstance().getImageFolders();
         keys = new ArrayList<>(imageFolders.keySet());
     }
 
-    public void updateDateset(){
+    public void updateDateSet(){
         this.imageFolders = GlobalStorage.getInstance().getImageFolders();
         keys = new ArrayList<>(imageFolders.keySet());
         notifyDataSetChanged();
     }
 
+    public int getFolderViewHolderPosition(String folderName){
+        return keys.indexOf(folderName);
+    }
 
     @Override
     public void onViewAttachedToWindow(RecyclerView.ViewHolder holder) {
         MyViewHolder myViewHolder = (MyViewHolder) holder;
-        if (holder.getAdapterPosition() == GlobalStorage.getInstance().getSelectedImageDrawerButton()){
+        if (holder.getAdapterPosition() == GlobalStorage.getInstance().getHighLightedImageDrawerButton()){
             myViewHolder.getButton().setBackgroundResource(R.drawable.button_style_yellow);
         } else {
             myViewHolder.getButton().setBackgroundResource(R.drawable.button_style_white);
@@ -55,13 +57,13 @@ public class DrawerRecyclerViewAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         final MyViewHolder myViewHolder = (MyViewHolder) holder;
-        myViewHolder.setBadgeText(String.valueOf(imageFolders.get(keys.get(position)).getFolderCount()));
+        myViewHolder.setBadgeText(String.valueOf(imageFolders.get(keys.get(position)).size()));
         myViewHolder.setButtonText(imageFolders.get(keys.get(position)).getFolderName());
         myViewHolder.getButton().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onFolderClickedListener.onFolderClicked(imageFolders.get(keys.get(position)), myViewHolder.getButton());
-                GlobalStorage.getInstance().setSelectedImageDrawerButton(position);
+                onImageFolderClickedListener.onFolderClicked(imageFolders.get(keys.get(position)), myViewHolder.getButton());
+                GlobalStorage.getInstance().setHighLightedImageDrawerButton(position);
             }
         });
     }
@@ -106,7 +108,7 @@ public class DrawerRecyclerViewAdapter extends RecyclerView.Adapter {
         this.imageFolders = imageFolders;
     }
 
-    public void setOnFolderClickedListener(Interfaces.OnFolderClickedListener onFolderClickedListener) {
-        this.onFolderClickedListener = onFolderClickedListener;
+    public void setOnImageFolderClickedListener(Interfaces.OnImageFolderClickedListener onImageFolderClickedListener) {
+        this.onImageFolderClickedListener = onImageFolderClickedListener;
     }
 }

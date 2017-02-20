@@ -36,8 +36,31 @@ public class ImageFolder {
         this.folderName = folderName;
     }
 
-    public int getFolderCount() {
+    public int size() {
         return imageInfoList.size();
     }
 
+    public void add(ImageInfo imageInfo){
+        imageInfoList.add(imageInfo);
+    }
+
+    public void remove(ImageInfo imageInfo){
+        imageInfoList.remove(imageInfo);
+    }
+
+    public ImageInfo get(int position){
+        return imageInfoList.get(position);
+    }
+
+    public void addAll(List<ImageInfo> list){
+        imageInfoList.addAll(list);
+    }
+
+    public void remove(int position){
+        imageInfoList.remove(position);
+    }
+
+    public int indexOf(ImageInfo imageInfo){
+        return imageInfoList.indexOf(imageInfo);
+    }
 }

@@ -5,7 +5,7 @@ package com.example.cieo233.notetest;
  */
 
 public class NoteInfo {
-    private String noteName, noteCreateTime, noteContent, noteBelongTo, noteMark;
+    private String noteName, noteCreateTime, noteContent, noteBelongTo, noteID;
 
     public NoteInfo(String noteContent, String noteBelongTo, String noteCreateTime, String noteName) {
         this.noteContent = noteContent;
@@ -14,12 +14,12 @@ public class NoteInfo {
         this.noteName = noteName;
     }
 
-    public NoteInfo(String noteName, String noteCreateTime, String noteContent, String noteBelongTo, String noteMark) {
+    public NoteInfo(String noteName, String noteCreateTime, String noteContent, String noteBelongTo, String noteID) {
         this.noteName = noteName;
         this.noteCreateTime = noteCreateTime;
         this.noteContent = noteContent;
         this.noteBelongTo = noteBelongTo;
-        this.noteMark = noteMark;
+        this.noteID = noteID;
     }
 
     public String getNoteName() {
@@ -54,16 +54,16 @@ public class NoteInfo {
         this.noteBelongTo = noteBelongTo;
     }
 
-    public String getNoteMark() {
-        return noteMark;
+    public String getNoteID() {
+        return noteID;
     }
 
-    public void setNoteMark(String noteMark) {
-        this.noteMark = noteMark;
+    public void setNoteID(String noteID) {
+        this.noteID = noteID;
     }
 
     @Override
     public String toString() {
-        return String.format("noteName=%s,noteCreateTime=%s,noteContent=%s,noteBelongto=%s,noteMark=%s",noteName,noteCreateTime,noteContent,noteBelongTo,noteMark);
+        return String.format("noteName=%s,noteCreateTime=%s,noteContent=%s,noteBelongto=%s,noteID=%s",noteName,noteCreateTime,noteContent,noteBelongTo, noteID);
     }
 }

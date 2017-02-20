@@ -55,7 +55,7 @@ public class PhotoDetailActivity extends AppCompatActivity implements View.OnCli
         setToolbar();
 
         Intent intent = getIntent();
-        String currentFolder = intent.getStringExtra("currentFolder");
+        String currentFolder = intent.getStringExtra("currentShowingFolder");
         int currentPosition = intent.getIntExtra("currentPosition",0);
         photoViewPager.setAdapter(new PhotoViewPagerAdapter(this,currentFolder));
         photoViewPager.setCurrentItem(currentPosition);

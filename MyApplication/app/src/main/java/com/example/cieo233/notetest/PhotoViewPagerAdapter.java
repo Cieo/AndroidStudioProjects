@@ -40,7 +40,7 @@ public class PhotoViewPagerAdapter extends PagerAdapter{
 
     @Override
     public int getCount() {
-        return imageFolder.getFolderCount();
+        return imageFolder.size();
     }
 
     @Override

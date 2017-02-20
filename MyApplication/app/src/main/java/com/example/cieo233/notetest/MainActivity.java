@@ -2,9 +2,9 @@ package com.example.cieo233.notetest;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.support.v4.graphics.ColorUtils;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -13,9 +13,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,21 +24,19 @@ import android.widget.TextView;
 import com.transitionseverywhere.AutoTransition;
 import com.transitionseverywhere.TransitionManager;
 
-import java.util.Collections;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements Interfaces.OnFolderClickedListener, Interfaces.OnImageClickedListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements Interfaces.OnImageFolderClickedListener, Interfaces.OnImageClickedListener, View.OnClickListener {
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.drawerLayout)
     DrawerLayout drawerLayout;
-    @BindView(R.id.drawerLayoutContentRecyclerView)
-    RecyclerView drawerLayoutContentRecyclerView;
-    @BindView(R.id.drawerLayoutDrawerRecyclerView)
-    RecyclerView drawerLayoutDrawerRecyclerView;
-    @BindView(R.id.allImageButton)
+    @BindView(R.id.contentRecyclerView)
+    RecyclerView contentRecyclerView;
+    @BindView(R.id.drawerRecyclerView)
+    RecyclerView drawerRecyclerView;
+    @BindView(R.id.showAllImage)
     Button allImageButton;
     @BindView(R.id.allImageBadge)
     TextView allImageBadge;
@@ -64,17 +59,15 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
     @BindView(R.id.addNewAlbum)
     LinearLayout addNewAlbum;
 
-    private int choosed,srcPosition, upX, upY, lastX, lastY;
 
+    private boolean isSelectMode;
+    String currentShowingFolder;
 
-    private boolean selectMode;
-    String currentFolder;
-
-    private ImageRecyclerViewAdapter imageRecyclerViewAdapter;
-    private DrawerRecyclerViewAdapter drawerRecyclerViewAdapter;
-    private NoteDatabaseHelper noteDatabaseHelper;
-    private Button selectedDrawer;
-    private Dialog dialog;
+    private ImageContentRecyclerViewAdapter contentRecyclerViewAdapter;
+    private ImageDrawerRecyclerViewAdapter drawerRecyclerViewAdapter;
+    private SlideNoteDatabaseHelper slideNoteDatabaseHelper;
+    private Button highLightedDrawerButton;
+    private Dialog createNewFolderDialog;
     private EditText createNewFolderEditText;
     private TextView createNewFolderCheck;
 
@@ -85,31 +78,29 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         init();
-        noteDatabaseHelper = new NoteDatabaseHelper(this,"note",null,1);
+        slideNoteDatabaseHelper = new SlideNoteDatabaseHelper(this,"note",null,1);
         GlobalStorage.getInstance().getImageFromContentProvider(this);
         setToolbar();
         setRecyclerView();
     }
 
 
-    void notifyDatasetChange() {
-        drawerRecyclerViewAdapter.updateDateset();
-        imageRecyclerViewAdapter.updateDateset(currentFolder);
-        allImageBadge.setText(GlobalStorage.getInstance().getFolderCount("allImage"));
+    void notifyAllAdapterDataSetChange() {
+        drawerRecyclerViewAdapter.updateDateSet();
+        contentRecyclerViewAdapter.updateDateSet(currentShowingFolder);
+        allImageBadge.setText(GlobalStorage.getInstance().getImageFolderSize("allImage"));
     }
 
     void init() {
-        noteDatabaseHelper = new NoteDatabaseHelper(this,"note",null,1);
-        srcPosition = -1;
-        choosed = -1;
-        currentFolder = "allImage";
-        selectMode = false;
+        slideNoteDatabaseHelper = new SlideNoteDatabaseHelper(this,"note",null,1);
+        currentShowingFolder = "allImage";
+        isSelectMode = false;
         allImageButton.setOnClickListener(this);
         popUpMenuDelete.setOnClickListener(this);
         jumpToNote.setOnClickListener(this);
         addNewAlbum.setOnClickListener(this);
-        selectedDrawer = (Button) findViewById(R.id.allImageButton);
-        GlobalStorage.getInstance().setSelectedImageDrawerButton(-1);
+        highLightedDrawerButton = (Button) findViewById(R.id.showAllImage);
+        GlobalStorage.getInstance().setHighLightedImageDrawerButton(-1);
     }
 
     void setToolbar() {
@@ -120,38 +111,38 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
     }
 
     void setRecyclerView() {
-        imageRecyclerViewAdapter = new ImageRecyclerViewAdapter(this);
-        imageRecyclerViewAdapter.setOnImageClickedListener(this);
-        imageRecyclerViewAdapter.setImageFolder("allImage");
-        drawerRecyclerViewAdapter = new DrawerRecyclerViewAdapter(this);
-        drawerRecyclerViewAdapter.setOnFolderClickedListener(this);
-        drawerLayoutDrawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        drawerLayoutDrawerRecyclerView.setAdapter(drawerRecyclerViewAdapter);
-        drawerLayoutContentRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
-        drawerLayoutContentRecyclerView.setAdapter(imageRecyclerViewAdapter);
-        allImageBadge.setText(GlobalStorage.getInstance().getFolderCount("allImage"));
+        contentRecyclerViewAdapter = new ImageContentRecyclerViewAdapter(this);
+        contentRecyclerViewAdapter.setOnImageClickedListener(this);
+        contentRecyclerViewAdapter.setImageFolder("allImage");
+        drawerRecyclerViewAdapter = new ImageDrawerRecyclerViewAdapter(this);
+        drawerRecyclerViewAdapter.setOnImageFolderClickedListener(this);
+        drawerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        drawerRecyclerView.setAdapter(drawerRecyclerViewAdapter);
+        contentRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        contentRecyclerView.setAdapter(contentRecyclerViewAdapter);
+        allImageBadge.setText(GlobalStorage.getInstance().getImageFolderSize("allImage"));
     }
 
 
     @Override
     public void onFolderClicked(ImageFolder clickedFolder, Button button) {
-        currentFolder = clickedFolder.getFolderName();
-        imageRecyclerViewAdapter.setImageFolder(clickedFolder.getFolderName());
-        imageRecyclerViewAdapter.notifyDataSetChanged();
+        currentShowingFolder = clickedFolder.getFolderName();
+        contentRecyclerViewAdapter.setImageFolder(clickedFolder.getFolderName());
+        contentRecyclerViewAdapter.notifyDataSetChanged();
         drawerLayout.closeDrawer(GravityCompat.START);
-        clearButtonBackground();
-        selectedDrawer = button;
-        setButtonBackground();
+        clearHighLightBackground();
+        highLightedDrawerButton = button;
+        setHighLightBackground();
     }
 
     @Override
     public void onImageClicked(ImageInfo clickedImageInfo, View checkBox) {
-        if (!selectMode) {
+        if (!isSelectMode) {
             Intent intent = new Intent(this,PhotoDetailActivity.class);
             intent.putExtra("imageURL",clickedImageInfo.getImageURL());
-            intent.putExtra("currentFolder",currentFolder);
-            intent.putExtra("currentPosition",GlobalStorage.getInstance().getImageFolder(currentFolder).getImageInfoList().indexOf(clickedImageInfo));
-            Log.e("index", String.valueOf(GlobalStorage.getInstance().getImageFolder(currentFolder).getImageInfoList().indexOf(clickedImageInfo)));
+            intent.putExtra("currentShowingFolder", currentShowingFolder);
+            intent.putExtra("currentPosition",GlobalStorage.getInstance().getImageFolder(currentShowingFolder).indexOf(clickedImageInfo));
+            Log.e("index", String.valueOf(GlobalStorage.getInstance().getImageFolder(currentShowingFolder).indexOf(clickedImageInfo)));
             startActivity(intent);
 
         } else {
@@ -168,45 +159,45 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
 
     }
 
-    void clearButtonBackground(){
-        if (selectedDrawer == null){
+    void clearHighLightBackground(){
+        if (highLightedDrawerButton == null){
             return;
         }
-        selectedDrawer.setBackgroundResource(R.drawable.button_style_white);
+        highLightedDrawerButton.setBackgroundResource(R.drawable.button_style_white);
     }
 
-    void setButtonBackground(){
-        if (selectedDrawer == null){
+    void setHighLightBackground(){
+        if (highLightedDrawerButton == null){
             return;
         }
-        selectedDrawer.setBackgroundResource(R.drawable.button_style_yellow);
+        highLightedDrawerButton.setBackgroundResource(R.drawable.button_style_yellow);
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.allImageButton:
-                currentFolder = "allImage";
-                imageRecyclerViewAdapter.setImageFolder(currentFolder);
-                imageRecyclerViewAdapter.notifyDataSetChanged();
+            case R.id.showAllImage:
+                currentShowingFolder = "allImage";
+                contentRecyclerViewAdapter.setImageFolder(currentShowingFolder);
+                contentRecyclerViewAdapter.notifyDataSetChanged();
                 drawerLayout.closeDrawer(GravityCompat.START);
-                clearButtonBackground();
-                selectedDrawer = (Button) findViewById(R.id.allImageButton);
-                GlobalStorage.getInstance().setSelectedImageDrawerButton(-1);
-                setButtonBackground();
+                clearHighLightBackground();
+                highLightedDrawerButton = (Button) findViewById(R.id.showAllImage);
+                GlobalStorage.getInstance().setHighLightedImageDrawerButton(-1);
+                setHighLightBackground();
                 break;
             case R.id.popUpMenuDelete:
-                GlobalStorage.getInstance().deleteSelected(getApplicationContext());
-                selectMode = !selectMode;
+                GlobalStorage.getInstance().deleteSelectedImage(getApplicationContext());
+                isSelectMode = !isSelectMode;
                 popUpMenu.setVisibility(View.GONE);
                 toolbarSelect.setText("选择");
-                notifyDatasetChange();
+                notifyAllAdapterDataSetChange();
                 break;
             case R.id.toolbarSelect:
-                selectMode = !selectMode;
+                isSelectMode = !isSelectMode;
                 AutoTransition autoTransition = new AutoTransition();
                 autoTransition.setDuration(100);
-                if (selectMode) {
+                if (isSelectMode) {
                     toolbarSelect.setText("取消");
                     TransitionManager.beginDelayedTransition(drawerLayoutContent, autoTransition);
                     popUpMenu.setVisibility(View.VISIBLE);
@@ -217,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
                     }
                     TransitionManager.beginDelayedTransition(drawerLayoutContent, autoTransition);
                     popUpMenu.setVisibility(View.GONE);
-                    GlobalStorage.getInstance().clearSeletecd();
+                    GlobalStorage.getInstance().clearSelectedImage();
                 }
                 break;
             case R.id.toolbarMenu:
@@ -228,24 +219,35 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnFold
                 startActivity(intent);
                 break;
             case R.id.addNewAlbum:
-                dialog = new Dialog(this);
-                dialog.setCancelable(true);
-                dialog.setContentView(R.layout.add_one_dialog);
-                dialog.getWindow().setLayout(1080, LinearLayout.LayoutParams.WRAP_CONTENT);
-                createNewFolderEditText = (EditText) dialog.findViewById(R.id.inputNewFolderName);
-                createNewFolderCheck = (TextView) dialog.findViewById(R.id.createNewFolderCheck);
+                createNewFolderDialog = new Dialog(this);
+                createNewFolderDialog.setCancelable(true);
+                createNewFolderDialog.setContentView(R.layout.add_one_dialog);
+                createNewFolderDialog.getWindow().setLayout(1080, LinearLayout.LayoutParams.WRAP_CONTENT);
+                createNewFolderEditText = (EditText) createNewFolderDialog.findViewById(R.id.inputNewFolderName);
+                createNewFolderCheck = (TextView) createNewFolderDialog.findViewById(R.id.createNewFolderCheck);
                 createNewFolderCheck.setOnClickListener(this);
-                dialog.show();
+                createNewFolderDialog.show();
                 break;
             case R.id.createNewFolderCheck:
                 String folderName = createNewFolderEditText.getText().toString();
                 if (!folderName.isEmpty()){
-                    noteDatabaseHelper.createImageFolder(folderName);
+                    slideNoteDatabaseHelper.createImageFolder(folderName);
                     GlobalStorage.getInstance().getImageFromContentProvider(this);
-                    currentFolder = folderName;
-                    imageRecyclerViewAdapter.setImageFolder(currentFolder);
-                    notifyDatasetChange();
-                    dialog.dismiss();
+                    currentShowingFolder = folderName;
+                    contentRecyclerViewAdapter.setImageFolder(currentShowingFolder);
+                    notifyAllAdapterDataSetChange();
+                    createNewFolderDialog.dismiss();
+                    Handler handler = new Handler(new Handler.Callback() {
+                        @Override
+                        public boolean handleMessage(Message message) {
+                            clearHighLightBackground();
+                            ImageDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder));
+                            highLightedDrawerButton = myViewHolder.getButton();
+                            setHighLightBackground();
+                            return false;
+                        }
+                    });
+                    handler.sendEmptyMessageDelayed(1,200);
                 }
                 break;
         }

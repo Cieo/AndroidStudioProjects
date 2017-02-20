@@ -8,7 +8,7 @@ import android.widget.Button;
  */
 
 public class Interfaces {
-    public interface OnFolderClickedListener{
+    public interface OnImageFolderClickedListener {
         void onFolderClicked(ImageFolder clickedFolder, Button button);
     }
 

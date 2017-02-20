@@ -3,7 +3,6 @@ package com.example.cieo233.notetest;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
@@ -13,15 +12,15 @@ import java.io.File;
  * Created by Cieo233 on 2/11/2017.
  */
 
-public class NoteDatabaseHelper extends SQLiteOpenHelper {
-    public NoteDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+public class SlideNoteDatabaseHelper extends SQLiteOpenHelper {
+    public SlideNoteDatabaseHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
     }
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String noteSql = "create table note(_id integer primary key autoincrement, notename text, notecreatetime text, notecontent text, notebelongto text)";
-        String folderSql = "create table folder(_id integer primary key autoincrement, foldername text)";
+        String folderSql = "create table notefolder(_id integer primary key autoincrement, foldername text)";
         String imageSql = "create table imagefolder(_id integer primary key autoincrement, foldername text)";
         sqLiteDatabase.execSQL(noteSql);
         sqLiteDatabase.execSQL(folderSql);
@@ -31,7 +30,7 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
         String noteSql = "drop table if exists note";
-        String folderSql = "drop table if exists folder";
+        String folderSql = "drop table if exists notefolder";
         String imageSql = "drop table if exists imagefolder";
         sqLiteDatabase.execSQL(noteSql);
         sqLiteDatabase.execSQL(folderSql);
@@ -39,17 +38,17 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public int delete(String id){
+    public int deleteNote(String id){
         SQLiteDatabase database = getWritableDatabase();
         return database.delete("note","_id=?",new String[]{id});
     }
 
-    public Cursor select(){
+    public Cursor selectAllNote(){
         SQLiteDatabase database = getWritableDatabase();
         return database.query("note",null,null,null,null,null,null);
     }
 
-    public long insert(NoteInfo noteInfo){
+    public long insertNote(NoteInfo noteInfo){
         SQLiteDatabase database = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("notename",noteInfo.getNoteName());
@@ -59,20 +58,20 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
         return database.insert("note",null,contentValues);
     }
 
-    public int update(NoteInfo noteInfo){
+    public int updateNote(NoteInfo noteInfo){
         SQLiteDatabase database = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("notename",noteInfo.getNoteName());
         contentValues.put("notecreatetime",noteInfo.getNoteCreateTime());
         contentValues.put("notecontent",noteInfo.getNoteContent());
         contentValues.put("notebelongto",noteInfo.getNoteBelongTo());
-        return database.update("note",contentValues,"_id=?",new String[]{noteInfo.getNoteMark()});
+        return database.update("note",contentValues,"_id=?",new String[]{noteInfo.getNoteID()});
     }
 
-    public void clearAll(){
+    public void clearAllTable(){
         SQLiteDatabase database = getWritableDatabase();
         String noteSql = "drop table if exists note";
-        String folderSql = "drop table if exists folder";
+        String folderSql = "drop table if exists notefolder";
         String imageSql = "drop table if exists imagefolder";
         database.execSQL(noteSql);
         database.execSQL(folderSql);
@@ -80,7 +79,7 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
         onCreate(database);
     }
 
-    public void clear(){
+    public void clearNote(){
         SQLiteDatabase database = getWritableDatabase();
         String noteSql = "drop table if exists note";
         database.execSQL(noteSql);
@@ -92,12 +91,12 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
         SQLiteDatabase database = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("foldername",folderName);
-        return database.insert("folder",null,contentValues);
+        return database.insert("notefolder",null,contentValues);
     }
 
-    public Cursor selectFolder(){
+    public Cursor selectAllNoteFolder(){
         SQLiteDatabase database = getWritableDatabase();
-        return database.query("folder",null,null,null,null,null,null);
+        return database.query("notefolder",null,null,null,null,null,null);
     }
 
     public long createImageFolder(String folderName){
@@ -112,7 +111,7 @@ public class NoteDatabaseHelper extends SQLiteOpenHelper {
         return database.insert("imagefolder",null,contentValues);
     }
 
-    public Cursor selectImageFolder(){
+    public Cursor selectAllImageFolder(){
         SQLiteDatabase database = getWritableDatabase();
         return database.query("imagefolder",null,null,null,null,null,null);
     }

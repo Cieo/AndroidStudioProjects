@@ -2,13 +2,9 @@ package com.example.cieo233.notetest;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
-import android.media.MediaScannerConnection;
 import android.provider.MediaStore;
-import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 
@@ -35,8 +31,8 @@ public class GlobalStorage {
     private static Typeface FZLT;
     private static Typeface Roboto;
 
-    private int selectedNoteDrawerButton;
-    private int selectedImageDrawerButton;
+    private int highLightedNoteDrawerButton;
+    private int highLightedImageDrawerButton;
 
     private GlobalStorage(){
         imageFolders = new HashMap<>();
@@ -45,24 +41,24 @@ public class GlobalStorage {
         selectedImageInfo = new ArrayList<>();
         selectedNoteInfo = new ArrayList<>();
         selectedNoteThumbnailCheckBox = new ArrayList<>();
-        selectedImageDrawerButton = -1;
-        selectedNoteDrawerButton = -1;
+        highLightedImageDrawerButton = -1;
+        highLightedNoteDrawerButton = -1;
     }
 
-    public int getSelectedNoteDrawerButton() {
-        return selectedNoteDrawerButton;
+    public int getHighLightedNoteDrawerButton() {
+        return highLightedNoteDrawerButton;
     }
 
-    public void setSelectedNoteDrawerButton(int selectedNoteDrawerButton) {
-        this.selectedNoteDrawerButton = selectedNoteDrawerButton;
+    public void setHighLightedNoteDrawerButton(int highLightedNoteDrawerButton) {
+        this.highLightedNoteDrawerButton = highLightedNoteDrawerButton;
     }
 
-    public int getSelectedImageDrawerButton() {
-        return selectedImageDrawerButton;
+    public int getHighLightedImageDrawerButton() {
+        return highLightedImageDrawerButton;
     }
 
-    public void setSelectedImageDrawerButton(int selectedImageDrawerButton) {
-        this.selectedImageDrawerButton = selectedImageDrawerButton;
+    public void setHighLightedImageDrawerButton(int highLightedImageDrawerButton) {
+        this.highLightedImageDrawerButton = highLightedImageDrawerButton;
     }
 
     public static Typeface getFZLT(Context context) {
@@ -103,7 +99,7 @@ public class GlobalStorage {
         if (Objects.equals(folderName, "allImage")){
             ImageFolder allImageFolder = new ImageFolder("allImage");
             for (ImageFolder item : GlobalStorage.getInstance().getImageFolders().values()){
-                allImageFolder.getImageInfoList().addAll(item.getImageInfoList());
+                allImageFolder.addAll(item.getImageInfoList());
             }
             return allImageFolder;
         } else {
@@ -113,9 +109,9 @@ public class GlobalStorage {
 
     public NoteFolder getNoteFolder(String folderName){
         if (Objects.equals(folderName, "allNote")){
-            NoteFolder allNoteFolder = new NoteFolder(new ArrayList<NoteInfo>(),"allNote");
+            NoteFolder allNoteFolder = new NoteFolder("allNote");
             for (NoteFolder item : GlobalStorage.getInstance().getNoteFolders().values()){
-                allNoteFolder.getNoteInfoList().addAll(item.getNoteInfoList());
+                allNoteFolder.addAll(item.getNoteInfoList());
             }
             return allNoteFolder;
         } else {
@@ -143,7 +139,7 @@ public class GlobalStorage {
         this.selectedImageInfo = selectedImageInfo;
     }
 
-    public void clearSeletecd(){
+    public void clearSelectedImage(){
         for (View checkBox : this.selectedImageViewCheckBox){
             checkBox.setVisibility(View.GONE);
         }
@@ -151,7 +147,7 @@ public class GlobalStorage {
         this.selectedImageViewCheckBox.clear();
     }
 
-    public void clearSeletecdNote(){
+    public void clearSelectedNote(){
         for (View checkBox : this.selectedNoteThumbnailCheckBox){
             checkBox.setVisibility(View.GONE);
         }
@@ -159,7 +155,7 @@ public class GlobalStorage {
         this.selectedNoteThumbnailCheckBox.clear();
     }
 
-    public void deleteSelected(Context context){
+    public void deleteSelectedImage(Context context){
         ContentResolver contentResolver = context.getContentResolver();
         for (ImageInfo selectedItem : this.selectedImageInfo){
             File file = new File(selectedItem.getImageURL());
@@ -167,49 +163,49 @@ public class GlobalStorage {
                 file.delete();
                 contentResolver.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,MediaStore.Images.Media.DATA+"=?",new String[]{selectedItem.getImageURL()});
             }
-            imageFolders.get(selectedItem.getImageFolder()).getImageInfoList().remove(selectedItem);
+            imageFolders.get(selectedItem.getImageFolder()).remove(selectedItem);
         }
-        clearSeletecd();
+        clearSelectedImage();
     }
 
     public void deleteSelectedNote(Context context){
-        NoteDatabaseHelper noteDatabaseHelper = new NoteDatabaseHelper(context,"note",null,1);
+        SlideNoteDatabaseHelper slideNoteDatabaseHelper = new SlideNoteDatabaseHelper(context,"note",null,1);
         for (NoteInfo item : selectedNoteInfo){
-            noteDatabaseHelper.delete(item.getNoteMark());
-            noteFolders.get(item.getNoteBelongTo()).getNoteInfoList().remove(item);
+            slideNoteDatabaseHelper.deleteNote(item.getNoteID());
+            noteFolders.get(item.getNoteBelongTo()).remove(item);
         }
-        clearSeletecdNote();
+        clearSelectedNote();
     }
 
-    public String getFolderCount(String folderName){
+    public String getImageFolderSize(String folderName){
         if (Objects.equals(folderName, "allImage")){
             ImageFolder allImageFolder = new ImageFolder("allImage");
             for (ImageFolder item : GlobalStorage.getInstance().getImageFolders().values()){
-                allImageFolder.getImageInfoList().addAll(item.getImageInfoList());
+                allImageFolder.addAll(item.getImageInfoList());
             }
-            return String.valueOf(allImageFolder.getFolderCount());
+            return String.valueOf(allImageFolder.size());
         }else {
-            return String.valueOf(imageFolders.get(folderName).getFolderCount());
+            return String.valueOf(imageFolders.get(folderName).size());
         }
     }
 
-    public String getNoteFolderCount(String folderName){
+    public String getNoteFolderSize(String folderName){
         if (Objects.equals(folderName, "allNote")){
-            NoteFolder allNoteFolder = new NoteFolder(new ArrayList<NoteInfo>(),"allNote");
+            NoteFolder allNoteFolder = new NoteFolder("allNote");
             for (NoteFolder item : GlobalStorage.getInstance().getNoteFolders().values()){
-                allNoteFolder.getNoteInfoList().addAll(item.getNoteInfoList());
+                allNoteFolder.addAll(item.getNoteInfoList());
             }
-            return String.valueOf(allNoteFolder.getFolderCount());
+            return String.valueOf(allNoteFolder.size());
         }else {
-            return String.valueOf(noteFolders.get(folderName).getFolderCount());
+            return String.valueOf(noteFolders.get(folderName).size());
         }
     }
 
 
     public void getImageFromContentProvider(Context context) {
         imageFolders.clear();
-        NoteDatabaseHelper databaseHelper = new NoteDatabaseHelper(context,"note",null,1);
-        Cursor otherPath = databaseHelper.selectImageFolder();
+        SlideNoteDatabaseHelper databaseHelper = new SlideNoteDatabaseHelper(context,"note",null,1);
+        Cursor otherPath = databaseHelper.selectAllImageFolder();
         while (otherPath.moveToNext()){
             String path = otherPath.getString(1);
             if (!imageFolders.containsKey(path)){
@@ -224,10 +220,10 @@ public class GlobalStorage {
                 String imageURL = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.DATA));
                 String folderImageIn = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
                 if (imageFolders.containsKey(folderImageIn)) {
-                    imageFolders.get(folderImageIn).getImageInfoList().add(new ImageInfo(imageURL, folderImageIn));
+                    imageFolders.get(folderImageIn).add(new ImageInfo(imageURL, folderImageIn));
                 } else {
                     GlobalStorage.getInstance().getImageFolders().put(folderImageIn, new ImageFolder(folderImageIn));
-                    GlobalStorage.getInstance().getImageFolders().get(folderImageIn).getImageInfoList().add(new ImageInfo(imageURL, folderImageIn));
+                    GlobalStorage.getInstance().getImageFolders().get(folderImageIn).add(new ImageInfo(imageURL, folderImageIn));
                 }
             }
         }
@@ -237,20 +233,20 @@ public class GlobalStorage {
 
     public void getNoteFromDataBase(Context context){
         noteFolders.clear();
-        NoteDatabaseHelper noteDatabaseHelper = new NoteDatabaseHelper(context, "note",null,1);
-        Cursor cursor = noteDatabaseHelper.select();
-        Cursor otherPath = noteDatabaseHelper.selectFolder();
+        SlideNoteDatabaseHelper slideNoteDatabaseHelper = new SlideNoteDatabaseHelper(context, "note",null,1);
+        Cursor cursor = slideNoteDatabaseHelper.selectAllNote();
+        Cursor otherPath = slideNoteDatabaseHelper.selectAllNoteFolder();
         while (otherPath.moveToNext()){
             String path = otherPath.getString(1);
             if (!noteFolders.containsKey(path)){
-                noteFolders.put(path,new NoteFolder(new ArrayList<NoteInfo>(),path));
+                noteFolders.put(path,new NoteFolder(path));
             }
         }
         while (cursor.moveToNext()){
             NoteInfo noteInfo = new NoteInfo(cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(0));
             Log.e("testDatabase",noteInfo.toString());
             if (noteFolders.containsKey(noteInfo.getNoteBelongTo())){
-                noteFolders.get(noteInfo.getNoteBelongTo()).getNoteInfoList().add(noteInfo);
+                noteFolders.get(noteInfo.getNoteBelongTo()).add(noteInfo);
             } else {
                 List<NoteInfo> noteInfos = new ArrayList<>();
                 noteInfos.add(noteInfo);

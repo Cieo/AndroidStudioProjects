@@ -9,11 +9,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".MainActivity" android:launchMode="singleInstance">
 
         </activity>
-        <activity android:name=".PhotoDetailActivity"/>
-        <activity android:name=".NoteListActivity">
+        <activity android:name=".PhotoDetailActivity" android:launchMode="singleInstance"/>
+        <activity android:name=".NoteListActivity" android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
