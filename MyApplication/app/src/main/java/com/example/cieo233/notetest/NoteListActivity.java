@@ -23,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.example.administrator.noteediter.NoteRichEditor;
 import com.transitionseverywhere.AutoTransition;
 import com.transitionseverywhere.TransitionManager;
 
@@ -306,7 +307,10 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
     @Override
     public void onNoteClicked(NoteInfo clickedNote, View checkBox) {
         if (!selectMode) {
-//            Intent intent = new Intent(this,PhotoDetailActivity.class);
+            Intent intent = new Intent(this, NoteRichEditor.class);
+            intent.putExtra("noteContent",clickedNote.getNoteContent());
+            intent.putExtra("noteContent",clickedNote.getNoteContent());
+            startActivityForResult(intent,1);
 //            intent.putExtra("imageURL",clickedImageInfo.getImageURL());
 //            intent.putExtra("currentFolder",currentFolder);
 //            intent.putExtra("currentPosition",GlobalStorage.getInstance().getImageFolder(currentFolder).getImageInfoList().indexOf(clickedImageInfo));
@@ -325,6 +329,11 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
             }
         }
         Log.e("TestOnClicked","noteClicked");
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        //TODO
     }
 
     @Override
