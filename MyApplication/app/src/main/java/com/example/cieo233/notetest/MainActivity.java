@@ -89,6 +89,17 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnImag
         drawerRecyclerViewAdapter.updateDateSet();
         contentRecyclerViewAdapter.updateDateSet(currentShowingFolder);
         allImageBadge.setText(GlobalStorage.getInstance().getImageFolderSize("allImage"));
+        Handler handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                clearHighLightBackground();
+                ImageDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder));
+                highLightedDrawerButton = myViewHolder.getButton();
+                setHighLightBackground();
+                return false;
+            }
+        });
+        handler.sendEmptyMessageDelayed(1,200);
     }
 
     void init() {
@@ -97,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnImag
         isSelectMode = false;
         allImageButton.setOnClickListener(this);
         popUpMenuDelete.setOnClickListener(this);
+        popUpMenuMoveTo.setOnClickListener(this);
         jumpToNote.setOnClickListener(this);
         addNewAlbum.setOnClickListener(this);
         highLightedDrawerButton = (Button) findViewById(R.id.showAllImage);
@@ -161,6 +173,7 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnImag
 
     void clearHighLightBackground(){
         if (highLightedDrawerButton == null){
+            Log.e("ClearHighLight","there is a null");
             return;
         }
         highLightedDrawerButton.setBackgroundResource(R.drawable.button_style_white);
@@ -237,20 +250,21 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnImag
                     contentRecyclerViewAdapter.setImageFolder(currentShowingFolder);
                     notifyAllAdapterDataSetChange();
                     createNewFolderDialog.dismiss();
-                    Handler handler = new Handler(new Handler.Callback() {
-                        @Override
-                        public boolean handleMessage(Message message) {
-                            clearHighLightBackground();
-                            ImageDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder));
-                            highLightedDrawerButton = myViewHolder.getButton();
-                            setHighLightBackground();
-                            return false;
-                        }
-                    });
-                    handler.sendEmptyMessageDelayed(1,200);
                 }
                 break;
+            case R.id.popUpMenuMoveTo:
+                Intent moveToIntent = new Intent(this,MoveToActivity.class);
+                startActivityForResult(moveToIntent,1);
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode){
+            case 1:
+                notifyAllAdapterDataSetChange();
+                toolbarSelect.callOnClick();
+                break;
+        }
+    }
 }

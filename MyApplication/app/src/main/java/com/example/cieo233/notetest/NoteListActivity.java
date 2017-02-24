@@ -98,6 +98,17 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         drawerRecyclerViewAdapter.updateDateSet();
         contentRecyclerViewAdapter.updateDateSet(currentShowingFolder);
         allNoteBadge.setText(GlobalStorage.getInstance().getNoteFolderSize("allNote"));
+        Handler handler = new Handler(new Handler.Callback() {
+            @Override
+            public boolean handleMessage(Message message) {
+                clearHighLightBackground();
+                NoteDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (NoteDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder));
+                highLightedDrawerButton = myViewHolder.getButton();
+                setHighLightBackground();
+                return false;
+            }
+        });
+        handler.sendEmptyMessage(1);
     }
 
     void init() {
@@ -294,17 +305,6 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
                     contentRecyclerViewAdapter.setNoteFolder(currentShowingFolder);
                     notifyAllAdapterDataSetChange();
                     createNewFolderDialog.dismiss();
-                    Handler handler = new Handler(new Handler.Callback() {
-                        @Override
-                        public boolean handleMessage(Message message) {
-                            clearHighLightBackground();
-                            NoteDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (NoteDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder));
-                            highLightedDrawerButton = myViewHolder.getButton();
-                            setHighLightBackground();
-                            return false;
-                        }
-                    });
-                    handler.sendEmptyMessage(1);
                 }
                 break;
         }

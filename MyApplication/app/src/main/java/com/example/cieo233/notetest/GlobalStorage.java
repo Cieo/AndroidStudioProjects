@@ -1,14 +1,23 @@
 package com.example.cieo233.notetest;
 
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.graphics.Typeface;
+import android.media.MediaScannerConnection;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 
+import com.transitionseverywhere.Slide;
+
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -96,8 +105,9 @@ public class GlobalStorage {
     }
 
     public ImageFolder getImageFolder(String folderName){
+        String path = "/storage/emulated/0/";
         if (Objects.equals(folderName, "allImage")){
-            ImageFolder allImageFolder = new ImageFolder("allImage");
+            ImageFolder allImageFolder = new ImageFolder("allImage", path);
             for (ImageFolder item : GlobalStorage.getInstance().getImageFolders().values()){
                 allImageFolder.addAll(item.getImageInfoList());
             }
@@ -179,7 +189,8 @@ public class GlobalStorage {
 
     public String getImageFolderSize(String folderName){
         if (Objects.equals(folderName, "allImage")){
-            ImageFolder allImageFolder = new ImageFolder("allImage");
+            String path = "/storage/emulated/0/";
+            ImageFolder allImageFolder = new ImageFolder("allImage", path);
             for (ImageFolder item : GlobalStorage.getInstance().getImageFolders().values()){
                 allImageFolder.addAll(item.getImageInfoList());
             }
@@ -208,8 +219,13 @@ public class GlobalStorage {
         Cursor otherPath = databaseHelper.selectAllImageFolder();
         while (otherPath.moveToNext()){
             String path = otherPath.getString(1);
-            if (!imageFolders.containsKey(path)){
-                imageFolders.put(path,new ImageFolder(path));
+            File file = new File(path);
+            if (!file.exists()){
+                file.mkdirs();
+            }
+            String name = path.substring(path.lastIndexOf("/")+1);
+            if (!imageFolders.containsKey(name)){
+                imageFolders.put(name,new ImageFolder(name,path));
             }
         }
         ContentResolver contentResolver = context.getContentResolver();
@@ -221,15 +237,63 @@ public class GlobalStorage {
                 String folderImageIn = cursor.getString(cursor.getColumnIndex(MediaStore.Images.Media.BUCKET_DISPLAY_NAME));
                 if (imageFolders.containsKey(folderImageIn)) {
                     imageFolders.get(folderImageIn).add(new ImageInfo(imageURL, folderImageIn));
+
                 } else {
-                    GlobalStorage.getInstance().getImageFolders().put(folderImageIn, new ImageFolder(folderImageIn));
-                    GlobalStorage.getInstance().getImageFolders().get(folderImageIn).add(new ImageInfo(imageURL, folderImageIn));
+                    imageFolders.put(folderImageIn, new ImageFolder(folderImageIn, imageURL.substring(0,imageURL.lastIndexOf("/"))));
+                    imageFolders.get(folderImageIn).add(new ImageInfo(imageURL, folderImageIn));
                 }
             }
         }
         cursor.close();
         otherPath.close();
     }
+
+    public void moveImageToOtherFolder(Context context, ImageFolder targetFolder){
+        String newPath = targetFolder.getFolderPath();
+        for (ImageInfo info : selectedImageInfo){
+            String oldURL = info.getImageURL();
+            String newURL = newPath+oldURL.substring(oldURL.lastIndexOf("/"));
+            Log.e("TestOldURL",oldURL);
+            Log.e("TestNewURL",newURL);
+            File oldFile = new File(info.getImageURL());
+            File newFile = new File(newURL);
+            imageFolders.get(targetFolder.getFolderName()).add(new ImageInfo(newURL,targetFolder.getFolderName()));
+            try {
+                copy(oldFile,newFile);
+                MediaScannerConnection.scanFile(context,new String[]{newURL},null,null);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        deleteSelectedImage(context);
+    }
+
+    public void moveNoteToOtherFolder(Context context, NoteFolder targetFolder){
+        SlideNoteDatabaseHelper slideNoteDatabaseHelper = new SlideNoteDatabaseHelper(context,"note",null,1);
+        for (NoteInfo info : selectedNoteInfo){
+            info.setNoteBelongTo(targetFolder.getFolderName());
+            slideNoteDatabaseHelper.updateNote(info);
+            noteFolders.get(info.getNoteBelongTo()).remove(info);
+            noteFolders.get(targetFolder.getFolderName()).add(info);
+        }
+        clearSelectedNote();
+    }
+
+
+    public void copy(File src, File dst) throws IOException {
+        InputStream in = new FileInputStream(src);
+        OutputStream out = new FileOutputStream(dst);
+
+        // Transfer bytes from in to out
+        byte[] buf = new byte[1024];
+        int len;
+        while ((len = in.read(buf)) > 0) {
+            out.write(buf, 0, len);
+        }
+        in.close();
+        out.close();
+    }
+
 
     public void getNoteFromDataBase(Context context){
         noteFolders.clear();

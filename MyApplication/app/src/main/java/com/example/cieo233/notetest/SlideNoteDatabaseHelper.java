@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.io.File;
 
@@ -21,7 +22,7 @@ public class SlideNoteDatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         String noteSql = "create table note(_id integer primary key autoincrement, notename text, notecreatetime text, notecontent text, notebelongto text)";
         String folderSql = "create table notefolder(_id integer primary key autoincrement, foldername text)";
-        String imageSql = "create table imagefolder(_id integer primary key autoincrement, foldername text)";
+        String imageSql = "create table imagefolder(_id integer primary key autoincrement, folderpath text)";
         sqLiteDatabase.execSQL(noteSql);
         sqLiteDatabase.execSQL(folderSql);
         sqLiteDatabase.execSQL(imageSql);
@@ -103,11 +104,11 @@ public class SlideNoteDatabaseHelper extends SQLiteOpenHelper {
         String path = "/storage/emulated/0/"+folderName;
         File file = new File(path);
         if (!file.exists()){
-            file.mkdirs();
+            Log.e("testCreateFolder", String.valueOf(file.mkdirs()));
         }
         SQLiteDatabase database = getWritableDatabase();
         ContentValues contentValues = new ContentValues();
-        contentValues.put("foldername",folderName);
+        contentValues.put("folderpath",path);
         return database.insert("imagefolder",null,contentValues);
     }
 

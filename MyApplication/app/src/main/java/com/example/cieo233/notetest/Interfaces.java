@@ -25,4 +25,13 @@ public class Interfaces {
         void onAddOneClicked();
     }
 
+    public interface OnImageMoveToFolderClickedListener{
+        void onMoveToFolderClicked(ImageFolder targetFolder, int position, float x, float y);
+        void onCreateNewFolderClicked();
+    }
+
+    public interface OnNoteMoveToFolderClickedListener{
+        void onMoveToFolderClicked(NoteFolder targetFolder, int position);
+        void onCreateNewFolderClicked();
+    }
 }

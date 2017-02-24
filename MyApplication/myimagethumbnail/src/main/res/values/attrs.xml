@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MyImageThumbnail">
+        <attr name="photo_number" format="integer"/>
+        <attr name="photo_elevation" format="dimension"/>
+        <attr name="photo_width" format="dimension"/>
+        <attr name="photo_height" format="dimension"/>
+        <attr name="photo_border" format="dimension"/>
+    </declare-styleable>
+</resources>

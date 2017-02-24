@@ -2,6 +2,7 @@ package com.example.cieo233.notetest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Cieo233 on 1/19/2017.
@@ -9,7 +10,7 @@ import java.util.List;
 
 public class ImageFolder {
     private List<ImageInfo> imageInfoList;
-    private String folderName;
+    private String folderName, folderPath;
 
     public ImageFolder() {
         imageInfoList = new ArrayList<>();
@@ -18,6 +19,20 @@ public class ImageFolder {
     public ImageFolder(String folderName) {
         this.folderName = folderName;
         imageInfoList = new ArrayList<>();
+    }
+
+    public ImageFolder(String folderName, String folderPath) {
+        this.folderName = folderName;
+        this.folderPath = folderPath;
+        imageInfoList = new ArrayList<>();
+    }
+
+    public String getFolderPath() {
+        return folderPath;
+    }
+
+    public void setFolderPath(String folderPath) {
+        this.folderPath = folderPath;
     }
 
     public List<ImageInfo> getImageInfoList() {
@@ -45,7 +60,11 @@ public class ImageFolder {
     }
 
     public void remove(ImageInfo imageInfo){
-        imageInfoList.remove(imageInfo);
+        for(ImageInfo info : imageInfoList){
+            if (Objects.equals(info.getImageURL(), imageInfo.getImageURL())){
+                imageInfoList.remove(info);
+            }
+        }
     }
 
     public ImageInfo get(int position){

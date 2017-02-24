@@ -12,6 +12,7 @@ public class ImageInfo {
         this.imageFolder = imageFolder;
     }
 
+
     public String getImageURL() {
         return imageURL;
     }

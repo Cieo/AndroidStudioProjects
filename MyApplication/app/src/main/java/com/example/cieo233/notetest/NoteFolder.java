@@ -2,6 +2,7 @@ package com.example.cieo233.notetest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by Cieo233 on 2/11/2017.
@@ -9,16 +10,16 @@ import java.util.List;
 
 public class NoteFolder {
     private List<NoteInfo> noteInfoList;
-    private String FolderName;
+    private String folderName;
 
     public NoteFolder(List<NoteInfo> noteInfoList, String folderName) {
         this.noteInfoList = noteInfoList;
-        FolderName = folderName;
+        this.folderName = folderName;
     }
 
     public NoteFolder(String folderName) {
         noteInfoList = new ArrayList<>();
-        FolderName = folderName;
+        this.folderName = folderName;
     }
 
     public List<NoteInfo> getNoteInfoList() {
@@ -30,11 +31,11 @@ public class NoteFolder {
     }
 
     public String getFolderName() {
-        return FolderName;
+        return folderName;
     }
 
     public void setFolderName(String folderName) {
-        FolderName = folderName;
+        this.folderName = folderName;
     }
 
     public int size() {
@@ -46,7 +47,11 @@ public class NoteFolder {
     }
 
     public void remove(NoteInfo noteInfo){
-        noteInfoList.remove(noteInfo);
+        for(NoteInfo info : noteInfoList){
+            if (Objects.equals(info.getNoteID(), noteInfo.getNoteID())){
+                noteInfoList.remove(info);
+            }
+        }
     }
 
     public void remove(int position){
