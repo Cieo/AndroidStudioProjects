@@ -98,17 +98,19 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         drawerRecyclerViewAdapter.updateDateSet();
         contentRecyclerViewAdapter.updateDateSet(currentShowingFolder);
         allNoteBadge.setText(GlobalStorage.getInstance().getNoteFolderSize("allNote"));
+        final int position = drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder);
+        drawerRecyclerView.scrollToPosition(position);
         Handler handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
                 clearHighLightBackground();
-                NoteDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (NoteDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder));
+                NoteDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (NoteDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(position);
                 highLightedDrawerButton = myViewHolder.getButton();
                 setHighLightBackground();
                 return false;
             }
         });
-        handler.sendEmptyMessage(1);
+        handler.sendEmptyMessageDelayed(1,100);
     }
 
     void init() {

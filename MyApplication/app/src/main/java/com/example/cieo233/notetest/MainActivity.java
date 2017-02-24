@@ -89,17 +89,19 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnImag
         drawerRecyclerViewAdapter.updateDateSet();
         contentRecyclerViewAdapter.updateDateSet(currentShowingFolder);
         allImageBadge.setText(GlobalStorage.getInstance().getImageFolderSize("allImage"));
+        final int position = drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder);
+        drawerRecyclerView.scrollToPosition(position);
         Handler handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
                 clearHighLightBackground();
-                ImageDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder));
+                ImageDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(position);
                 highLightedDrawerButton = myViewHolder.getButton();
                 setHighLightBackground();
                 return false;
             }
         });
-        handler.sendEmptyMessageDelayed(1,200);
+        handler.sendEmptyMessageDelayed(1,100);
     }
 
     void init() {
@@ -253,8 +255,10 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnImag
                 }
                 break;
             case R.id.popUpMenuMoveTo:
-                Intent moveToIntent = new Intent(this,MoveToActivity.class);
-                startActivityForResult(moveToIntent,1);
+                if (GlobalStorage.getInstance().getSelectedImageInfo().size() > 0){
+                    Intent moveToIntent = new Intent(this,MoveToActivity.class);
+                    startActivityForResult(moveToIntent,1);
+                }
         }
     }
 

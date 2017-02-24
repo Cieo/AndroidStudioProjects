@@ -105,11 +105,12 @@ public class SlideNoteDatabaseHelper extends SQLiteOpenHelper {
         File file = new File(path);
         if (!file.exists()){
             Log.e("testCreateFolder", String.valueOf(file.mkdirs()));
+            SQLiteDatabase database = getWritableDatabase();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("folderpath",path);
+            return database.insert("imagefolder",null,contentValues);
         }
-        SQLiteDatabase database = getWritableDatabase();
-        ContentValues contentValues = new ContentValues();
-        contentValues.put("folderpath",path);
-        return database.insert("imagefolder",null,contentValues);
+        return -1;
     }
 
     public Cursor selectAllImageFolder(){

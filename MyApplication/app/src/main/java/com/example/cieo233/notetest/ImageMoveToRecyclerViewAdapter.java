@@ -1,6 +1,7 @@
 package com.example.cieo233.notetest;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -69,6 +70,7 @@ public class ImageMoveToRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+        holder.setIsRecyclable(false);
         MyViewHolder viewHolder = (MyViewHolder) holder;
         if (position == 0){
             viewHolder.getAlbumName().setText("新建相册");
@@ -91,14 +93,24 @@ public class ImageMoveToRecyclerViewAdapter extends RecyclerView.Adapter {
             }
 
             viewHolder.getFolderItem().setOnTouchListener(new View.OnTouchListener() {
+                private float x = -1, y = -1;
+
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
                     if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
-                        if (onImageMoveToFolderClickedListener!=null){
+                        x = motionEvent.getRawX();
+                        y = motionEvent.getRawY();
+                        Log.e("TestX",String.valueOf(x));
+                        Log.e("TestY",String.valueOf(y));
+                    }
+                    if (motionEvent.getAction() == MotionEvent.ACTION_UP){
+                        Log.e("TestX",  String.valueOf(x)+" "+String.valueOf(motionEvent.getRawX()));
+                        Log.e("TestY",  String.valueOf(y)+" "+String.valueOf(motionEvent.getRawY()));
+                        if (onImageMoveToFolderClickedListener!=null && Math.abs(x-motionEvent.getRawX()) < 10 && Math.abs(y-motionEvent.getRawY()) < 10){
                             onImageMoveToFolderClickedListener.onMoveToFolderClicked(imageFolder,position,motionEvent.getRawX(),motionEvent.getRawY());
                         }
                     }
-                    return false;
+                    return true;
                 }
             });
         }
@@ -121,6 +133,14 @@ public class ImageMoveToRecyclerViewAdapter extends RecyclerView.Adapter {
         private ImageView albumThumbnail;
         private TextView albumName, albumSize;
         private LinearLayout folderItem;
+
+        public void mockTouch(){
+            int location[] = new int[2];
+            folderItem.getLocationOnScreen(location);
+            Log.e("TestLocation",String.valueOf(location[0]+" "+String.valueOf(location[1])));
+            folderItem.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),SystemClock.uptimeMillis(),MotionEvent.ACTION_DOWN,location[0]+30,location[1]+30,0));
+            folderItem.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),SystemClock.uptimeMillis(),MotionEvent.ACTION_UP,location[0]+30,location[1]+30,0));
+        }
 
         public MyViewHolder(View itemView) {
             super(itemView);

@@ -30,6 +30,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -83,6 +84,16 @@ public class MoveToActivity extends AppCompatActivity implements Interfaces.OnIm
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setAdapter(imageMoveToRecyclerViewAdapter);
+    }
+
+    void setImageThumbnail(){
+        if (GlobalStorage.getInstance().getSelectedImageInfo().size() == 1){
+            whiteBackground2.setVisibility(View.GONE);
+            whiteBackground3.setVisibility(View.GONE);
+        }else {
+            whiteBackground2.setVisibility(View.VISIBLE);
+            whiteBackground3.setVisibility(View.VISIBLE);
+        }
     }
 
     void showDialog(){
@@ -143,17 +154,17 @@ public class MoveToActivity extends AppCompatActivity implements Interfaces.OnIm
 
     void notifyAdapterDataSetChange(final String folderName){
         imageMoveToRecyclerViewAdapter.updateDateSet();
+        final int position = imageMoveToRecyclerViewAdapter.getFolderViewHolderPosition(folderName);
+        recyclerView.scrollToPosition(position);
         Handler handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
-                int position = imageMoveToRecyclerViewAdapter.getFolderViewHolderPosition(folderName);
                 ImageMoveToRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageMoveToRecyclerViewAdapter.MyViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
-                recyclerView.scrollToPosition(position);
-//                myViewHolder.getFolderItem().dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),SystemClock.uptimeMillis(),MotionEvent.ACTION_DOWN,myViewHolder.getFolderItem().getLeft()+30,myViewHolder.getFolderItem().getTop()+30,0));
+                myViewHolder.mockTouch();
                 return false;
             }
         });
-        handler.sendEmptyMessage(1);
+        handler.sendEmptyMessageDelayed(1,100);
     }
 
     @Override
