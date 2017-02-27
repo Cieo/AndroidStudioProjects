@@ -60,11 +60,14 @@ public class ImageFolder {
     }
 
     public void remove(ImageInfo imageInfo){
+        ImageInfo targetInfo = new ImageInfo("nul","nul");
         for(ImageInfo info : imageInfoList){
             if (Objects.equals(info.getImageURL(), imageInfo.getImageURL())){
-                imageInfoList.remove(info);
+                targetInfo = info;
+                break;
             }
         }
+        imageInfoList.remove(targetInfo);
     }
 
     public ImageInfo get(int position){

@@ -1,67 +1,48 @@
 package com.example.cieo233.notetest;
 
-import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.app.Dialog;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.SystemClock;
-import android.support.annotation.InterpolatorRes;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.Interpolator;
-import android.view.animation.ScaleAnimation;
-import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by Cieo233 on 2/21/2017.
+ * Created by Cieo233 on 2/25/2017.
  */
 
-public class MoveToActivity extends AppCompatActivity implements Interfaces.OnImageMoveToFolderClickedListener, View.OnClickListener {
+public class NoteMoveToActivity extends AppCompatActivity implements Interfaces.OnNoteMoveToFolderClickedListener, View.OnClickListener{
+
     @BindView(R.id.cancel)
     ImageView cancel;
-    @BindView(R.id.numberOfImage)
-    TextView numberOfImage;
+    @BindView(R.id.numberOfNote)
+    TextView numberOfNote;
     @BindView(R.id.whiteBackground1)
     TextView whiteBackground1;
     @BindView(R.id.whiteBackground2)
     TextView whiteBackground2;
     @BindView(R.id.whiteBackground3)
     TextView whiteBackground3;
-    @BindView(R.id.imageThumbnail)
-    ImageView imageThumbnail;
+    @BindView(R.id.noteThumbnail)
+    ImageView noteThumbnail;
     @BindView(R.id.recyclerView)
     RecyclerView recyclerView;
-    @BindView(R.id.imageThumbnailLayout)
+    @BindView(R.id.noteThumbnailLayout)
     RelativeLayout thumbnailLayout;
 
-
-    private ImageMoveToRecyclerViewAdapter imageMoveToRecyclerViewAdapter;
+    private NoteMoveToRecyclerViewAdapter noteMoveToRecyclerViewAdapter;
     private LinearLayoutManager linearLayoutManager;
     private Dialog createNewFolderDialog;
     private EditText createNewFolderEditText;
@@ -69,34 +50,30 @@ public class MoveToActivity extends AppCompatActivity implements Interfaces.OnIm
     private TextView createNewFolderCancel;
     private SlideNoteDatabaseHelper slideNoteDatabaseHelper;
 
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_move_to);
+        setContentView(R.layout.activity_note_move_to);
         ButterKnife.bind(this);
         init();
-    }
-
-    void loadImage(){
-        Glide.with(this).load(GlobalStorage.getInstance().getSelectedImageInfo().get(0).getImageURL()).into(imageThumbnail);
     }
 
 
 
     void init(){
-        GlobalStorage.getInstance().getImageFromContentProvider(this);
+        GlobalStorage.getInstance().getNoteFromDataBase(this);
         slideNoteDatabaseHelper = new SlideNoteDatabaseHelper(this,"note",null,1);
-        imageMoveToRecyclerViewAdapter = new ImageMoveToRecyclerViewAdapter(this);
-        imageMoveToRecyclerViewAdapter.setOnImageMoveToFolderClickedListener(this);
+        noteMoveToRecyclerViewAdapter = new NoteMoveToRecyclerViewAdapter(this);
+        noteMoveToRecyclerViewAdapter.setOnNoteMoveToFolderClickedListener(this);
         linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
-        recyclerView.setAdapter(imageMoveToRecyclerViewAdapter);
+        recyclerView.setAdapter(noteMoveToRecyclerViewAdapter);
         setImageThumbnail();
-        loadImage();
     }
 
     void setImageThumbnail(){
-        if (GlobalStorage.getInstance().getSelectedImageInfo().size() == 1){
+        if (GlobalStorage.getInstance().getSelectedNoteInfo().size() == 1){
             whiteBackground2.setVisibility(View.GONE);
             whiteBackground3.setVisibility(View.GONE);
         }else {
@@ -119,8 +96,8 @@ public class MoveToActivity extends AppCompatActivity implements Interfaces.OnIm
     }
 
     @Override
-    public void onMoveToFolderClicked(ImageFolder targetFolder, int position, float touchX, float touchY) {
-        GlobalStorage.getInstance().moveImageToOtherFolder(this,targetFolder);
+    public void onMoveToFolderClicked(NoteFolder targetFolder, int position, float touchX, float touchY) {
+        GlobalStorage.getInstance().moveNoteToOtherFolder(this,targetFolder);
 
 
         float childToX = 60;
@@ -150,7 +127,7 @@ public class MoveToActivity extends AppCompatActivity implements Interfaces.OnIm
         Handler handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
-                imageMoveToRecyclerViewAdapter.updateDateSet();
+                noteMoveToRecyclerViewAdapter.updateDateSet();
                 return false;
             }
         });
@@ -164,13 +141,13 @@ public class MoveToActivity extends AppCompatActivity implements Interfaces.OnIm
 
 
     void notifyAdapterDataSetChange(final String folderName){
-        imageMoveToRecyclerViewAdapter.updateDateSet();
-        final int position = imageMoveToRecyclerViewAdapter.getFolderViewHolderPosition(folderName);
+        noteMoveToRecyclerViewAdapter.updateDateSet();
+        final int position = noteMoveToRecyclerViewAdapter.getFolderViewHolderPosition(folderName);
         recyclerView.scrollToPosition(position);
         Handler handler = new Handler(new Handler.Callback() {
             @Override
             public boolean handleMessage(Message message) {
-                ImageMoveToRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageMoveToRecyclerViewAdapter.MyViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
+                NoteMoveToRecyclerViewAdapter.MyViewHolder myViewHolder = (NoteMoveToRecyclerViewAdapter.MyViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
                 myViewHolder.mockTouch();
                 return false;
             }
@@ -184,8 +161,8 @@ public class MoveToActivity extends AppCompatActivity implements Interfaces.OnIm
             case R.id.createNewFolderCheck:
                 String folderName = createNewFolderEditText.getText().toString();
                 if (!folderName.isEmpty()){
-                    slideNoteDatabaseHelper.createImageFolder(folderName);
-                    GlobalStorage.getInstance().getImageFromContentProvider(this);
+                    slideNoteDatabaseHelper.createNoteFolder(folderName);
+                    GlobalStorage.getInstance().getNoteFromDataBase(this);
                     notifyAdapterDataSetChange(folderName);
                     createNewFolderDialog.dismiss();
                 }

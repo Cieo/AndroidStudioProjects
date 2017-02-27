@@ -106,7 +106,7 @@
                     android:id="@+id/popUpMenuDelete"
                     android:layout_width="31.5dp"
                     android:layout_height="31.5dp"
-                    android:src="@mipmap/btn_delete_n" />
+                    android:src="@mipmap/btn_delete_n_xxxhdpi" />
             </RelativeLayout>
         </RelativeLayout>
 
@@ -153,7 +153,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="49.5dp">
                 <ImageView
-                    android:src="@mipmap/ic_sync_white_24dp"
+                    android:src="@mipmap/btn_switch_n"
                     android:layout_width="27dp"
                     android:layout_height="27dp" />
                 <TextView
@@ -179,7 +179,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <ImageView
-                    android:src="@mipmap/ic_add_box_white_48dp"
+                    android:src="@mipmap/btn_add_h"
                     android:layout_width="54dp"
                     android:layout_height="54dp" />
                 <TextView

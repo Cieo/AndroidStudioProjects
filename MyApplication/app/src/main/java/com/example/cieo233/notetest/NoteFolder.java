@@ -47,11 +47,14 @@ public class NoteFolder {
     }
 
     public void remove(NoteInfo noteInfo){
+        NoteInfo targetInfo = new NoteInfo("null","null","null","null");
         for(NoteInfo info : noteInfoList){
             if (Objects.equals(info.getNoteID(), noteInfo.getNoteID())){
-                noteInfoList.remove(info);
+                targetInfo = info;
+                break;
             }
         }
+        noteInfoList.remove(targetInfo);
     }
 
     public void remove(int position){

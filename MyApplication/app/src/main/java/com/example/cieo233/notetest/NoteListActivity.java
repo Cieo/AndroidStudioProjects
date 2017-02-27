@@ -80,6 +80,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
     private Dialog createNewFolderDialog;
     private EditText createNewFolderEditText;
     private TextView createNewFolderCheck;
+    private TextView createNewFolderCancel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,6 +136,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         jumpToSlide.setOnClickListener(this);
         popUpMenuShare.setOnClickListener(this);
         addNewNotebook.setOnClickListener(this);
+        popUpMenuMoveTo.setOnClickListener(this);
         highLightedDrawerButton = (Button) findViewById(R.id.showAllNote);
         GlobalStorage.getInstance().setHighLightedNoteDrawerButton(-1);
         bottomShareDialog = new Dialog(this,R.style.MaterialDialogSheet);
@@ -227,6 +229,19 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
     }
 
 
+    void showDialog(){
+        createNewFolderDialog = new Dialog(this);
+        createNewFolderDialog.setCancelable(true);
+        createNewFolderDialog.setContentView(R.layout.add_one_dialog);
+        createNewFolderDialog.getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        createNewFolderEditText = (EditText) createNewFolderDialog.findViewById(R.id.inputNewFolderName);
+        createNewFolderCheck = (TextView) createNewFolderDialog.findViewById(R.id.createNewFolderCheck);
+        createNewFolderCancel = (TextView) createNewFolderDialog.findViewById(R.id.createNewFolderCancel);
+        createNewFolderCheck.setOnClickListener(this);
+        createNewFolderCancel.setOnClickListener(this);
+        createNewFolderDialog.show();
+    }
+
 
     void clearHighLightBackground(){
         if (highLightedDrawerButton == null){
@@ -289,14 +304,7 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
                 bottomShareDialog.show();
                 break;
             case R.id.addNewNotebook:
-                createNewFolderDialog = new Dialog(this);
-                createNewFolderDialog.setCancelable(true);
-                createNewFolderDialog.setContentView(R.layout.add_one_dialog);
-                createNewFolderDialog.getWindow().setLayout(1080, LinearLayout.LayoutParams.WRAP_CONTENT);
-                createNewFolderEditText = (EditText) createNewFolderDialog.findViewById(R.id.inputNewFolderName);
-                createNewFolderCheck = (TextView) createNewFolderDialog.findViewById(R.id.createNewFolderCheck);
-                createNewFolderCheck.setOnClickListener(this);
-                createNewFolderDialog.show();
+                showDialog();
                 break;
             case R.id.createNewFolderCheck:
                 String folderName = createNewFolderEditText.getText().toString();
@@ -307,6 +315,12 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
                     contentRecyclerViewAdapter.setNoteFolder(currentShowingFolder);
                     notifyAllAdapterDataSetChange();
                     createNewFolderDialog.dismiss();
+                }
+                break;
+            case R.id.popUpMenuMoveTo:
+                if (GlobalStorage.getInstance().getSelectedImageInfo().size() > 0) {
+                    Intent intent1 = new Intent(this, NoteMoveToActivity.class);
+                    startActivityForResult(intent1, 100);
                 }
                 break;
         }
@@ -346,7 +360,11 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        //TODO
+        switch (requestCode){
+            case 100:
+                notifyAllAdapterDataSetChange();
+                toolbarSelect.callOnClick();
+        }
     }
 
     @Override

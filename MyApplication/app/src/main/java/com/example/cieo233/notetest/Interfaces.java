@@ -31,7 +31,8 @@ public class Interfaces {
     }
 
     public interface OnNoteMoveToFolderClickedListener{
-        void onMoveToFolderClicked(NoteFolder targetFolder, int position);
+        void onMoveToFolderClicked(NoteFolder targetFolder, int position, float x, float y);
         void onCreateNewFolderClicked();
     }
+
 }

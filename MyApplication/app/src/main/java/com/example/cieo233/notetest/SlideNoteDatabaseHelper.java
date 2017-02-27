@@ -66,7 +66,8 @@ public class SlideNoteDatabaseHelper extends SQLiteOpenHelper {
         contentValues.put("notecreatetime",noteInfo.getNoteCreateTime());
         contentValues.put("notecontent",noteInfo.getNoteContent());
         contentValues.put("notebelongto",noteInfo.getNoteBelongTo());
-        return database.update("note",contentValues,"_id=?",new String[]{noteInfo.getNoteID()});
+        Log.e("TestUpdate", String.valueOf(database.update("note",contentValues,"_id=?",new String[]{noteInfo.getNoteID()})));
+        return 0;
     }
 
     public void clearAllTable(){

@@ -33,6 +33,11 @@
             android:launchMode="singleInstance">
 
         </activity>
+        <activity
+            android:name=".NoteMoveToActivity"
+            android:launchMode="singleInstance">
+
+        </activity>
     </application>
 
 </manifest>

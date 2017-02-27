@@ -6,7 +6,7 @@
     <TextView
         android:id="@+id/header"
         android:layout_width="match_parent"
-        android:layout_height="170dp"
+        android:layout_height="210dp"
         android:background="@color/mainColor1" />
 
     <ImageView
@@ -18,7 +18,7 @@
         android:src="@mipmap/btn_back_n" />
 
     <TextView
-        android:id="@+id/numberOfImage"
+        android:id="@+id/numberOfNote"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -49,10 +49,10 @@
     </android.support.v7.widget.RecyclerView>
 
     <RelativeLayout
-        android:id="@+id/imageThumbnailLayout"
+        android:id="@+id/noteThumbnailLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/numberOfImage"
+        android:layout_below="@id/numberOfNote"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="5dp"
         android:clipToPadding="false"
@@ -61,8 +61,8 @@
 
         <TextView
             android:id="@+id/whiteBackground3"
-            android:layout_width="150dp"
-            android:layout_height="98dp"
+            android:layout_width="98dp"
+            android:layout_height="130dp"
             android:layout_alignBottom="@+id/whiteBackground2"
             android:layout_alignStart="@+id/whiteBackground2"
             android:layout_marginBottom="4dp"
@@ -72,8 +72,8 @@
 
         <TextView
             android:id="@+id/whiteBackground2"
-            android:layout_width="150dp"
-            android:layout_height="98dp"
+            android:layout_width="98dp"
+            android:layout_height="130dp"
             android:layout_alignBottom="@+id/whiteBackground1"
             android:layout_alignStart="@+id/whiteBackground1"
             android:layout_marginBottom="4dp"
@@ -83,17 +83,16 @@
 
         <TextView
             android:id="@+id/whiteBackground1"
-            android:layout_width="150dp"
-            android:layout_height="98dp"
+            android:layout_width="98dp"
+            android:layout_height="130dp"
             android:layout_marginTop="15dp"
             android:background="@color/subColor1"
             android:elevation="8dp" />
 
         <ImageView
-            android:id="@+id/imageThumbnail"
-            android:scaleType="centerCrop"
-            android:layout_width="142dp"
-            android:layout_height="90dp"
+            android:id="@+id/noteThumbnail"
+            android:layout_width="90dp"
+            android:layout_height="122dp"
             android:layout_alignBottom="@id/whiteBackground1"
             android:layout_alignStart="@id/whiteBackground1"
             android:layout_marginBottom="4dp"

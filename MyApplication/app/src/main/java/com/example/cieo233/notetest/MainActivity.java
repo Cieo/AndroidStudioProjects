@@ -70,6 +70,7 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnImag
     private Dialog createNewFolderDialog;
     private EditText createNewFolderEditText;
     private TextView createNewFolderCheck;
+    private TextView createNewFolderCancel;
 
 
     @Override
@@ -188,6 +189,19 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnImag
         highLightedDrawerButton.setBackgroundResource(R.drawable.button_style_yellow);
     }
 
+    void showDialog(){
+        createNewFolderDialog = new Dialog(this);
+        createNewFolderDialog.setCancelable(true);
+        createNewFolderDialog.setContentView(R.layout.add_one_dialog);
+        createNewFolderDialog.getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        createNewFolderEditText = (EditText) createNewFolderDialog.findViewById(R.id.inputNewFolderName);
+        createNewFolderCheck = (TextView) createNewFolderDialog.findViewById(R.id.createNewFolderCheck);
+        createNewFolderCancel = (TextView) createNewFolderDialog.findViewById(R.id.createNewFolderCancel);
+        createNewFolderCheck.setOnClickListener(this);
+        createNewFolderCancel.setOnClickListener(this);
+        createNewFolderDialog.show();
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -234,14 +248,7 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnImag
                 startActivity(intent);
                 break;
             case R.id.addNewAlbum:
-                createNewFolderDialog = new Dialog(this);
-                createNewFolderDialog.setCancelable(true);
-                createNewFolderDialog.setContentView(R.layout.add_one_dialog);
-                createNewFolderDialog.getWindow().setLayout(1080, LinearLayout.LayoutParams.WRAP_CONTENT);
-                createNewFolderEditText = (EditText) createNewFolderDialog.findViewById(R.id.inputNewFolderName);
-                createNewFolderCheck = (TextView) createNewFolderDialog.findViewById(R.id.createNewFolderCheck);
-                createNewFolderCheck.setOnClickListener(this);
-                createNewFolderDialog.show();
+                showDialog();
                 break;
             case R.id.createNewFolderCheck:
                 String folderName = createNewFolderEditText.getText().toString();

@@ -271,9 +271,9 @@ public class GlobalStorage {
     public void moveNoteToOtherFolder(Context context, NoteFolder targetFolder){
         SlideNoteDatabaseHelper slideNoteDatabaseHelper = new SlideNoteDatabaseHelper(context,"note",null,1);
         for (NoteInfo info : selectedNoteInfo){
+            noteFolders.get(info.getNoteBelongTo()).remove(info);
             info.setNoteBelongTo(targetFolder.getFolderName());
             slideNoteDatabaseHelper.updateNote(info);
-            noteFolders.get(info.getNoteBelongTo()).remove(info);
             noteFolders.get(targetFolder.getFolderName()).add(info);
         }
         clearSelectedNote();

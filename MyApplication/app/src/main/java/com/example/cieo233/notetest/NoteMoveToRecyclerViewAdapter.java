@@ -1,13 +1,19 @@
 package com.example.cieo233.notetest;
 
 import android.content.Context;
+import android.os.SystemClock;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,12 +37,68 @@ public class NoteMoveToRecyclerViewAdapter extends RecyclerView.Adapter {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.move_to_item,null,false));
+        if (viewType == 0){
+            return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.add_one_item,null,false));
+        }
+        return new MyViewHolder(LayoutInflater.from(context).inflate(R.layout.list_item,null,false));
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+    public int getItemViewType(int position) {
+        return position == 0?0:1;
+    }
 
+    public void updateDateSet(){
+        this.noteFolders = GlobalStorage.getInstance().getNoteFolders();
+        keys = new ArrayList<>(noteFolders.keySet());
+        notifyDataSetChanged();
+    }
+
+    public int getFolderViewHolderPosition(String folderName){
+        Log.e("TestGetPosition", String.valueOf(keys.indexOf(folderName)+1));
+        return keys.indexOf(folderName)+1;
+    }
+
+
+    @Override
+    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
+        holder.setIsRecyclable(false);
+        MyViewHolder viewHolder = (MyViewHolder) holder;
+        if (position == 0){
+            viewHolder.getAddNewNotebook().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (onNoteMoveToFolderClickedListener != null){
+                        onNoteMoveToFolderClickedListener.onCreateNewFolderClicked();
+                    }
+                }
+            });
+        } else {
+            final NoteFolder noteFolder = noteFolders.get(keys.get(position-1));
+            viewHolder.getButton().setText(noteFolder.getFolderName());
+            viewHolder.getBadge().setText(String.valueOf(noteFolder.size()));
+            viewHolder.getButton().setOnTouchListener(new View.OnTouchListener() {
+                private float x = -1, y = -1;
+
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    if (motionEvent.getAction() == MotionEvent.ACTION_DOWN){
+                        x = motionEvent.getRawX();
+                        y = motionEvent.getRawY();
+                        Log.e("TestX",String.valueOf(x));
+                        Log.e("TestY",String.valueOf(y));
+                    }
+                    if (motionEvent.getAction() == MotionEvent.ACTION_UP){
+                        Log.e("TestX",  String.valueOf(x)+" "+String.valueOf(motionEvent.getRawX()));
+                        Log.e("TestY",  String.valueOf(y)+" "+String.valueOf(motionEvent.getRawY()));
+                        if (onNoteMoveToFolderClickedListener!=null && Math.abs(x-motionEvent.getRawX()) < 10 && Math.abs(y-motionEvent.getRawY()) < 10){
+                            onNoteMoveToFolderClickedListener.onMoveToFolderClicked(noteFolder,position,motionEvent.getRawX(),motionEvent.getRawY());
+                        }
+                    }
+                    return true;
+                }
+            });
+        }
     }
 
 
@@ -55,48 +117,47 @@ public class NoteMoveToRecyclerViewAdapter extends RecyclerView.Adapter {
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder{
-        private ImageView albumThumbnail;
-        private TextView albumName, albumSize;
-        private LinearLayout folderItem;
+        private Button button;
+        private TextView badge;
+        private LinearLayout addNewNotebook;
 
         public MyViewHolder(View itemView) {
             super(itemView);
-            albumThumbnail = (ImageView) itemView.findViewById(R.id.albumThumbnail);
-            albumName = (TextView) itemView.findViewById(R.id.albumName);
-            albumSize = (TextView) itemView.findViewById(R.id.albumSize);
-            folderItem = (LinearLayout) itemView.findViewById(R.id.folderItem);
+            button = (Button) itemView.findViewById(R.id.button);
+            badge = (TextView) itemView.findViewById(R.id.badge);
+            addNewNotebook = (LinearLayout) itemView.findViewById(R.id.addNewNotebook);
         }
 
-        public TextView getAlbumSize() {
-            return albumSize;
+        public void mockTouch(){
+            int location[] = new int[2];
+            button.getLocationOnScreen(location);
+            Log.e("TestLocation",String.valueOf(location[0]+" "+String.valueOf(location[1])));
+            button.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),SystemClock.uptimeMillis(),MotionEvent.ACTION_DOWN,location[0]+30,location[1]+30,0));
+            button.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(),SystemClock.uptimeMillis(),MotionEvent.ACTION_UP,location[0]+30,location[1]+30,0));
         }
 
-        public void setAlbumSize(TextView albumSize) {
-            this.albumSize = albumSize;
+        public Button getButton() {
+            return button;
         }
 
-        public LinearLayout getFolderItem() {
-            return folderItem;
+        public void setButton(Button button) {
+            this.button = button;
         }
 
-        public void setFolderItem(LinearLayout folderItem) {
-            this.folderItem = folderItem;
+        public TextView getBadge() {
+            return badge;
         }
 
-        public ImageView getAlbumThumbnail() {
-            return albumThumbnail;
+        public void setBadge(TextView badge) {
+            this.badge = badge;
         }
 
-        public void setAlbumThumbnail(ImageView albumThumbnail) {
-            this.albumThumbnail = albumThumbnail;
+        public LinearLayout getAddNewNotebook() {
+            return addNewNotebook;
         }
 
-        public TextView getAlbumName() {
-            return albumName;
-        }
-
-        public void setAlbumName(TextView albumName) {
-            this.albumName = albumName;
+        public void setAddNewNotebook(LinearLayout addNewNotebook) {
+            this.addNewNotebook = addNewNotebook;
         }
     }
 }
