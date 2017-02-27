@@ -323,6 +323,9 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
                     startActivityForResult(intent1, 100);
                 }
                 break;
+            case R.id.createNewFolderCancel:
+                createNewFolderDialog.dismiss();
+                break;
         }
     }
 

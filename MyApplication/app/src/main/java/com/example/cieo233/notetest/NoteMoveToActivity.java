@@ -167,6 +167,9 @@ public class NoteMoveToActivity extends AppCompatActivity implements Interfaces.
                     createNewFolderDialog.dismiss();
                 }
                 break;
+            case R.id.createNewFolderCancel:
+                createNewFolderDialog.dismiss();
+                break;
         }
     }
 }

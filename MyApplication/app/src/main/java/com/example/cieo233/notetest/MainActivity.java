@@ -266,6 +266,10 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnImag
                     Intent moveToIntent = new Intent(this,MoveToActivity.class);
                     startActivityForResult(moveToIntent,1);
                 }
+                break;
+            case R.id.createNewFolderCancel:
+                createNewFolderDialog.dismiss();
+                break;
         }
     }
 

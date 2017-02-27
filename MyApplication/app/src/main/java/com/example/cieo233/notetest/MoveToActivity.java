@@ -190,6 +190,9 @@ public class MoveToActivity extends AppCompatActivity implements Interfaces.OnIm
                     createNewFolderDialog.dismiss();
                 }
                 break;
+            case R.id.createNewFolderCancel:
+                createNewFolderDialog.dismiss();
+                break;
         }
     }
 }
