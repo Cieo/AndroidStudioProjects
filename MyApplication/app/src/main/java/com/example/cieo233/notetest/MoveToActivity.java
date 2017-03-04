@@ -116,6 +116,7 @@ public class MoveToActivity extends AppCompatActivity implements Interfaces.OnIm
         createNewFolderDialog.setCancelable(true);
         createNewFolderDialog.setContentView(R.layout.add_one_dialog);
         createNewFolderDialog.getWindow().setLayout(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        createNewFolderDialog.getWindow().setDimAmount(0.4f);
         createNewFolderEditText = (EditText) createNewFolderDialog.findViewById(R.id.inputNewFolderName);
         createNewFolderCheck = (TextView) createNewFolderDialog.findViewById(R.id.createNewFolderCheck);
         createNewFolderCancel = (TextView) createNewFolderDialog.findViewById(R.id.createNewFolderCancel);
