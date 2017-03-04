@@ -99,9 +99,15 @@ public class MoveToActivity extends AppCompatActivity implements Interfaces.OnIm
         if (GlobalStorage.getInstance().getSelectedImageInfo().size() == 1){
             whiteBackground2.setVisibility(View.GONE);
             whiteBackground3.setVisibility(View.GONE);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) whiteBackground1.getLayoutParams();
+            layoutParams.setMargins(0,0,0,0);
+            whiteBackground1.setLayoutParams(layoutParams);
         }else {
             whiteBackground2.setVisibility(View.VISIBLE);
             whiteBackground3.setVisibility(View.VISIBLE);
+            RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams) whiteBackground1.getLayoutParams();
+            layoutParams.setMargins(0,30,0,0);
+            whiteBackground1.setLayoutParams(layoutParams);
         }
     }
 

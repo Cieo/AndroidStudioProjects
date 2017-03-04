@@ -27,6 +27,8 @@ import com.example.administrator.noteediter.NoteRichEditor;
 import com.transitionseverywhere.AutoTransition;
 import com.transitionseverywhere.TransitionManager;
 
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -99,19 +101,25 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
         drawerRecyclerViewAdapter.updateDateSet();
         contentRecyclerViewAdapter.updateDateSet(currentShowingFolder);
         allNoteBadge.setText(GlobalStorage.getInstance().getNoteFolderSize("allNote"));
-        final int position = drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder);
-        drawerRecyclerView.scrollToPosition(position);
-        Handler handler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message message) {
-                clearHighLightBackground();
-                NoteDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (NoteDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(position);
-                highLightedDrawerButton = myViewHolder.getButton();
-                setHighLightBackground();
-                return false;
-            }
-        });
-        handler.sendEmptyMessageDelayed(1,100);
+        if (!Objects.equals(currentShowingFolder, "allNote")){
+            final int position = drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder);
+            drawerRecyclerView.scrollToPosition(position);
+            Handler handler = new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message message) {
+                    clearHighLightBackground();
+                    NoteDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (NoteDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(position);
+                    highLightedDrawerButton = myViewHolder.getButton();
+                    setHighLightBackground();
+                    return false;
+                }
+            });
+            handler.sendEmptyMessageDelayed(1,100);
+        } else {
+            clearHighLightBackground();
+            highLightedDrawerButton = showAllNote;
+            setHighLightBackground();
+        }
     }
 
     void init() {
@@ -318,9 +326,12 @@ public class NoteListActivity extends AppCompatActivity implements Interfaces.On
                 }
                 break;
             case R.id.popUpMenuMoveTo:
-                if (GlobalStorage.getInstance().getSelectedImageInfo().size() > 0) {
+                if (GlobalStorage.getInstance().getSelectedNoteInfo().size() > 0) {
                     Intent intent1 = new Intent(this, NoteMoveToActivity.class);
                     startActivityForResult(intent1, 100);
+                }
+                else {
+                    Log.e("selectedNoteInfo","zero");
                 }
                 break;
             case R.id.createNewFolderCancel:

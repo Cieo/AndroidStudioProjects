@@ -24,6 +24,8 @@ import android.widget.TextView;
 import com.transitionseverywhere.AutoTransition;
 import com.transitionseverywhere.TransitionManager;
 
+import java.util.Objects;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -90,19 +92,27 @@ public class MainActivity extends AppCompatActivity implements Interfaces.OnImag
         drawerRecyclerViewAdapter.updateDateSet();
         contentRecyclerViewAdapter.updateDateSet(currentShowingFolder);
         allImageBadge.setText(GlobalStorage.getInstance().getImageFolderSize("allImage"));
-        final int position = drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder);
-        drawerRecyclerView.scrollToPosition(position);
-        Handler handler = new Handler(new Handler.Callback() {
-            @Override
-            public boolean handleMessage(Message message) {
-                clearHighLightBackground();
-                ImageDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(position);
-                highLightedDrawerButton = myViewHolder.getButton();
-                setHighLightBackground();
-                return false;
-            }
-        });
-        handler.sendEmptyMessageDelayed(1,100);
+        Log.e("TestCurrentShowing",currentShowingFolder);
+        if (!Objects.equals(currentShowingFolder, "allImage")){
+            final int position = drawerRecyclerViewAdapter.getFolderViewHolderPosition(currentShowingFolder);
+            drawerRecyclerView.scrollToPosition(position);
+            Handler handler = new Handler(new Handler.Callback() {
+                @Override
+                public boolean handleMessage(Message message) {
+                    clearHighLightBackground();
+                    ImageDrawerRecyclerViewAdapter.MyViewHolder myViewHolder = (ImageDrawerRecyclerViewAdapter.MyViewHolder) drawerRecyclerView.findViewHolderForAdapterPosition(position);
+                    highLightedDrawerButton = myViewHolder.getButton();
+                    setHighLightBackground();
+                    return false;
+                }
+            });
+            handler.sendEmptyMessageDelayed(1,100);
+        } else {
+            clearHighLightBackground();
+            highLightedDrawerButton = allImageButton;
+            setHighLightBackground();
+        }
+
     }
 
     void init() {
